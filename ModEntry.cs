@@ -84,8 +84,6 @@ namespace AutomateToolSwap
             if (location.terrainFeatures.ContainsKey(tile))
             {
                 
-                //Check if its tree
-                Console.WriteLine(location.terrainFeatures[tile]);
                 if (location.terrainFeatures[tile] is Tree)
                 {
                     return "Tree";
@@ -108,7 +106,6 @@ namespace AutomateToolSwap
             //Check if it is an large stone or large stump
             for (int i = 0; i < location.resourceClumps.Count; i++)
             {
-
                 if (location.resourceClumps[i].occupiesTile((int)tile.X, (int)tile.Y))
                 {
                     Console.WriteLine(location.resourceClumps[i].parentSheetIndex);
@@ -124,11 +121,8 @@ namespace AutomateToolSwap
                         case 672:
                             return "Stone";
                     }
-                    
-                }
-                
+                }  
             }
-
             //If nothing is found, returns empty
             return "Empty";
         }
@@ -147,7 +141,7 @@ namespace AutomateToolSwap
                     break;
                 }
 
-                //If the action is break weeds, any melee weapon is okay
+                //If the action is to break weeds, any melee weapon is okay
                 if (player.Items[i] != null && player.Items[i].ToString().Contains(tool))
                 {
                     player.CurrentToolIndex = i;
