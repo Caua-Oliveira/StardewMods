@@ -50,10 +50,12 @@ namespace AutomateToolSwap
             GameLocation currentLocation = Game1.currentLocation;
             string tileContent = GetTileContents(currentLocation, cursorTile);
 
-
+            
             //Determines what tool the player should use
             switch (tileContent)
             {
+                case "Empty":
+                    break;
                 case "Tree":
                 case "Twig":
                 case "Gate":
@@ -62,7 +64,7 @@ namespace AutomateToolSwap
                 case "Giant Crop":
                     SetTool(player, "Axe");
                     break;
-
+            
                 case "Stone":
                     SetTool(player, "Pickaxe");
                     break;
@@ -152,6 +154,7 @@ namespace AutomateToolSwap
                         case 756:
                         case 754:
                         case 752:
+                        case 672:
                             return "Stone";
                         default:
                             Console.Write("Debug Code: ");
