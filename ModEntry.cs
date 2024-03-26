@@ -1,9 +1,11 @@
-﻿using System;
+using System;
+using System.Xml.Linq;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewValley;
+using StardewValley.Buildings;
 using StardewValley.Extensions;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
@@ -15,7 +17,7 @@ namespace AutomateToolSwap
 
     internal sealed class ModEntry : Mod
     {
-
+        bool mod_activated = true;
         public override void Entry(IModHelper helper)
         {
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
@@ -23,14 +25,24 @@ namespace AutomateToolSwap
 
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
+            
             // ignore if player hasn't loaded a save yet
             if (!Context.IsWorldReady)
                 return;
-            // ignore if player didnt left-click
-            if (e.Button != SButton.MouseLeft && e.Button != SButton.ControllerX)
+
+            if (e.Button == SButton.CapsLock)
+            {
+                mod_activated = !mod_activated;
+                if (mod_activated) { Console.WriteLine("Mod ACTIVATED"); }
+                else { Console.WriteLine("Mod DEACTIVATED"); }
+                
+            }
+            // ignore if player didnt left-click or mod is deactivated
+            if (e.Button != SButton.MouseLeft && e.Button != SButton.ControllerX || !mod_activated)
             {
                 return;
             }
+            
 
             Farmer player = Game1.player;
             ICursorPosition cursorPos = this.Helper.Input.GetCursorPosition();
@@ -47,6 +59,7 @@ namespace AutomateToolSwap
                 case "Gate":
                 case "Hardwood Fence":
                 case "Wood Fence":
+                case "Giant Crop":
                     SetTool(player, "Axe");
                     break;
 
@@ -61,7 +74,12 @@ namespace AutomateToolSwap
                 case "Scythe Crop":
                     SetTool(player, "Scythe");
                     break;
-
+                case "Not Watered":
+                    SetTool(player, "WateringCan");
+                    break;
+                default:
+                    Console.WriteLine($"Debug: {tileContent}");
+                    break;
             }
 
 
@@ -73,7 +91,6 @@ namespace AutomateToolSwap
             // Get the object at the specified tile
             StardewValley.Object obj = location.getObjectAtTile((int)tile.X, (int)tile.Y);
 
-
             if (obj != null)
             {
                 // If there's an object, return its name
@@ -83,32 +100,49 @@ namespace AutomateToolSwap
             // If there's no object, check for terrain features
             if (location.terrainFeatures.ContainsKey(tile))
             {
-                
+
+
+                //Check if its tree
                 if (location.terrainFeatures[tile] is Tree)
                 {
-                    return "Tree";
+                    return "Axe";
                 }
 
-                //Check if its a crop that need a scythe
+                if (location.terrainFeatures[tile] is GiantCrop)
+                {
+                    return "Giant Crop";
+                }
+
+
                 if (location.terrainFeatures[tile] is HoeDirt)
                 {
+                    //Check if its a crop that need a scythe
                     HoeDirt dirt = location.terrainFeatures[tile] as HoeDirt;
-                    if (dirt.crop != null && dirt.crop.currentPhase == dirt.crop.phaseDays.Count - 1)
+
+                    if (dirt.crop != null && dirt.readyForHarvest())
                     {
-                        Console.WriteLine(1);
                         return "Scythe Crop";
 
                     }
+                    
+                    //Checks if crop need water
+                    if (dirt.crop != null && !dirt.isWatered())
+                    {
+                        return "Not Watered";
+                    }
+                 
                 }
+                return location.terrainFeatures[tile].NetFields.Name;
+
             }
 
             
             //Check if it is an large stone or large stump
             for (int i = 0; i < location.resourceClumps.Count; i++)
             {
+
                 if (location.resourceClumps[i].occupiesTile((int)tile.X, (int)tile.Y))
                 {
-                    Console.WriteLine(location.resourceClumps[i].parentSheetIndex);
                     switch (location.resourceClumps[i].parentSheetIndex)
                     {
                         case 602:
@@ -118,11 +152,17 @@ namespace AutomateToolSwap
                         case 756:
                         case 754:
                         case 752:
-                        case 672:
                             return "Stone";
+                        default:
+                            Console.Write("Debug Code: ");
+                            Console.WriteLine(location.resourceClumps[i].parentSheetIndex);
+                            break;
                     }
-                }  
+                    
+                }
+                
             }
+
             //If nothing is found, returns empty
             return "Empty";
         }
@@ -141,7 +181,7 @@ namespace AutomateToolSwap
                     break;
                 }
 
-                //If the action is to break weeds, any melee weapon is okay
+                //If the action is break weeds, any melee weapon is okay
                 if (player.Items[i] != null && player.Items[i].ToString().Contains(tool))
                 {
                     player.CurrentToolIndex = i;
