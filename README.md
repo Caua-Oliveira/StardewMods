@@ -1,9 +1,7 @@
-This mod selects the correct tool for you whenever you click something breakable.
+This mod selects the correct tool for you whenever you click that requires a tool.
 The tools dont need to be on your hotbar, if it is in your inventory, it will work
 
-I just started playing the game and wanted a mod like this but i didnt found any, so i made it.
-At the moment the only objects that triggers this mod are trees, logs, stumps, twigs, weeds,  stones, large stones, fences and crops.
-As i said, i just started playing the game so it might have some objects i havent seen yet, like some large stones from the cave at deeper levels or items that i havent unlocked yet.
-
-The tools that it swaps to are the axe, pickaxe, scythe and weapons, altough the weapons only are swapped for weeds, i will make it swap for monsters later.
-If you find a object that the mod doesnt detect please tell me and  i will try to make it work, if it is a stone from the cave tell me in what level it is
+Mod Config Options:
+-Enables/Disables the mod whenever you want - CAPSLOCK (you cant change the keybind yet)
+-Prioritize Pickaxes Over WaterCan - Default=False (If true, when you are holding a pickaxe and use it on a dry planted soil, the mod wont swap for WaterCan)
+-Pickaxe Instead Of Scythe - Default=False (If true, when you try to break weeds(fiber) it will swap to your pickaxe instead of your Scythe)
