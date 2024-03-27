@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Xml.Linq;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
@@ -11,21 +11,67 @@ using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using xTile.Dimensions;
 using xTile.Tiles;
+using GenericModConfigMenu;
+using Sprinting;
 
 namespace AutomateToolSwap
 {
 
-    internal sealed class ModEntry : Mod
+    public class ModEntry : Mod
     {
+
+        internal static ModEntry Instance { get; private set; } = null!;
+        internal static ModConfig Config { get; set; }
         bool mod_activated = true;
         public override void Entry(IModHelper helper)
         {
+            Instance = this;
+            Config = Helper.ReadConfig<ModConfig>();
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
+            helper.Events.GameLoop.GameLaunched += new EventHandler<GameLaunchedEventArgs>(this.OnGameLaunched);
         }
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu == null)
+            {
+                Console.Out.WriteLine("Generic Mod Config Menu not installed!");
+                return;
+            }
+            else
+            {
+                Console.Out.WriteLine("Successfully hooked into spacechase0.GenericModConfigMenu.");
+                configMenu.Register(
+                    mod: this.ModManifest,
+                    reset: () => Config = new ModConfig(),
+                    save: () => this.Helper.WriteConfig(Config)
+                );
+
+                configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Prioritize Pickaxe over Watercan",
+                tooltip: () => "Prioritizes the Pickaxe, if you are holding a pickaxe when clicking an dry soil, it will not change for the watercan",
+                getValue: () => Config.Pickaxe_greater_wcan,
+                setValue: value => Config.Pickaxe_greater_wcan = value
+                );
+
+                configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Pickaxe isntead of Scythe",
+                tooltip: () => "When clicking on weeds(fibers), it will change for the pickaxe instead",
+                getValue: () => Config.Pickaxe_over_melee,
+                setValue: value => Config.Pickaxe_over_melee = value
+                );
+
+
+
+            }
+        }
+
 
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            
+
             // ignore if player hasn't loaded a save yet
             if (!Context.IsWorldReady)
                 return;
@@ -35,14 +81,14 @@ namespace AutomateToolSwap
                 mod_activated = !mod_activated;
                 if (mod_activated) { Console.WriteLine("Mod ACTIVATED"); }
                 else { Console.WriteLine("Mod DEACTIVATED"); }
-                
+
             }
             // ignore if player didnt left-click or mod is deactivated
             if (e.Button != SButton.MouseLeft && e.Button != SButton.ControllerX || !mod_activated)
             {
                 return;
             }
-            
+
 
             Farmer player = Game1.player;
             ICursorPosition cursorPos = this.Helper.Input.GetCursorPosition();
@@ -50,12 +96,14 @@ namespace AutomateToolSwap
             GameLocation currentLocation = Game1.currentLocation;
             string tileContent = GetTileContents(currentLocation, cursorTile);
 
-            
+
             //Determines what tool the player should use
             switch (tileContent)
             {
                 case "Empty":
+                case "Dont Need Water":
                     break;
+
                 case "Tree":
                 case "Twig":
                 case "Gate":
@@ -64,19 +112,26 @@ namespace AutomateToolSwap
                 case "Giant Crop":
                     SetTool(player, "Axe");
                     break;
-            
                 case "Stone":
                     SetTool(player, "Pickaxe");
                     break;
 
                 case "Weeds":
-                    SetTool(player, "MeleeWeapon");
-                    break;
+                    if (Config.Pickaxe_over_melee)
+                    {
+                        SetTool(player, "Pickaxe");
+                        break;
+                    }
+                    else
+                    {
+                        SetTool(player, "MeleeWeapon");
+                        break;
+                    }
 
                 case "Scythe Crop":
                     SetTool(player, "Scythe");
                     break;
-                case "Not Watered":
+                case "Need Water":
                     SetTool(player, "WateringCan");
                     break;
                 default:
@@ -93,6 +148,8 @@ namespace AutomateToolSwap
             // Get the object at the specified tile
             StardewValley.Object obj = location.getObjectAtTile((int)tile.X, (int)tile.Y);
 
+            Tool currentTool = Game1.player.CurrentTool;
+
             if (obj != null)
             {
                 // If there's an object, return its name
@@ -107,7 +164,7 @@ namespace AutomateToolSwap
                 //Check if its tree
                 if (location.terrainFeatures[tile] is Tree)
                 {
-                    return "Axe";
+                    return "Tree";
                 }
 
                 if (location.terrainFeatures[tile] is GiantCrop)
@@ -126,19 +183,23 @@ namespace AutomateToolSwap
                         return "Scythe Crop";
 
                     }
-                    
+
                     //Checks if crop need water
                     if (dirt.crop != null && !dirt.isWatered())
                     {
-                        return "Not Watered";
+                        if (Config.Pickaxe_greater_wcan && currentTool is Pickaxe)
+                        {
+                            return "Dont Need Water";
+                        }
+                        return "Need Water";
                     }
-                 
+
                 }
                 return location.terrainFeatures[tile].NetFields.Name;
 
             }
 
-            
+
             //Check if it is an large stone or large stump
             for (int i = 0; i < location.resourceClumps.Count; i++)
             {
@@ -161,9 +222,9 @@ namespace AutomateToolSwap
                             Console.WriteLine(location.resourceClumps[i].parentSheetIndex);
                             break;
                     }
-                    
+
                 }
-                
+
             }
 
             //If nothing is found, returns empty
@@ -174,7 +235,7 @@ namespace AutomateToolSwap
         //Looks for the tool necessary for the action
         private void SetTool(Farmer player, String tool)
         {
-            
+
             for (int i = 0; i < player.maxItems; i++)
             {
                 //If the action is to break crops, use scythe
@@ -194,6 +255,10 @@ namespace AutomateToolSwap
             }
 
         }
-
     }
 }
+
+
+
+
+    
