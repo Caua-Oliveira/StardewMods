@@ -7,6 +7,11 @@ using StardewValley;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using GenericModConfigMenu;
+using System.Diagnostics.Metrics;
+using StardewValley.GameData.Buildings;
+using StardewValley.Locations;
+using StardewValley.Extensions;
+using StardewValley.Buildings;
 
 
 namespace AutomateToolSwap
@@ -14,11 +19,11 @@ namespace AutomateToolSwap
 
     public class ModEntry : Mod
     {
-
-        internal static ModEntry Instance { get; private set; } = null!;
-        internal static ModConfig Config { get; set; }
         int lastItemIndex = 0;
         int auxItemIndex = 0;
+        internal static ModEntry Instance { get; private set; } = null!;
+        internal static ModConfig Config { get; set; }
+      
         public override void Entry(IModHelper helper)
         {
             Instance = this;
@@ -30,8 +35,8 @@ namespace AutomateToolSwap
         {
             Config.Enabled = true;
             var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (configMenu == null){ return;}
-    
+            if (configMenu == null) { return; }
+
             configMenu.Register(
                 mod: this.ModManifest,
                 reset: () => Config = new ModConfig(),
@@ -82,209 +87,171 @@ namespace AutomateToolSwap
 
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            int lastItemIndex = 0;
-            int auxItemIndex = 0;
             // ignore if player hasn't loaded a save yet
-            if (!Context.IsWorldReady) {  return; }
+            if (!Context.IsWorldReady) { return; }
 
             // turns mod on/off
             if (e.Button == Config.ToggleKey)
             {
                 Config.Enabled = !Config.Enabled;
-                if (Config.Enabled) { Console.WriteLine("AutomateToolSwap_Mod ENABLED"); }
-                else { Console.WriteLine("AutomateToolSwap_Mod DISABLED"); }
+                if (Config.Enabled) { Console.Out.WriteLine("AutomateToolSwap ENABLED"); }
+                else {                Console.Out.WriteLine("AutomateToolSwap DISABLED"); }
             }
 
-            if (e.Button == Config.LastToolButton && Game1.player.canMove){ ReturnToLastItem(); }
-
+            // swap to the last item
+            if (e.Button == Config.LastToolButton && Game1.player.canMove) { ReturnToLastItem(); }
 
             // ignore if player didnt left-click or mod is disabled
-            if (e.Button != SButton.MouseLeft && e.Button != SButton.ControllerX || !Config.Enabled || !(Game1.player.canMove)){return;}
-            
+            if (e.Button != SButton.MouseLeft && e.Button != SButton.ControllerX || !Config.Enabled || !(Game1.player.canMove)) { return; }
+
+
             Farmer player = Game1.player;
             ICursorPosition cursorPos = this.Helper.Input.GetCursorPosition();
             Vector2 cursorTile = cursorPos.GrabTile;
             GameLocation currentLocation = Game1.currentLocation;
-            string tileContent = GetTileContents(currentLocation, cursorTile);
-            
 
-            //Determines what tool the player should use
-            switch (tileContent)
-            {
-                case "Tree":
-                case "Twig":
-                case "Gate":
-                case "Hardwood Fence":
-                case "Wood Fence":
-                case "Giant Crop":                    
-                    SetTool(player, "Axe");break;
-
-                case "Stone":
-                case "Crab":                          
-                    SetTool(player, "Pickaxe");break;
-
-                case "Barrel":
-                case "Monster":                       
-                    SetTool(player, "MeleeWeapon");break;
-
-                case "Milker":                        
-                    SetTool(player, "MilkPail");break;
-
-                case "Wooler":                        
-                    SetTool(player, "Shears");break;
-
-                case "Scythe Crop":                   
-                    SetTool(player, "Scythe");break;
-
-                case "Artifact Spot":                 
-                    SetTool(player, "Hoe");break;
-
-                case "Need Water":                    
-                    SetTool(player, "WateringCan");break;
-
-                case "Weeds":
-                    if (Config.Pickaxe_over_melee) { SetTool(player, "Pickaxe"); break; }
-                    else { SetTool(player, "Scythe"); break; }
-
-                case "Empty":
-                    if (!Config.Hoe_in_empty_soil) { break; }
-                    if (currentLocation.Name.Contains("Mine")) { break; }
-
-                    try{
-                        var thing = player.CurrentItem;
-                        if (!(thing.canBePlacedHere(currentLocation, cursorTile, CollisionMask.All, true)) && !(thing is MeleeWeapon) && !player.CurrentItem.Name.Contains("Fishing Rod"))
-                        {
-                            SetTool(player, "Hoe");
-                        }
-                    }catch{ SetTool(player, "Hoe"); }break;
-            }
+            GetTool(currentLocation, cursorTile, player);
         }
 
-        //Detects what is in the tile that the player is looking at
-        private string GetTileContents(GameLocation location, Vector2 tile)
+        // detects what is in the tile that the player is looking at and calls the function to swap tools
+        private void GetTool(GameLocation location, Vector2 tile, Farmer player)
         {
+            Tool currentTool = player.CurrentTool;
             StardewValley.Object obj = location.getObjectAtTile((int)tile.X, (int)tile.Y);
-            Tool currentTool = Game1.player.CurrentTool;
 
+            //Check for objects
             if (obj != null)
             {
-                // If there's an object, return its name
-                return obj.Name;
+                if (obj.IsBreakableStone()) { SetTool(player, typeof(Pickaxe)); }
+                if (obj.IsTwig())           { SetTool(player, typeof(Axe)); }
+                if (obj.IsWeeds())          { SetTool(player, typeof(MeleeWeapon)); }
+                if (obj.Name == "Barrel")   { SetTool(player, typeof(MeleeWeapon), "Weapon"); ; }
+
+                return;
             }
 
-            // If there's no object, check for terrain features
+
+            // Check for terrain features
             if (location.terrainFeatures.ContainsKey(tile))
             {
-                if (location.terrainFeatures[tile] is Tree) {return "Tree";}
-
-                if (location.terrainFeatures[tile] is GiantCrop) {return "Giant Crop";}
+                if (location.terrainFeatures[tile] is Tree or GiantCrop)              { SetTool(player, typeof(Axe)); return; }
 
                 if (location.terrainFeatures[tile] is HoeDirt)
                 {
-                    //Check if its a crop that need a scythe for harvest
                     HoeDirt dirt = location.terrainFeatures[tile] as HoeDirt;
+                    if (dirt.crop != null && dirt.readyForHarvest())                  { SetTool(player, typeof(MeleeWeapon)); return; }
 
-                    if (dirt.crop != null && dirt.readyForHarvest()){return "Scythe Crop";}
-
-                    //Checks if crop needs water
                     if (dirt.crop != null && !dirt.isWatered())
                     {
-                        if (Config.Pickaxe_greater_wcan && currentTool is Pickaxe){return "Dont Need Water";}
-
-                        return "Need Water";
+                        if (!(Config.Pickaxe_greater_wcan && currentTool is Pickaxe)) { SetTool(player, typeof(WateringCan)); return; }
                     }
-                } 
+                }
             }
-   
-            //Check if it is an large stone or large stump
+
+            //Check if it is an boulder or logs and stumps
             for (int i = 0; i < location.resourceClumps.Count; i++)
             {
                 if (location.resourceClumps[i].occupiesTile((int)tile.X, (int)tile.Y))
                 {
                     switch (location.resourceClumps[i].parentSheetIndex)
                     {
-                        case 602:
-                        case 600:
-                            return "Tree";
-                        case 758:
-                        case 756:
-                        case 754:
-                        case 752:
-                        case 672:
-                            return "Stone";
+                        //Id's for logs and stumps
+                        case 602 or 600:
+                            SetTool(player, typeof(Axe));
+                            return;
+
+                        //Id's for boulders
+                        case 758 or 758 or 754 or 752 or 672 or 622:
+                            SetTool(player, typeof(Pickaxe));
+                            return;
                     }
                 }
             }
-
-            foreach (var animal in location.getAllFarmAnimals())
+            
+            //Check for water source
+            if ((location is Farm || location.isGreenhouse) && location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "WaterSource", "Back") != null)
             {
-                Vector2 animalTile = animal.Tile;
-                string[] canMilk = { "Goat", "Cow" };
-                string[] canCut = { "Rabbit", "Sheep" };
-                float distance = Vector2.Distance(tile, animalTile);
-                if (canMilk.Any(animal.displayType.Contains) && distance <= 1)
+                SetTool(player, typeof(WateringCan)); return;
+            }
+
+            //Check for water for fishing
+            if (location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Water", "Back") != null && !(player.CurrentTool is WateringCan))
+            { SetTool(player, typeof(FishingRod)); return; }
+
+            //Check for animals to milk or shear
+            if (location is Farm or AnimalHouse)
+            {
+                foreach (var animal in location.getAllFarmAnimals())
                 {
-                    return "Milker";
-                }
-                if (canCut.Any(animal.displayType.Contains) && distance < 2)
-                {
-                    return "Wooler";
+                    Vector2 animalTile = animal.Tile;
+                    string[] canMilk = { "Goat", "Cow" };
+                    string[] canShear = { "Rabbit", "Sheep" };
+                    float distance = Vector2.Distance(tile, animalTile);
+                    if (canMilk.Any(animal.displayType.Contains) && distance <= 1)       { SetTool(player, typeof(MilkPail)); }
+
+                    if (canShear.Any(animal.displayType.Contains) && distance < 2)       { SetTool(player, typeof(Shears)); }
                 }
             }
 
-            if (location.DisplayName.Contains("Mine") || location.DisplayName.Contains("Farm"))
+            //Check for monsters 
+            if (location is MineShaft || location is Farm)
             {
-                int radius = 3;
                 foreach (var monster in location.characters)
                 {
                     Vector2 monsterTile = monster.Tile;
                     float distance = Vector2.Distance(tile, monsterTile);
-                    if (monster.IsMonster && distance < radius)
-                    {
-                        if (monster.displayName.Contains("Crab") && !monster.isMoving()) 
-                        { return "Crab"; }
 
-                        return "Monster";
+                    if (monster.IsMonster && distance < 3)
+                    {
+                        //Pickaxe for non-moving cave crab
+                        if (monster.displayName.Contains("Crab") && !monster.isMoving()) { SetTool(player, typeof(Pickaxe)); ; return; }
+
+                        SetTool(player, typeof(MeleeWeapon), "Weapon");
+                        return;
                     }
-                    
                 }
             }
 
-            //If nothing is found, returns empty
-            return "Empty";
+            return;
         }
 
         //Looks for the tool necessary for the action
-        private void SetTool(Farmer player, String tool)
+        private void SetTool(Farmer player, Type toolType, string aux = "Scythe")
         {
+
+            //Melee Weapon \/
+            if (toolType == typeof(MeleeWeapon))
+            {
+                if (aux == "Scythe")
+                {
+                    for (int i = 0; i < player.maxItems; i++)
+                    {
+                        if (player.Items[i] != null && player.Items[i].Name.Contains(aux))
+                        {
+                            player.CurrentToolIndex = i;
+                            return;
+                        }
+                    }
+                }
+
+                for (int i = 0; i < player.maxItems; i++)
+                {
+                    if (player.Items[i] != null && player.Items[i].GetType() == toolType)
+                    {
+                        player.CurrentToolIndex = i;
+                        return;
+                    }
+                }
+            }
+
+
+            //Any other tool \/
             for (int i = 0; i < player.maxItems; i++)
             {
-                //Different code for scythe and melee weapon because both are treated as melee weapon
-                if (tool == "Scythe" && player.Items[i] != null && player.Items[i].Name.Contains(tool))
+                if (player.Items[i] != null && player.Items[i].GetType() == toolType)
                 {
-                    if (i != player.CurrentToolIndex) 
-                    { lastItemIndex = player.CurrentToolIndex; }
-
                     player.CurrentToolIndex = i;
-                    break;
-                }
-
-                if (tool == "Melee Weapon" && player.Items[i] != null && player.Items[i].getCategoryName().Contains("Level"))
-                {
-                    if (i != player.CurrentToolIndex) 
-                    { lastItemIndex = player.CurrentToolIndex; }
-
-                    player.CurrentToolIndex = i;
-                    break;
-                }
-
-                if (player.Items[i] != null && player.Items[i].ToString().Contains(tool))
-                {
-                    if (i != player.CurrentToolIndex)
-                    { lastItemIndex = player.CurrentToolIndex; }
-
-                    player.CurrentToolIndex = i;
-                    break;
+                    return;
                 }
             }
         }
@@ -302,4 +269,3 @@ namespace AutomateToolSwap
 
 
 
-    
