@@ -122,12 +122,14 @@ namespace AutomateToolSwap
             //Check for objects
             if (obj != null)
             {
-                if (obj.IsBreakableStone()) { SetTool(player, typeof(Pickaxe)); }
-                if (obj.IsTwig())           { SetTool(player, typeof(Axe)); }
-                if (obj.IsWeeds())          { SetTool(player, typeof(MeleeWeapon)); }
-                if (obj.Name == "Barrel")   { SetTool(player, typeof(MeleeWeapon), "Weapon"); ; }
+                if (obj.IsBreakableStone())      { SetTool(player, typeof(Pickaxe)); return; }
+                if (obj.IsTwig())                { SetTool(player, typeof(Axe)); return; }
+                if (obj.IsWeeds())               { SetTool(player, typeof(MeleeWeapon)); return; }
+                if (obj.IsFenceItem())           { SetTool(player, typeof(Axe)); return; }
+                if (obj.Name == "Artifact Spot") { SetTool(player, typeof(Hoe)); return; }
+                if (obj.Name == "Seed Spot")     { SetTool(player, typeof(Hoe)); return; }
+                if (obj.Name == "Barrel")        { SetTool(player, typeof(MeleeWeapon), "Weapon"); return; }
 
-                return;
             }
 
 
@@ -140,11 +142,13 @@ namespace AutomateToolSwap
                 {
                     HoeDirt dirt = location.terrainFeatures[tile] as HoeDirt;
                     if (dirt.crop != null && dirt.readyForHarvest())                  { SetTool(player, typeof(MeleeWeapon)); return; }
+                    if (dirt.crop != null && (bool)dirt.crop.dead)                    { SetTool(player, typeof(Pickaxe)); return; }
 
                     if (dirt.crop != null && !dirt.isWatered())
                     {
                         if (!(Config.Pickaxe_greater_wcan && currentTool is Pickaxe)) { SetTool(player, typeof(WateringCan)); return; }
                     }
+                    return;
                 }
             }
 
@@ -166,8 +170,8 @@ namespace AutomateToolSwap
                             return;
                     }
                 }
-            }
-            
+            }            
+
             //Check for water source
             if ((location is Farm || location.isGreenhouse) && location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "WaterSource", "Back") != null)
             {
@@ -176,7 +180,9 @@ namespace AutomateToolSwap
 
             //Check for water for fishing
             if (location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Water", "Back") != null && !(player.CurrentTool is WateringCan))
-            { SetTool(player, typeof(FishingRod)); return; }
+            { 
+                SetTool(player, typeof(FishingRod)); return; 
+            }
 
             //Check for animals to milk or shear
             if (location is Farm or AnimalHouse)
@@ -194,7 +200,7 @@ namespace AutomateToolSwap
             }
 
             //Check for monsters 
-            if (location is MineShaft || location is Farm)
+            if (location is MineShaft or Farm or VolcanoDungeon or Mine)
             {
                 foreach (var monster in location.characters)
                 {
@@ -212,7 +218,35 @@ namespace AutomateToolSwap
                 }
             }
 
-            return;
+            //Check for feeding bench
+            if (location is AnimalHouse && location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Trough", "Back") != null)
+            {
+                for (int i = 0; i < player.maxItems; i++)
+                {
+                    if (player.Items[i] != null && player.Items[i].Name == "Hay")
+                    {
+                        player.CurrentToolIndex = i;
+                        return;
+                    }
+                }
+            }
+
+            //Check if it should swap to Hoe
+            if (!Config.Hoe_in_empty_soil) { return; }
+            if (location is MineShaft) { return; }
+
+            try
+            {
+                var thing = player.CurrentItem;
+                if (!(thing.canBePlacedHere(location, tile, CollisionMask.All, true)) && !(thing is MeleeWeapon))
+                {
+                    SetTool(player, typeof(Hoe));
+                }
+                return;
+            }
+            catch { SetTool(player, typeof(Hoe)); return; }
+
+
         }
 
         //Looks for the tool necessary for the action
@@ -232,16 +266,26 @@ namespace AutomateToolSwap
                             return;
                         }
                     }
+
+                    for (int i = 0; i < player.maxItems; i++)
+                    {
+                        if (player.Items[i] != null && player.Items[i].GetType() == typeof(MeleeWeapon))
+                        {
+                            player.CurrentToolIndex = i;
+                            return;
+                        }
+                    }
                 }
 
                 for (int i = 0; i < player.maxItems; i++)
                 {
-                    if (player.Items[i] != null && player.Items[i].GetType() == toolType)
+                    if (player.Items[i] != null && player.Items[i].GetType() == toolType && !(player.Items[i].Name.Contains("Scythe")))
                     {
                         player.CurrentToolIndex = i;
                         return;
                     }
                 }
+                return;
             }
 
 
