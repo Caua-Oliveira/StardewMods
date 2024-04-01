@@ -1,5 +1,4 @@
-﻿using System;
-using System.Xml.Linq;
+﻿
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -7,23 +6,17 @@ using StardewValley;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using GenericModConfigMenu;
-using System.Diagnostics.Metrics;
-using StardewValley.GameData.Buildings;
 using StardewValley.Locations;
-using StardewValley.Extensions;
 using StardewValley.Buildings;
 
 
 namespace AutomateToolSwap
 {
-
     public class ModEntry : Mod
     {
-        int lastItemIndex = 0;
-        int auxItemIndex = 0;
         internal static ModEntry Instance { get; private set; } = null!;
         internal static ModConfig Config { get; set; }
-      
+
         public override void Entry(IModHelper helper)
         {
             Instance = this;
@@ -53,11 +46,28 @@ namespace AutomateToolSwap
 
             configMenu.AddKeybind(
             mod: this.ModManifest,
+            name: () => "Swap Tools Keybind",
+            tooltip: () => "What keybind you will use to swap tools (Recommended: Key you use to break things)",
+            getValue: () => Config.SwapKey,
+            setValue: value => Config.SwapKey = value
+            );
+
+            configMenu.AddKeybind(
+            mod: this.ModManifest,
             name: () => "Return to last tool used",
             tooltip: () => "What key you will use to return to last tool used",
             getValue: () => Config.LastToolButton,
             setValue: value => Config.LastToolButton = value
             );
+
+            configMenu.AddBoolOption(
+            mod: this.ModManifest,
+            name: () => "Auto switch to last tool",
+            tooltip: () => "Whenever the mod swaps a tool to break something, it automatically swaps back again to the previous tool",
+            getValue: () => Config.Auto_switch_last_tool,
+            setValue: value => Config.Auto_switch_last_tool = value
+            );
+
 
             configMenu.AddBoolOption(
             mod: this.ModManifest,
@@ -84,6 +94,7 @@ namespace AutomateToolSwap
             );
         }
 
+        IndexSwitcher switcher = new IndexSwitcher(0);
 
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
@@ -95,11 +106,11 @@ namespace AutomateToolSwap
             {
                 Config.Enabled = !Config.Enabled;
                 if (Config.Enabled) { Console.Out.WriteLine("AutomateToolSwap ENABLED"); }
-                else {                Console.Out.WriteLine("AutomateToolSwap DISABLED"); }
+                else { Console.Out.WriteLine("AutomateToolSwap DISABLED"); }
             }
 
             // swap to the last item
-            if (e.Button == Config.LastToolButton && Game1.player.canMove) { ReturnToLastItem(); }
+            if (e.Button == Config.LastToolButton && Game1.player.canMove) { switcher.GoToLastIndex(); }
 
             // ignore if player didnt left-click or mod is disabled
             if (e.Button != SButton.MouseLeft && e.Button != SButton.ControllerX || !Config.Enabled || !(Game1.player.canMove)) { return; }
@@ -122,13 +133,15 @@ namespace AutomateToolSwap
             //Check for objects
             if (obj != null)
             {
-                if (obj.IsBreakableStone())      { SetTool(player, typeof(Pickaxe)); return; }
-                if (obj.IsTwig())                { SetTool(player, typeof(Axe)); return; }
-                if (obj.IsWeeds())               { SetTool(player, typeof(MeleeWeapon)); return; }
-                if (obj.IsFenceItem())           { SetTool(player, typeof(Axe)); return; }
+
+                if (obj.IsBreakableStone()) { SetTool(player, typeof(Pickaxe)); return; }
+                if (obj.IsTwig()) { SetTool(player, typeof(Axe)); return; }
+                if (obj.IsWeeds()) { SetTool(player, typeof(MeleeWeapon)); return; }
+                if (obj.IsFenceItem()) { SetTool(player, typeof(Axe)); return; }
                 if (obj.Name == "Artifact Spot") { SetTool(player, typeof(Hoe)); return; }
-                if (obj.Name == "Seed Spot")     { SetTool(player, typeof(Hoe)); return; }
-                if (obj.Name == "Barrel")        { SetTool(player, typeof(MeleeWeapon), "Weapon"); return; }
+                if (obj.Name == "Seed Spot") { SetTool(player, typeof(Hoe)); return; }
+                if (obj.Name == "Barrel") { SetTool(player, typeof(MeleeWeapon), "Weapon"); return; }
+                return;
 
             }
 
@@ -136,13 +149,13 @@ namespace AutomateToolSwap
             // Check for terrain features
             if (location.terrainFeatures.ContainsKey(tile))
             {
-                if (location.terrainFeatures[tile] is Tree or GiantCrop)              { SetTool(player, typeof(Axe)); return; }
+                if (location.terrainFeatures[tile] is Tree or GiantCrop or FruitTree) { SetTool(player, typeof(Axe)); return; }
 
                 if (location.terrainFeatures[tile] is HoeDirt)
                 {
                     HoeDirt dirt = location.terrainFeatures[tile] as HoeDirt;
-                    if (dirt.crop != null && dirt.readyForHarvest())                  { SetTool(player, typeof(MeleeWeapon)); return; }
-                    if (dirt.crop != null && (bool)dirt.crop.dead)                    { SetTool(player, typeof(Pickaxe)); return; }
+                    if (dirt.crop != null && dirt.readyForHarvest()) { SetTool(player, typeof(MeleeWeapon)); return; }
+                    if (dirt.crop != null && (bool)dirt.crop.dead) { SetTool(player, typeof(MeleeWeapon)); return; }
 
                     if (dirt.crop != null && !dirt.isWatered())
                     {
@@ -150,6 +163,7 @@ namespace AutomateToolSwap
                     }
                     return;
                 }
+                return;
             }
 
             //Check if it is an boulder or logs and stumps
@@ -169,19 +183,31 @@ namespace AutomateToolSwap
                             SetTool(player, typeof(Pickaxe));
                             return;
                     }
+                    return;
                 }
-            }            
+            }
 
-            //Check for water source
-            if ((location is Farm || location.isGreenhouse) && location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "WaterSource", "Back") != null)
+            //Check for pet bowl
+            try
+            {
+                if (location.getBuildingAt(tile).GetType() == typeof(PetBowl))
+                {
+                    SetTool(player, typeof(WateringCan)); return;
+                }
+            }
+            catch { }
+
+
+            //Check for water source to refil watering can
+            if (((location is Farm || location.isGreenhouse)) && (location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "WaterSource", "Back") != null || location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Water", "Back") != null) && !(player.CurrentTool is FishingRod))
             {
                 SetTool(player, typeof(WateringCan)); return;
             }
 
             //Check for water for fishing
             if (location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Water", "Back") != null && !(player.CurrentTool is WateringCan))
-            { 
-                SetTool(player, typeof(FishingRod)); return; 
+            {
+                SetTool(player, typeof(FishingRod)); return;
             }
 
             //Check for animals to milk or shear
@@ -193,9 +219,9 @@ namespace AutomateToolSwap
                     string[] canMilk = { "Goat", "Cow" };
                     string[] canShear = { "Rabbit", "Sheep" };
                     float distance = Vector2.Distance(tile, animalTile);
-                    if (canMilk.Any(animal.displayType.Contains) && distance <= 1)       { SetTool(player, typeof(MilkPail)); }
+                    if (canMilk.Any(animal.displayType.Contains) && distance <= 1) { SetTool(player, typeof(MilkPail)); return; }
 
-                    if (canShear.Any(animal.displayType.Contains) && distance < 2)       { SetTool(player, typeof(Shears)); }
+                    if (canShear.Any(animal.displayType.Contains) && distance < 2) { SetTool(player, typeof(Shears)); return; }
                 }
             }
 
@@ -234,6 +260,8 @@ namespace AutomateToolSwap
             //Check if it should swap to Hoe
             if (!Config.Hoe_in_empty_soil) { return; }
             if (location is MineShaft) { return; }
+            if (player.CurrentItem is WateringCan) { return; }
+            if (location.isPath(tile)) {  return; }
 
             try
             {
@@ -252,7 +280,7 @@ namespace AutomateToolSwap
         //Looks for the tool necessary for the action
         private void SetTool(Farmer player, Type toolType, string aux = "Scythe")
         {
-
+            switcher.canSwitch = Config.Auto_switch_last_tool;
             //Melee Weapon \/
             if (toolType == typeof(MeleeWeapon))
             {
@@ -262,7 +290,10 @@ namespace AutomateToolSwap
                     {
                         if (player.Items[i] != null && player.Items[i].Name.Contains(aux))
                         {
-                            player.CurrentToolIndex = i;
+                            if (!(player.CurrentToolIndex == i))
+                            {
+                                switcher.SwitchIndex(i);
+                            }
                             return;
                         }
                     }
@@ -271,7 +302,10 @@ namespace AutomateToolSwap
                     {
                         if (player.Items[i] != null && player.Items[i].GetType() == typeof(MeleeWeapon))
                         {
-                            player.CurrentToolIndex = i;
+                            if (!(player.CurrentToolIndex == i))
+                            {
+                                switcher.SwitchIndex(i);
+                            }
                             return;
                         }
                     }
@@ -281,7 +315,10 @@ namespace AutomateToolSwap
                 {
                     if (player.Items[i] != null && player.Items[i].GetType() == toolType && !(player.Items[i].Name.Contains("Scythe")))
                     {
-                        player.CurrentToolIndex = i;
+                        if (!(player.CurrentToolIndex == i))
+                        {
+                            switcher.SwitchIndex(i);
+                        }
                         return;
                     }
                 }
@@ -294,19 +331,15 @@ namespace AutomateToolSwap
             {
                 if (player.Items[i] != null && player.Items[i].GetType() == toolType)
                 {
-                    player.CurrentToolIndex = i;
+                    if (!(player.CurrentToolIndex == i))
+                    {
+                        switcher.SwitchIndex(i);
+                    }
                     return;
                 }
             }
         }
 
-        private void ReturnToLastItem()
-        {
-            auxItemIndex = Game1.player.CurrentToolIndex;
-            Game1.player.CurrentToolIndex = lastItemIndex;
-            lastItemIndex = auxItemIndex;
-            return;
-        }
     }
 }
 
