@@ -15,7 +15,7 @@ namespace AutomateToolSwap
         public bool Pickaxe_over_melee { get; set; } = false;
 
         public SButton LastToolButton { get; set; } = SButton.MouseMiddle;
-        
+
         public bool Hoe_in_empty_soil { get; set; } = true;
 
         public bool Auto_switch_last_tool { get; set; } = false;
