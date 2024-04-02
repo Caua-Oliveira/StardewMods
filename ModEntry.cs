@@ -1,13 +1,14 @@
 ﻿
+using GenericModConfigMenu;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Buildings;
+using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
-using GenericModConfigMenu;
-using StardewValley.Locations;
-using StardewValley.Buildings;
+using System.Runtime.Remoting;
 
 
 namespace AutomateToolSwap
@@ -37,60 +38,60 @@ namespace AutomateToolSwap
             );
 
             configMenu.AddKeybind(
-            mod: this.ModManifest,
-            name: () => "Toggle On/Off Keybind",
-            tooltip: () => "What key you will use to toggle the mod on/off",
-            getValue: () => Config.ToggleKey,
-            setValue: value => Config.ToggleKey = value
+                mod: this.ModManifest,
+                name: () => "Toggle On/Off Keybind",
+                tooltip: () => "What key you will use to toggle the mod on/off",
+                getValue: () => Config.ToggleKey,
+                setValue: value => Config.ToggleKey = value
             );
 
             configMenu.AddKeybind(
-            mod: this.ModManifest,
-            name: () => "Swap Tools Keybind",
-            tooltip: () => "What keybind you will use to swap tools (Recommended: Key you use to break things)",
-            getValue: () => Config.SwapKey,
-            setValue: value => Config.SwapKey = value
+                mod: this.ModManifest,
+                name: () => "Swap Tools Keybind",
+                tooltip: () => "What keybind you will use to swap tools (Recommended: Key you use to break things)",
+                getValue: () => Config.SwapKey,
+                setValue: value => Config.SwapKey = value
             );
 
             configMenu.AddKeybind(
-            mod: this.ModManifest,
-            name: () => "Return to last tool used",
-            tooltip: () => "What key you will use to return to last tool used",
-            getValue: () => Config.LastToolButton,
-            setValue: value => Config.LastToolButton = value
+                mod: this.ModManifest,
+                name: () => "Return to last tool used",
+                tooltip: () => "What key you will use to return to last tool used",
+                getValue: () => Config.LastToolButton,
+                setValue: value => Config.LastToolButton = value
             );
 
             configMenu.AddBoolOption(
-            mod: this.ModManifest,
-            name: () => "Auto switch to last tool",
-            tooltip: () => "Whenever the mod swaps a tool to break something, it automatically swaps back again to the previous tool",
-            getValue: () => Config.Auto_switch_last_tool,
-            setValue: value => Config.Auto_switch_last_tool = value
+                mod: this.ModManifest,
+                name: () => "Auto switch to last tool",
+                tooltip: () => "Whenever the mod swaps a tool to break something, it automatically swaps back again to the previous tool",
+                getValue: () => Config.Auto_switch_last_tool,
+                setValue: value => Config.Auto_switch_last_tool = value
             );
 
 
             configMenu.AddBoolOption(
-            mod: this.ModManifest,
-            name: () => "Switch to Hoe",
-            tooltip: () => "Switch to Hoe when clicking empty soil",
-            getValue: () => Config.Hoe_in_empty_soil,
-            setValue: value => Config.Hoe_in_empty_soil = value
+                mod: this.ModManifest,
+                name: () => "Switch to Hoe",
+                tooltip: () => "Switch to Hoe when clicking empty soil",
+                getValue: () => Config.Hoe_in_empty_soil,
+                setValue: value => Config.Hoe_in_empty_soil = value
             );
 
             configMenu.AddBoolOption(
-            mod: this.ModManifest,
-            name: () => "Prioritize Pickaxe over Watercan",
-            tooltip: () => "Prioritizes the Pickaxe, if you are holding a pickaxe when clicking an dry soil, it will not change for the watercan",
-            getValue: () => Config.Pickaxe_greater_wcan,
-            setValue: value => Config.Pickaxe_greater_wcan = value
+                mod: this.ModManifest,
+                name: () => "Prioritize Pickaxe over Watercan",
+                tooltip: () => "Prioritizes the Pickaxe, if you are holding a pickaxe when clicking an dry soil, it will not change for the watercan",
+                getValue: () => Config.Pickaxe_greater_wcan,
+                setValue: value => Config.Pickaxe_greater_wcan = value
             );
 
             configMenu.AddBoolOption(
-            mod: this.ModManifest,
-            name: () => "Pickaxe isntead of Scythe",
-            tooltip: () => "When clicking on weeds(fibers), it will change for the pickaxe instead",
-            getValue: () => Config.Pickaxe_over_melee,
-            setValue: value => Config.Pickaxe_over_melee = value
+                mod: this.ModManifest,
+                name: () => "Pickaxe isntead of Scythe",
+                tooltip: () => "When clicking on weeds(fibers), it will change for the pickaxe instead",
+                getValue: () => Config.Pickaxe_over_melee,
+                setValue: value => Config.Pickaxe_over_melee = value
             );
         }
 
@@ -133,12 +134,12 @@ namespace AutomateToolSwap
             //Check for objects
             if (obj != null)
             {
-
                 if (obj.IsBreakableStone()) { SetTool(player, typeof(Pickaxe)); return; }
                 if (obj.IsTwig()) { SetTool(player, typeof(Axe)); return; }
                 if (obj.IsWeeds()) { SetTool(player, typeof(MeleeWeapon)); return; }
                 if (obj.IsFenceItem()) { SetTool(player, typeof(Axe)); return; }
                 if (obj.Name == "Artifact Spot") { SetTool(player, typeof(Hoe)); return; }
+                if (obj.Name == "Garden Pot") { SetTool(player, typeof(WateringCan)); return; }
                 if (obj.Name == "Seed Spot") { SetTool(player, typeof(Hoe)); return; }
                 if (obj.Name == "Barrel") { SetTool(player, typeof(MeleeWeapon), "Weapon"); return; }
                 return;
@@ -154,8 +155,8 @@ namespace AutomateToolSwap
                 if (location.terrainFeatures[tile] is HoeDirt)
                 {
                     HoeDirt dirt = location.terrainFeatures[tile] as HoeDirt;
-                    if (dirt.crop != null && dirt.readyForHarvest()) { SetTool(player, typeof(MeleeWeapon)); return; }
-                    if (dirt.crop != null && (bool)dirt.crop.dead) { SetTool(player, typeof(MeleeWeapon)); return; }
+                    if (dirt.crop != null && dirt.readyForHarvest())                  { SetTool(player, typeof(MeleeWeapon)); return; }
+                    if (dirt.crop != null && (bool)dirt.crop.dead)                    { SetTool(player, typeof(MeleeWeapon)); return; }
 
                     if (dirt.crop != null && !dirt.isWatered())
                     {
@@ -179,10 +180,26 @@ namespace AutomateToolSwap
                             return;
 
                         //Id's for boulders
-                        case 758 or 758 or 754 or 752 or 672 or 622:
+                        case 758 or 756 or 754 or 752 or 672 or 622:
                             SetTool(player, typeof(Pickaxe));
                             return;
                     }
+                    return;
+                }
+            }
+
+            //Check for monsters 
+            foreach (var monster in location.characters)
+            {
+                Vector2 monsterTile = monster.Tile;
+                float distance = Vector2.Distance(tile, monsterTile);
+
+                if (monster.IsMonster && distance < 3)
+                {
+                    //Pickaxe for non-moving cave crab
+                    if (monster.displayName.Contains("Crab") && !monster.isMoving()) { SetTool(player, typeof(Pickaxe)); ; return; }
+
+                    SetTool(player, typeof(MeleeWeapon), "Weapon");
                     return;
                 }
             }
@@ -197,15 +214,14 @@ namespace AutomateToolSwap
             }
             catch { }
 
-
             //Check for water source to refil watering can
-            if (((location is Farm || location.isGreenhouse)) && (location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "WaterSource", "Back") != null || location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Water", "Back") != null) && !(player.CurrentTool is FishingRod))
+            if (((location is Farm or VolcanoDungeon || location.isGreenhouse)) && (location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "WaterSource", "Back") != null || location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Water", "Back") != null) && !(player.CurrentTool is FishingRod or Pan))
             {
                 SetTool(player, typeof(WateringCan)); return;
             }
 
             //Check for water for fishing
-            if (location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Water", "Back") != null && !(player.CurrentTool is WateringCan))
+            if (location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Water", "Back") != null && !(player.CurrentTool is WateringCan or Pan))
             {
                 SetTool(player, typeof(FishingRod)); return;
             }
@@ -222,25 +238,6 @@ namespace AutomateToolSwap
                     if (canMilk.Any(animal.displayType.Contains) && distance <= 1) { SetTool(player, typeof(MilkPail)); return; }
 
                     if (canShear.Any(animal.displayType.Contains) && distance < 2) { SetTool(player, typeof(Shears)); return; }
-                }
-            }
-
-            //Check for monsters 
-            if (location is MineShaft or Farm or VolcanoDungeon or Mine)
-            {
-                foreach (var monster in location.characters)
-                {
-                    Vector2 monsterTile = monster.Tile;
-                    float distance = Vector2.Distance(tile, monsterTile);
-
-                    if (monster.IsMonster && distance < 3)
-                    {
-                        //Pickaxe for non-moving cave crab
-                        if (monster.displayName.Contains("Crab") && !monster.isMoving()) { SetTool(player, typeof(Pickaxe)); ; return; }
-
-                        SetTool(player, typeof(MeleeWeapon), "Weapon");
-                        return;
-                    }
                 }
             }
 
@@ -261,7 +258,7 @@ namespace AutomateToolSwap
             if (!Config.Hoe_in_empty_soil) { return; }
             if (location is MineShaft) { return; }
             if (player.CurrentItem is WateringCan) { return; }
-            if (location.isPath(tile)) {  return; }
+            if (location.isPath(tile)) { return; }
 
             try
             {
@@ -273,7 +270,6 @@ namespace AutomateToolSwap
                 return;
             }
             catch { SetTool(player, typeof(Hoe)); return; }
-
 
         }
 
