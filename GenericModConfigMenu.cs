@@ -1,6 +1,4 @@
-﻿using System;
-using StardewModdingAPI;
-using StardewModdingAPI.Utilities;
+﻿using StardewModdingAPI;
 
 namespace GenericModConfigMenu
 {
