@@ -1,6 +1,7 @@
 ﻿
 using GenericModConfigMenu;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -80,6 +81,14 @@ namespace AutomateToolSwap
 
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
+                name: () => "Scythe on Grass",
+                tooltip: () => "If it should switch to Scythe when clicking grass",
+                getValue: () => Config.Scythe_on_grass,
+                setValue: value => Config.Scythe_on_grass = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
                 name: () => "Prioritize Pickaxe over Watercan",
                 tooltip: () => "Prioritizes the Pickaxe, if you are holding a pickaxe when clicking an dry soil, it will not change for the watercan",
                 getValue: () => Config.Pickaxe_greater_wcan,
@@ -114,15 +123,23 @@ namespace AutomateToolSwap
             if (e.Button == Config.LastToolButton && Game1.player.canMove) { switcher.GoToLastIndex(); }
 
             // ignore if player didnt left-click or mod is disabled
-            if (e.Button != SButton.MouseLeft && e.Button != SButton.ControllerX || !Config.Enabled || !(Game1.player.canMove)) { return; }
+            if (e.Button != Config.SwapKey|| !Config.Enabled || !(Game1.player.canMove)) { return; }
 
 
             Farmer player = Game1.player;
+            GameLocation currentLocation = Game1.currentLocation;
             ICursorPosition cursorPos = this.Helper.Input.GetCursorPosition();
             Vector2 cursorTile = cursorPos.GrabTile;
-            GameLocation currentLocation = Game1.currentLocation;
-
-            GetTool(currentLocation, cursorTile, player);
+            Vector2 toolLocation = new Vector2((int)Game1.player.GetToolLocation().X / Game1.tileSize, (int)Game1.player.GetToolLocation().Y / Game1.tileSize);
+            if (Game1.input.GetGamePadState().IsConnected)
+            {
+                GetTool(currentLocation, toolLocation, player);
+            }
+            else if (!Game1.input.GetGamePadState().IsConnected)
+            {
+                GetTool(currentLocation, cursorTile, player);
+            }
+            
         }
 
         // detects what is in the tile that the player is looking at and calls the function to swap tools
@@ -130,7 +147,6 @@ namespace AutomateToolSwap
         {
             Tool currentTool = player.CurrentTool;
             StardewValley.Object obj = location.getObjectAtTile((int)tile.X, (int)tile.Y);
-
             //Check for objects
             if (obj != null)
             {
@@ -138,10 +154,10 @@ namespace AutomateToolSwap
                 if (obj.IsTwig()) { SetTool(player, typeof(Axe)); return; }
                 if (obj.IsWeeds()) { SetTool(player, typeof(MeleeWeapon)); return; }
                 if (obj.IsFenceItem()) { SetTool(player, typeof(Axe)); return; }
-                if (obj.Name == "Artifact Spot") { SetTool(player, typeof(Hoe)); return; }
-                if (obj.Name == "Garden Pot") { SetTool(player, typeof(WateringCan)); return; }
-                if (obj.Name == "Seed Spot") { SetTool(player, typeof(Hoe)); return; }
-                if (obj.Name == "Barrel") { SetTool(player, typeof(MeleeWeapon), "Weapon"); return; }
+                if (obj.Name.Equals("Artifact Spot")) { SetTool(player, typeof(Hoe)); return; }
+                if (obj.Name.Equals("Garden Pot")) { SetTool(player, typeof(WateringCan)); return; }
+                if (obj.Name.Equals("Artifact Spot")) { SetTool(player, typeof(Hoe)); return; }
+                if (obj.Name.Equals("Barrel")) { SetTool(player, typeof(MeleeWeapon), "Weapon"); return; }
                 return;
 
             }
@@ -150,17 +166,17 @@ namespace AutomateToolSwap
             // Check for terrain features
             if (location.terrainFeatures.ContainsKey(tile))
             {
-                if (location.terrainFeatures[tile] is Tree or GiantCrop or FruitTree) { SetTool(player, typeof(Axe)); return; }
-
+                if (location.terrainFeatures[tile] is Tree or GiantCrop or FruitTree)  { SetTool(player, typeof(Axe)); return; }
+                if (location.terrainFeatures[tile] is Grass && Config.Scythe_on_grass) { SetTool(player, typeof(MeleeWeapon)); return; }
                 if (location.terrainFeatures[tile] is HoeDirt)
                 {
                     HoeDirt dirt = location.terrainFeatures[tile] as HoeDirt;
-                    if (dirt.crop != null && dirt.readyForHarvest())                  { SetTool(player, typeof(MeleeWeapon)); return; }
-                    if (dirt.crop != null && (bool)dirt.crop.dead)                    { SetTool(player, typeof(MeleeWeapon)); return; }
+                    if (dirt.crop != null && dirt.readyForHarvest())                   { SetTool(player, typeof(MeleeWeapon)); return; }
+                    if (dirt.crop != null && (bool)dirt.crop.dead)                     { SetTool(player, typeof(MeleeWeapon)); return; }
 
                     if (dirt.crop != null && !dirt.isWatered())
                     {
-                        if (!(Config.Pickaxe_greater_wcan && currentTool is Pickaxe)) { SetTool(player, typeof(WateringCan)); return; }
+                        if (!(Config.Pickaxe_greater_wcan && currentTool is Pickaxe))  { SetTool(player, typeof(WateringCan)); return; }
                     }
                     return;
                 }
@@ -180,7 +196,7 @@ namespace AutomateToolSwap
                             return;
 
                         //Id's for boulders
-                        case 758 or 756 or 754 or 752 or 672 or 622:
+                        case 758 or 756 or 754 or 752 or 672 or 622 or 148:
                             SetTool(player, typeof(Pickaxe));
                             return;
                     }
@@ -256,13 +272,17 @@ namespace AutomateToolSwap
 
             //Check if it should swap to Hoe
             if (!Config.Hoe_in_empty_soil) { return; }
-            if (location is MineShaft) { return; }
-            if (player.CurrentItem is WateringCan) { return; }
+            if (location is FarmHouse or Shed or AnimalHouse or MineShaft) { return; }
             if (location.isPath(tile)) { return; }
+            if (player.CurrentItem is WateringCan) { return; }
+            if (player.CurrentItem is Wand && player.CurrentItem.Name.Equals("Return Scepter")) { return; }
+            {
+                
+            }
 
             try
             {
-                var thing = player.CurrentItem;
+                var thing = player.CurrentItem;; 
                 if (!(thing.canBePlacedHere(location, tile, CollisionMask.All, true)) && !(thing is MeleeWeapon))
                 {
                     SetTool(player, typeof(Hoe));
@@ -320,7 +340,7 @@ namespace AutomateToolSwap
                 }
                 return;
             }
-
+            
 
             //Any other tool \/
             for (int i = 0; i < player.maxItems; i++)
