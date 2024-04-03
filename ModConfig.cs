@@ -19,5 +19,7 @@ namespace AutomateToolSwap
         public bool Hoe_in_empty_soil { get; set; } = true;
 
         public bool Auto_switch_last_tool { get; set; } = false;
+
+        public bool Scythe_on_grass { get; set; } = false;
     }
 }
