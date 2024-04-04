@@ -1,4 +1,5 @@
 ﻿using StardewModdingAPI;
+using StardewModdingAPI.Utilities;
 
 namespace AutomateToolSwap
 {
@@ -6,15 +7,15 @@ namespace AutomateToolSwap
     {
         public bool Enabled { get; set; } = true;
 
-        public SButton ToggleKey { get; set; } = SButton.CapsLock;
+        public KeybindList ToggleKey { get; set; } = KeybindList.Parse("CapsLock");
 
-        public SButton SwapKey { get; set; } = SButton.MouseLeft;
+        public KeybindList SwapKey { get; set; } = KeybindList.Parse("MouseLeft");
 
         public bool Pickaxe_greater_wcan { get; set; } = false;
 
         public bool Pickaxe_over_melee { get; set; } = false;
 
-        public SButton LastToolButton { get; set; } = SButton.MouseMiddle;
+        public KeybindList LastToolButton { get; set; } = KeybindList.Parse("MouseMiddle");
 
         public bool Hoe_in_empty_soil { get; set; } = true;
 

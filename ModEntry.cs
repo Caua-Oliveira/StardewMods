@@ -38,7 +38,7 @@ namespace AutomateToolSwap
                 save: () => this.Helper.WriteConfig(Config)
             );
 
-            configMenu.AddKeybind(
+            configMenu.AddKeybindList(
                 mod: this.ModManifest,
                 name: () => "Toggle On/Off Keybind",
                 tooltip: () => "What key you will use to toggle the mod on/off",
@@ -46,7 +46,7 @@ namespace AutomateToolSwap
                 setValue: value => Config.ToggleKey = value
             );
 
-            configMenu.AddKeybind(
+            configMenu.AddKeybindList(
                 mod: this.ModManifest,
                 name: () => "Swap Tools Keybind",
                 tooltip: () => "What keybind you will use to swap tools (Recommended: Key you use to break things)",
@@ -54,7 +54,7 @@ namespace AutomateToolSwap
                 setValue: value => Config.SwapKey = value
             );
 
-            configMenu.AddKeybind(
+            configMenu.AddKeybindList(
                 mod: this.ModManifest,
                 name: () => "Return to last tool used",
                 tooltip: () => "What key you will use to return to last tool used",
@@ -112,18 +112,31 @@ namespace AutomateToolSwap
             if (!Context.IsWorldReady) { return; }
 
             // turns mod on/off
-            if (e.Button == Config.ToggleKey)
+            if (Config.ToggleKey.JustPressed())
             {
                 Config.Enabled = !Config.Enabled;
+<<<<<<< Updated upstream
                 if (Config.Enabled) { Console.Out.WriteLine("AutomateToolSwap ENABLED"); }
                 else { Console.Out.WriteLine("AutomateToolSwap DISABLED"); }
+=======
+                if (Config.Enabled)
+                {
+                    Game1.addHUDMessage(new HUDMessage("AutomateToolSwap ENABLED", 2));
+                }
+                Game1.addHUDMessage(new HUDMessage("AutomateToolSwap DISABLED", 2));
+                Game1.hudMessages.First().timeLeft = 1200;
+>>>>>>> Stashed changes
             }
 
             // swap to the last item
-            if (e.Button == Config.LastToolButton && Game1.player.canMove) { switcher.GoToLastIndex(); }
+            if (Config.LastToolButton.JustPressed() && Game1.player.canMove) { switcher.GoToLastIndex(); }
 
             // ignore if player didnt left-click or mod is disabled
+<<<<<<< Updated upstream
             if (e.Button != Config.SwapKey|| !Config.Enabled || !(Game1.player.canMove)) { return; }
+=======
+            if (!Config.SwapKey.JustPressed() || !Config.Enabled || !(Game1.player.canMove)) { return; }
+>>>>>>> Stashed changes
 
 
             Farmer player = Game1.player;
@@ -152,7 +165,19 @@ namespace AutomateToolSwap
             {
                 if (obj.IsBreakableStone()) { SetTool(player, typeof(Pickaxe)); return; }
                 if (obj.IsTwig()) { SetTool(player, typeof(Axe)); return; }
+<<<<<<< Updated upstream
                 if (obj.IsWeeds()) { SetTool(player, typeof(MeleeWeapon)); return; }
+=======
+                if (obj.IsWeeds())
+                {
+                    if (Config.Pickaxe_over_melee && !(location is MineShaft))
+                    {
+                        SetTool(player, typeof(Pickaxe));
+                        return;
+                    }
+                    SetTool(player, typeof(MeleeWeapon)); return;
+                }
+>>>>>>> Stashed changes
                 if (obj.IsFenceItem()) { SetTool(player, typeof(Axe)); return; }
                 if (obj.Name.Equals("Artifact Spot")) { SetTool(player, typeof(Hoe)); return; }
                 if (obj.Name.Equals("Garden Pot")) { SetTool(player, typeof(WateringCan)); return; }
