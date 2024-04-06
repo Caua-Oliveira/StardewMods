@@ -22,5 +22,7 @@ namespace AutomateToolSwap
         public bool Auto_switch_last_tool { get; set; } = false;
 
         public bool Scythe_on_grass { get; set; } = false;
+
+        public string Detection_method {  get; set; } = "KBM";
     }
 }
