@@ -109,6 +109,7 @@ namespace AutomateToolSwap
 
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
+
             // ignore if player hasn't loaded a save yet
             if (!Context.IsWorldReady) { return; }
 
@@ -166,11 +167,14 @@ namespace AutomateToolSwap
                     }
                     SetTool(player, typeof(MeleeWeapon)); return;
                 }
-                if (obj.IsFenceItem()) { SetTool(player, typeof(Axe)); return; }
+                if (obj.Name.Equals("Furnace")) { SetItem(player, "Ore", 5); return; }
+                if (obj.Name.Equals("Cheese Press")) { SetItem(player, "Milk"); return; }
+                if (obj.Name.Equals("Mayonnaise Machine")) { SetItem(player, "Egg"); return; }
                 if (obj.Name.Equals("Artifact Spot")) { SetTool(player, typeof(Hoe)); return; }
                 if (obj.Name.Equals("Garden Pot")) { SetTool(player, typeof(WateringCan)); return; }
                 if (obj.Name.Equals("Artifact Spot")) { SetTool(player, typeof(Hoe)); return; }
                 if (obj.Name.Equals("Barrel")) { SetTool(player, typeof(MeleeWeapon), "Weapon"); return; }
+                if (obj.Name.Equals("Supply Crate")) { SetTool(player, typeof(Hoe)); return; }
                 return;
 
             }
@@ -183,7 +187,8 @@ namespace AutomateToolSwap
                 if (location.terrainFeatures[tile] is Grass && Config.Scythe_on_grass) { SetTool(player, typeof(MeleeWeapon)); return; }
                 if (location.terrainFeatures[tile] is Tree tree)
                 {
-                    if (tree.hasMoss)
+                    if (player.CurrentItem.Name.Equals("Tapper")) { return; }
+                    if (tree.hasMoss && tree.growthStage >= Tree.stageForMossGrowth)
                     {
                         SetTool(player, typeof(MeleeWeapon)); return;
                     }
@@ -251,17 +256,19 @@ namespace AutomateToolSwap
             }
             catch { }
 
+            //Check for water for fishing
+            if (!(location is Farm or VolcanoDungeon || location.Name.Contains("Island") || location.isGreenhouse) && location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Water", "Back") != null && !(player.CurrentTool is WateringCan or Pan))
+            {
+                SetTool(player, typeof(FishingRod)); return;
+            }
+
             //Check for water source to refil watering can
-            if (((location is Farm or VolcanoDungeon || location.isGreenhouse)) && (location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "WaterSource", "Back") != null || location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Water", "Back") != null) && !(player.CurrentTool is FishingRod or Pan))
+            if ((location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "WaterSource", "Back") != null || location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Water", "Back") != null) && !(player.CurrentTool is FishingRod or Pan))
             {
                 SetTool(player, typeof(WateringCan)); return;
             }
 
-            //Check for water for fishing
-            if (location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Water", "Back") != null && !(player.CurrentTool is WateringCan or Pan))
-            {
-                SetTool(player, typeof(FishingRod)); return;
-            }
+            
 
             //Check for animals to milk or shear
             if (location is Farm or AnimalHouse)
@@ -295,7 +302,7 @@ namespace AutomateToolSwap
             if (!Config.Hoe_in_empty_soil) { return; }
             if (location is FarmHouse or Shed or AnimalHouse or MineShaft) { return; }
             if (location.isPath(tile)) { return; }
-            if (player.CurrentItem is WateringCan) { return; }
+            if (player.CurrentItem is WateringCan or FishingRod) { return; }
             if (player.CurrentItem is Wand && player.CurrentItem.Name.Equals("Return Scepter")) { return; }
             {
 
@@ -329,21 +336,9 @@ namespace AutomateToolSwap
                         {
                             if (!(player.CurrentToolIndex == i))
                             {
-                                switcher.SwitchIndex(i);
+                                switcher.SwitchIndex(i); return;
                             }
-                            return;
-                        }
-                    }
 
-                    for (int i = 0; i < player.maxItems; i++)
-                    {
-                        if (player.Items[i] != null && player.Items[i].GetType() == typeof(MeleeWeapon))
-                        {
-                            if (!(player.CurrentToolIndex == i))
-                            {
-                                switcher.SwitchIndex(i);
-                            }
-                            return;
                         }
                     }
                 }
@@ -362,11 +357,26 @@ namespace AutomateToolSwap
                 return;
             }
 
-
             //Any other tool \/
             for (int i = 0; i < player.maxItems; i++)
             {
                 if (player.Items[i] != null && player.Items[i].GetType() == toolType)
+                {
+                    if (!(player.CurrentToolIndex == i))
+                    {
+                        switcher.SwitchIndex(i);
+                    }
+                    return;
+                }
+            }
+        }
+
+        //Any item
+        private void SetItem(Farmer player, string item, int minStack = 1)
+        {
+            for (int i = 0; i < player.maxItems; i++)
+            {
+                if (player.Items[i] != null && !(player.Items[i] is Tool) && player.Items[i].Stack >= minStack && player.Items[i].Name.Contains(item))
                 {
                     if (!(player.CurrentToolIndex == i))
                     {
