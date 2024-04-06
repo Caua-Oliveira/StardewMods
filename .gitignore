@@ -84,3 +84,6 @@ npm-debug.log*
 
 # Ignore Visual Studio Code related files
 .vscode/
+/.vs
+/obj
+StardewValley-AutomateToolSwap.sln
