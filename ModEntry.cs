@@ -63,6 +63,15 @@ namespace AutomateToolSwap
                 setValue: value => Config.LastToolButton = value
             );
 
+            configMenu.AddTextOption(
+                mod: this.ModManifest,
+                name: () => "Detection Method",
+                tooltip: () => "KBM: will swap tool based on the object the cursor is pointing to; Controller: will swap tool based on where the player is looking at",
+                allowedValues: new string[] { "KBM", "Controller"},
+                getValue: () => Config.Detection_method,
+                setValue: value => Config.Detection_method = value
+            );
+
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
                 name: () => "Auto switch to last tool",
@@ -137,13 +146,14 @@ namespace AutomateToolSwap
             ICursorPosition cursorPos = this.Helper.Input.GetCursorPosition();
             Vector2 cursorTile = cursorPos.GrabTile;
             Vector2 toolLocation = new Vector2((int)Game1.player.GetToolLocation().X / Game1.tileSize, (int)Game1.player.GetToolLocation().Y / Game1.tileSize);
-            if (Game1.input.GetGamePadState().IsConnected)
+            switch (Config.Detection_method)
             {
-                GetTool(currentLocation, toolLocation, player);
-            }
-            else if (!Game1.input.GetGamePadState().IsConnected)
-            {
-                GetTool(currentLocation, cursorTile, player);
+                case "KBM":
+                    GetTool(currentLocation, cursorTile, player);
+                    break;
+                case "Controller":
+                    GetTool(currentLocation, toolLocation, player);
+                    break;
             }
 
         }
@@ -153,28 +163,29 @@ namespace AutomateToolSwap
         {
             Tool currentTool = player.CurrentTool;
             StardewValley.Object obj = location.getObjectAtTile((int)tile.X, (int)tile.Y);
+
             //Check for objects
             if (obj != null)
             {
                 if (obj.IsBreakableStone()) { SetTool(player, typeof(Pickaxe)); return; }
-                if (obj.IsTwig()) { SetTool(player, typeof(Axe)); return; }
+                if (obj.IsTwig())           { SetTool(player, typeof(Axe)); return; }
                 if (obj.IsWeeds())
                 {
                     if (Config.Pickaxe_over_melee && !(location is MineShaft))
                     {
-                        SetTool(player, typeof(Pickaxe));
-                        return;
+                        SetTool(player, typeof(Pickaxe), anyTool: true); return;
                     }
                     SetTool(player, typeof(MeleeWeapon)); return;
                 }
-                if (obj.Name.Equals("Furnace")) { SetItem(player, "Ore", 5); return; }
-                if (obj.Name.Equals("Cheese Press")) { SetItem(player, "Milk"); return; }
+                if (obj.Name.Equals("Furnace"))            { SetItem(player, "Ore", 5); return; }
+                if (obj.Name.Equals("Cheese Press"))       { SetItem(player, "Milk"); return; }
                 if (obj.Name.Equals("Mayonnaise Machine")) { SetItem(player, "Egg"); return; }
-                if (obj.Name.Equals("Artifact Spot")) { SetTool(player, typeof(Hoe)); return; }
-                if (obj.Name.Equals("Garden Pot")) { SetTool(player, typeof(WateringCan)); return; }
-                if (obj.Name.Equals("Artifact Spot")) { SetTool(player, typeof(Hoe)); return; }
-                if (obj.Name.Equals("Barrel")) { SetTool(player, typeof(MeleeWeapon), "Weapon"); return; }
-                if (obj.Name.Equals("Supply Crate")) { SetTool(player, typeof(Hoe)); return; }
+                if (obj.Name.Equals("Artifact Spot"))      { SetTool(player, typeof(Hoe)); return; }
+                if (obj.Name.Equals("Garden Pot"))         { SetTool(player, typeof(WateringCan)); return; }
+                if (obj.Name.Equals("Artifact Spot"))      { SetTool(player, typeof(Hoe)); return; }
+                if (obj.Name.Equals("Seed Spot"))          { SetTool(player, typeof(Hoe)); return; }
+                if (obj.Name.Equals("Barrel"))             { SetTool(player, typeof(MeleeWeapon), "Weapon"); return; }
+                if (obj.Name.Equals("Supply Crate"))       { SetTool(player, typeof(Hoe), anyTool: true); return; }
                 return;
 
             }
@@ -279,24 +290,14 @@ namespace AutomateToolSwap
                     string[] canMilk = { "Goat", "Cow" };
                     string[] canShear = { "Rabbit", "Sheep" };
                     float distance = Vector2.Distance(tile, animalTile);
-                    if (canMilk.Any(animal.displayType.Contains) && distance <= 1) { SetTool(player, typeof(MilkPail)); return; }
+                    if (canMilk.Any(animal.displayType.Contains) && distance <= 1 && animal.currentLocation == player.currentLocation) { SetTool(player, typeof(MilkPail)); return; }
 
-                    if (canShear.Any(animal.displayType.Contains) && distance < 2) { SetTool(player, typeof(Shears)); return; }
+                    if (canShear.Any(animal.displayType.Contains) && distance < 2 && animal.currentLocation == player.currentLocation) { SetTool(player, typeof(Shears)); return; }
                 }
             }
 
             //Check for feeding bench
-            if (location is AnimalHouse && location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Trough", "Back") != null)
-            {
-                for (int i = 0; i < player.maxItems; i++)
-                {
-                    if (player.Items[i] != null && player.Items[i].Name == "Hay")
-                    {
-                        player.CurrentToolIndex = i;
-                        return;
-                    }
-                }
-            }
+            if (location is AnimalHouse && location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Trough", "Back") != null)          { SetItem(player, "Hay"); return; }
 
             //Check if it should swap to Hoe
             if (!Config.Hoe_in_empty_soil) { return; }
@@ -304,11 +305,9 @@ namespace AutomateToolSwap
             if (location.isPath(tile)) { return; }
             if (player.CurrentItem is WateringCan or FishingRod) { return; }
             if (player.CurrentItem is Wand && player.CurrentItem.Name.Equals("Return Scepter")) { return; }
-            {
 
-            }
 
-            try
+            if (player.CurrentItem != null)
             {
                 var thing = player.CurrentItem; ;
                 if (!(thing.canBePlacedHere(location, tile, CollisionMask.All, true)) && !(thing is MeleeWeapon))
@@ -316,13 +315,12 @@ namespace AutomateToolSwap
                     SetTool(player, typeof(Hoe));
                 }
                 return;
-            }
-            catch { SetTool(player, typeof(Hoe)); return; }
 
+            }
         }
 
         //Looks for the tool necessary for the action
-        private void SetTool(Farmer player, Type toolType, string aux = "Scythe")
+        private void SetTool(Farmer player, Type toolType, string aux = "Scythe", bool anyTool = false)
         {
             switcher.canSwitch = Config.Auto_switch_last_tool;
             //Melee Weapon \/
@@ -349,7 +347,7 @@ namespace AutomateToolSwap
                     {
                         if (!(player.CurrentToolIndex == i))
                         {
-                            switcher.SwitchIndex(i);
+                            switcher.SwitchIndex(i); 
                         }
                         return;
                     }
@@ -358,9 +356,10 @@ namespace AutomateToolSwap
             }
 
             //Any other tool \/
+  
             for (int i = 0; i < player.maxItems; i++)
             {
-                if (player.Items[i] != null && player.Items[i].GetType() == toolType)
+                if ((player.Items[i] != null && player.Items[i].GetType() == toolType) || (anyTool && player.Items[i] is Axe or Pickaxe or Hoe))
                 {
                     if (!(player.CurrentToolIndex == i))
                     {
@@ -369,6 +368,7 @@ namespace AutomateToolSwap
                     return;
                 }
             }
+
         }
 
         //Any item
