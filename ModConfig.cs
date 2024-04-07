@@ -1,5 +1,4 @@
-﻿using StardewModdingAPI;
-using StardewModdingAPI.Utilities;
+﻿using StardewModdingAPI.Utilities;
 
 namespace AutomateToolSwap
 {
@@ -23,6 +22,6 @@ namespace AutomateToolSwap
 
         public bool Scythe_on_grass { get; set; } = false;
 
-        public string Detection_method {  get; set; } = "KBM";
+        public string Detection_method { get; set; } = "KBM";
     }
 }
