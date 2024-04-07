@@ -1,7 +1,6 @@
 ﻿
 using GenericModConfigMenu;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -9,8 +8,7 @@ using StardewValley.Buildings;
 using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
-using System.Runtime.Remoting;
-using xTile.Dimensions;
+
 
 
 namespace AutomateToolSwap
@@ -67,7 +65,7 @@ namespace AutomateToolSwap
                 mod: this.ModManifest,
                 name: () => "Detection Method",
                 tooltip: () => "KBM: will swap tool based on the object the cursor is pointing to; Controller: will swap tool based on where the player is looking at",
-                allowedValues: new string[] { "KBM", "Controller"},
+                allowedValues: new string[] { "KBM", "Controller" },
                 getValue: () => Config.Detection_method,
                 setValue: value => Config.Detection_method = value
             );
@@ -167,29 +165,80 @@ namespace AutomateToolSwap
             //Check for objects
             if (obj != null)
             {
-                if (obj.IsBreakableStone()) { SetTool(player, typeof(Pickaxe)); return; }
-                if (obj.IsTwig())           { SetTool(player, typeof(Axe)); return; }
                 if (obj.IsWeeds())
                 {
                     if (Config.Pickaxe_over_melee && !(location is MineShaft))
                     {
-                        SetTool(player, typeof(Pickaxe), anyTool: true); return;
+                        SetTool(player, typeof(Pickaxe), anyTool: true);
+
+                        return;
                     }
-                    SetTool(player, typeof(MeleeWeapon)); return;
+                    SetTool(player, typeof(MeleeWeapon));
+
                 }
-                if (obj.Name.Equals("Furnace"))            { SetItem(player, "Ore", 5); return; }
-                if (obj.Name.Equals("Cheese Press"))       { SetItem(player, "Milk"); return; }
-                if (obj.Name.Equals("Mayonnaise Machine")) { SetItem(player, "Egg"); return; }
-                if (obj.Name.Equals("Artifact Spot"))      { SetTool(player, typeof(Hoe)); return; }
-                if (obj.Name.Equals("Garden Pot"))         { SetTool(player, typeof(WateringCan)); return; }
-                if (obj.Name.Equals("Artifact Spot"))      { SetTool(player, typeof(Hoe)); return; }
-                if (obj.Name.Equals("Seed Spot"))          { SetTool(player, typeof(Hoe)); return; }
-                if (obj.Name.Equals("Barrel"))             { SetTool(player, typeof(MeleeWeapon), "Weapon"); return; }
-                if (obj.Name.Equals("Supply Crate"))       { SetTool(player, typeof(Hoe), anyTool: true); return; }
+                else if (obj.IsBreakableStone())
+                {
+                    SetTool(player, typeof(Pickaxe));
+
+                }
+                else if (obj.IsTwig())
+                {
+                    SetTool(player, typeof(Axe));
+
+                }
+                else if (obj.Name.Equals("Furnace"))
+                {
+                    SetItem(player, "Resource", "Ore");
+
+                }
+                else if (obj.Name.Equals("Cheese Press"))
+                {
+                    SetItem(player, "Animal Product", "Milk");
+
+                }
+                else if (obj.Name.Equals("Mayonnaise Machine"))
+                {
+                    SetItem(player, "Animal Product", "Egg");
+
+                }
+                else if (obj.Name.Equals("Artifact Spot"))
+                {
+                    SetTool(player, typeof(Hoe));
+
+                }
+                else if (obj.Name.Equals("Garden Pot"))
+                {
+                    SetTool(player, typeof(WateringCan));
+
+                }
+                else if (obj.Name.Equals("Artifact Spot"))
+                {
+                    SetTool(player, typeof(Hoe));
+
+                }
+                else if (obj.Name.Equals("Seed Spot"))
+                {
+                    SetTool(player, typeof(Hoe));
+
+                }
+                else if (obj.Name.Equals("Barrel"))
+                {
+                    SetTool(player, typeof(MeleeWeapon), "Weapon");
+
+                }
+                else if (obj.Name.Equals("Supply Crate"))
+                {
+                    SetTool(player, typeof(Hoe), anyTool: true);
+
+                }
+                else if (obj.Name.Equals("Recycling Machine"))
+                {
+                    SetItem(player, "Trash", "Joja");
+
+                }
                 return;
 
             }
-
 
             // Check for terrain features
             if (location.terrainFeatures.ContainsKey(tile))
@@ -279,7 +328,7 @@ namespace AutomateToolSwap
                 SetTool(player, typeof(WateringCan)); return;
             }
 
-            
+
 
             //Check for animals to milk or shear
             if (location is Farm or AnimalHouse)
@@ -297,7 +346,7 @@ namespace AutomateToolSwap
             }
 
             //Check for feeding bench
-            if (location is AnimalHouse && location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Trough", "Back") != null)          { SetItem(player, "Hay"); return; }
+            if (location is AnimalHouse && location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Trough", "Back") != null) { SetItem(player, "", "Hay"); return; }
 
             //Check if it should swap to Hoe
             if (!Config.Hoe_in_empty_soil) { return; }
@@ -334,9 +383,9 @@ namespace AutomateToolSwap
                         {
                             if (!(player.CurrentToolIndex == i))
                             {
-                                switcher.SwitchIndex(i); return;
+                                switcher.SwitchIndex(i);
                             }
-
+                            return;
                         }
                     }
                 }
@@ -347,7 +396,7 @@ namespace AutomateToolSwap
                     {
                         if (!(player.CurrentToolIndex == i))
                         {
-                            switcher.SwitchIndex(i); 
+                            switcher.SwitchIndex(i);
                         }
                         return;
                     }
@@ -356,7 +405,7 @@ namespace AutomateToolSwap
             }
 
             //Any other tool \/
-  
+
             for (int i = 0; i < player.maxItems; i++)
             {
                 if ((player.Items[i] != null && player.Items[i].GetType() == toolType) || (anyTool && player.Items[i] is Axe or Pickaxe or Hoe))
@@ -372,11 +421,44 @@ namespace AutomateToolSwap
         }
 
         //Any item
-        private void SetItem(Farmer player, string item, int minStack = 1)
+        private void SetItem(Farmer player, string categorie, string item)
         {
+            Console.WriteLine(player.Items[1].getCategoryName());
+            if (categorie == "Trash")
+            {
+                for (int i = 0; i < player.maxItems; i++)
+                {
+                    if (player.Items[i] != null && player.Items[i].getCategoryName() == categorie && !(player.Items[i].Name.Contains(item)))
+                    {
+                        if (!(player.CurrentToolIndex == i))
+                        {
+                            switcher.SwitchIndex(i);
+                        }
+                        return;
+                    }
+                }
+                return;
+            }
+
+            if (categorie == "Resource")
+            {
+                for (int i = 0; i < player.maxItems; i++)
+                {
+                    if (player.Items[i] != null && player.Items[i].getCategoryName() == categorie && player.Items[i].Name.Contains(item) && player.Items[i].Stack >= 5)
+                    {
+                        if (!(player.CurrentToolIndex == i))
+                        {
+                            switcher.SwitchIndex(i);
+                        }
+                        return;
+                    }
+                }
+                return;
+            }
+
             for (int i = 0; i < player.maxItems; i++)
             {
-                if (player.Items[i] != null && !(player.Items[i] is Tool) && player.Items[i].Stack >= minStack && player.Items[i].Name.Contains(item))
+                if (player.Items[i] != null && player.Items[i].getCategoryName() == categorie && player.Items[i].Name.Contains(item))
                 {
                     if (!(player.CurrentToolIndex == i))
                     {
@@ -385,6 +467,7 @@ namespace AutomateToolSwap
                     return;
                 }
             }
+            return;
         }
 
     }
