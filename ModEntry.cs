@@ -6,6 +6,7 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Locations;
+using StardewValley.Monsters;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 
@@ -243,26 +244,58 @@ namespace AutomateToolSwap
             // Check for terrain features
             if (location.terrainFeatures.ContainsKey(tile))
             {
-                if (location.terrainFeatures[tile] is GiantCrop or FruitTree) { SetTool(player, typeof(Axe)); return; }
-                if (location.terrainFeatures[tile] is Grass && Config.Scythe_on_grass) { SetTool(player, typeof(MeleeWeapon)); return; }
+                if (location.terrainFeatures[tile] is GiantCrop or FruitTree)
+                {
+                    SetTool(player, typeof(Axe));
+
+                    return;
+                }
+                if (location.terrainFeatures[tile] is Grass && Config.Scythe_on_grass)
+                {
+                    SetTool(player, typeof(MeleeWeapon));
+
+                    return;
+                }
                 if (location.terrainFeatures[tile] is Tree tree)
                 {
                     if (player.CurrentItem.Name.Equals("Tapper")) { return; }
+
                     if (tree.hasMoss && tree.growthStage >= Tree.stageForMossGrowth)
                     {
-                        SetTool(player, typeof(MeleeWeapon)); return;
+                        SetTool(player, typeof(MeleeWeapon));
+
+                        return;
                     }
-                    SetTool(player, typeof(Axe)); return;
+                    SetTool(player, typeof(Axe));
+
+                    return;
                 }
                 if (location.terrainFeatures[tile] is HoeDirt)
                 {
                     HoeDirt dirt = location.terrainFeatures[tile] as HoeDirt;
-                    if (dirt.crop != null && dirt.readyForHarvest()) { SetTool(player, typeof(MeleeWeapon)); return; }
-                    if (dirt.crop != null && (bool)dirt.crop.dead) { SetTool(player, typeof(MeleeWeapon)); return; }
+                    if (dirt.crop != null && dirt.readyForHarvest())
+                    {
+                        SetTool(player, typeof(MeleeWeapon));
 
+                        return;
+
+                    }
+                    if (dirt.crop != null && (bool)dirt.crop.dead)
+                    {
+                        SetTool(player, typeof(MeleeWeapon));
+
+                        return;
+
+                    }
                     if (dirt.crop != null && !dirt.isWatered())
                     {
-                        if (!(Config.Pickaxe_greater_wcan && currentTool is Pickaxe)) { SetTool(player, typeof(WateringCan)); return; }
+                        if (!(Config.Pickaxe_greater_wcan && currentTool is Pickaxe))
+                        {
+                            SetTool(player, typeof(WateringCan));
+
+                            return;
+
+                        }
                     }
                     return;
                 }
@@ -279,11 +312,13 @@ namespace AutomateToolSwap
                         //Id's for logs and stumps
                         case 602 or 600:
                             SetTool(player, typeof(Axe));
+
                             return;
 
                         //Id's for boulders
                         case 758 or 756 or 754 or 752 or 672 or 622 or 148:
                             SetTool(player, typeof(Pickaxe));
+
                             return;
                     }
                     return;
@@ -299,33 +334,45 @@ namespace AutomateToolSwap
                 if (monster.IsMonster && distance < 3)
                 {
                     //Pickaxe for non-moving cave crab
-                    if (monster.displayName.Contains("Crab") && !monster.isMoving()) { SetTool(player, typeof(Pickaxe)); ; return; }
+                    if (monster.displayName.Contains("Crab") && !monster.isMoving())
+                    {
+                        SetTool(player, typeof(Pickaxe));
 
+                        return;
+
+                    }
                     SetTool(player, typeof(MeleeWeapon), "Weapon");
+
                     return;
                 }
             }
 
             //Check for pet bowls
-            try
+
+            if (location.getBuildingAt(tile) != null && location.getBuildingAt(tile).GetType() == typeof(PetBowl))
             {
-                if (location.getBuildingAt(tile) != null && location.getBuildingAt(tile).GetType() == typeof(PetBowl))
-                {
-                    SetTool(player, typeof(WateringCan)); return;
-                }
+                SetTool(player, typeof(WateringCan));
+
+                return;
+
             }
-            catch { }
 
             //Check for water for fishing
             if (!(location is Farm or VolcanoDungeon || location.Name.Contains("Island") || location.isGreenhouse) && location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Water", "Back") != null && !(player.CurrentTool is WateringCan or Pan))
             {
-                SetTool(player, typeof(FishingRod)); return;
+                SetTool(player, typeof(FishingRod));
+
+                return;
+
             }
 
             //Check for water source to refil watering can
             if ((location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "WaterSource", "Back") != null || location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Water", "Back") != null) && !(player.CurrentTool is FishingRod or Pan))
             {
-                SetTool(player, typeof(WateringCan)); return;
+                SetTool(player, typeof(WateringCan));
+
+                return;
+
             }
 
 
@@ -333,20 +380,35 @@ namespace AutomateToolSwap
             //Check for animals to milk or shear
             if (location is Farm or AnimalHouse)
             {
-                foreach (var animal in location.getAllFarmAnimals())
+                foreach (FarmAnimal animal in location.getAllFarmAnimals())
                 {
                     Vector2 animalTile = animal.Tile;
                     string[] canMilk = { "Goat", "Cow" };
                     string[] canShear = { "Rabbit", "Sheep" };
                     float distance = Vector2.Distance(tile, animalTile);
-                    if (canMilk.Any(animal.displayType.Contains) && distance <= 1 && animal.currentLocation == player.currentLocation) { SetTool(player, typeof(MilkPail)); return; }
+                    if (canMilk.Any(animal.displayType.Contains) && distance <= 1 && animal.currentLocation == player.currentLocation)
+                    {
+                        SetTool(player, typeof(MilkPail));
 
-                    if (canShear.Any(animal.displayType.Contains) && distance < 2 && animal.currentLocation == player.currentLocation) { SetTool(player, typeof(Shears)); return; }
+                        return;
+                    }
+
+                    if (canShear.Any(animal.displayType.Contains) && distance < 2 && animal.currentLocation == player.currentLocation)
+                    {
+                        SetTool(player, typeof(Shears));
+
+                        return;
+                    }
                 }
             }
 
             //Check for feeding bench
-            if (location is AnimalHouse && location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Trough", "Back") != null) { SetItem(player, "", "Hay"); return; }
+            if (location is AnimalHouse && location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Trough", "Back") != null)
+            {
+                SetItem(player, "", "Hay");
+
+                return;
+            }
 
             //Check if it should swap to Hoe
             if (!Config.Hoe_in_empty_soil) { return; }
