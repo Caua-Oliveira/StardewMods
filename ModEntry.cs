@@ -7,6 +7,7 @@ using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Locations;
 using StardewValley.Monsters;
+using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 
@@ -177,66 +178,48 @@ namespace AutomateToolSwap
                     SetTool(player, typeof(MeleeWeapon));
 
                 }
-                else if (obj.IsBreakableStone())
+                else if (obj is CrabPot crabPot)
                 {
+                    if (crabPot.bait.Value == null)
+                        SetItem(player, "Bait", "Bait");
+
+                }
+                else if (obj.IsBreakableStone())
                     SetTool(player, typeof(Pickaxe));
 
-                }
                 else if (obj.IsTwig())
-                {
                     SetTool(player, typeof(Axe));
 
-                }
                 else if (obj.Name.Equals("Furnace"))
-                {
                     SetItem(player, "Resource", "Ore");
 
-                }
                 else if (obj.Name.Equals("Cheese Press"))
-                {
                     SetItem(player, "Animal Product", "Milk");
 
-                }
                 else if (obj.Name.Equals("Mayonnaise Machine"))
-                {
                     SetItem(player, "Animal Product", "Egg");
 
-                }
                 else if (obj.Name.Equals("Artifact Spot"))
-                {
                     SetTool(player, typeof(Hoe));
 
-                }
                 else if (obj.Name.Equals("Garden Pot"))
-                {
                     SetTool(player, typeof(WateringCan));
 
-                }
-                else if (obj.Name.Equals("Artifact Spot"))
-                {
-                    SetTool(player, typeof(Hoe));
-
-                }
                 else if (obj.Name.Equals("Seed Spot"))
-                {
                     SetTool(player, typeof(Hoe));
 
-                }
                 else if (obj.Name.Equals("Barrel"))
-                {
                     SetTool(player, typeof(MeleeWeapon), "Weapon");
 
-                }
                 else if (obj.Name.Equals("Supply Crate"))
-                {
                     SetTool(player, typeof(Hoe), anyTool: true);
 
-                }
                 else if (obj.Name.Equals("Recycling Machine"))
-                {
                     SetItem(player, "Trash", "Joja");
 
-                }
+                else if (obj.Name.Equals("Bone Mill"))
+                    SetItem(player, "Resource", "Bone Fragment");
+
                 return;
 
             }
@@ -409,19 +392,19 @@ namespace AutomateToolSwap
 
                 return;
             }
-
             //Check if it should swap to Hoe
             if (!Config.Hoe_in_empty_soil) { return; }
             if (location is FarmHouse or Shed or AnimalHouse or MineShaft) { return; }
             if (location.isPath(tile)) { return; }
-            if (player.CurrentItem is WateringCan or FishingRod) { return; }
+            if (player.CurrentItem is MeleeWeapon && player.CurrentItem.getCategoryName().Contains("Level") && Game1.spawnMonstersAtNight) { return; }
+            if (player.CurrentItem is FishingRod) { return; }
             if (player.CurrentItem is Wand && player.CurrentItem.Name.Equals("Return Scepter")) { return; }
 
 
             if (player.CurrentItem != null)
             {
                 var thing = player.CurrentItem; ;
-                if (!(thing.canBePlacedHere(location, tile, CollisionMask.All, true)) && !(thing is MeleeWeapon))
+                if (!thing.canBePlacedHere(location, tile, CollisionMask.All, true))
                 {
                     SetTool(player, typeof(Hoe));
                 }
@@ -485,7 +468,6 @@ namespace AutomateToolSwap
         //Any item
         private void SetItem(Farmer player, string categorie, string item)
         {
-            Console.WriteLine(player.Items[1].getCategoryName());
             if (categorie == "Trash")
             {
                 for (int i = 0; i < player.maxItems; i++)
