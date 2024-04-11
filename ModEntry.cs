@@ -332,7 +332,7 @@ namespace AutomateToolSwap
 
             //Check for pet bowls
 
-            if (location.getBuildingAt(tile) != null && location.getBuildingAt(tile).GetType() == typeof(PetBowl))
+            if (location.getBuildingAt(tile) != null && (location.getBuildingAt(tile).GetType() == typeof(PetBowl) || location.getBuildingAt(tile).GetType() == typeof(Stable)))
             {
                 SetTool(player, typeof(WateringCan));
 
@@ -393,12 +393,18 @@ namespace AutomateToolSwap
                 return;
             }
             //Check if it should swap to Hoe
-            if (!Config.Hoe_in_empty_soil) { return; }
-            if (location is FarmHouse or Shed or AnimalHouse or MineShaft) { return; }
-            if (location.isPath(tile)) { return; }
-            if (player.CurrentItem is MeleeWeapon && player.CurrentItem.getCategoryName().Contains("Level") && Game1.spawnMonstersAtNight) { return; }
-            if (player.CurrentItem is FishingRod) { return; }
-            if (player.CurrentItem is Wand && player.CurrentItem.Name.Equals("Return Scepter")) { return; }
+            if (!Config.Hoe_in_empty_soil)
+                return;
+            if (location is FarmHouse or Shed or AnimalHouse or MineShaft)
+                return;
+            if (location.isPath(tile))
+                return;
+            if (player.CurrentItem is MeleeWeapon && player.CurrentItem.getCategoryName().Contains("Level") && Game1.spawnMonstersAtNight)
+                return;
+            if (player.CurrentItem is FishingRod or GenericTool)
+                return;
+            if (player.CurrentItem is Wand && player.CurrentItem.Name.Equals("Return Scepter"))
+                return;
 
 
             if (player.CurrentItem != null)
@@ -424,7 +430,7 @@ namespace AutomateToolSwap
                 {
                     for (int i = 0; i < player.maxItems; i++)
                     {
-                        if (player.Items[i] != null && player.Items[i].Name.Contains(aux))
+                        if (player.Items[i] != null && player.Items[i].GetType() == toolType && player.Items[i].Name.Contains(aux))
                         {
                             if (!(player.CurrentToolIndex == i))
                             {
