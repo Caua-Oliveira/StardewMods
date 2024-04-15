@@ -6,22 +6,31 @@ namespace AutomateToolSwap
     {
         public bool Enabled { get; set; } = true;
 
+        // Keybind to toggle mod on/off
         public KeybindList ToggleKey { get; set; } = KeybindList.Parse("CapsLock");
 
+        // Keybind to swap tools
         public KeybindList SwapKey { get; set; } = KeybindList.Parse("MouseLeft");
 
-        public bool Pickaxe_greater_wcan { get; set; } = false;
+        // Keybind to switch back to the last used tool
+        public KeybindList LastToolKey { get; set; } = KeybindList.Parse("MouseMiddle");
 
-        public bool Pickaxe_over_melee { get; set; } = false;
+        // Detection method for tool switching (cursor or player orientation)
+        public string DetectionMethod { get; set; } = "Cursor";
 
-        public KeybindList LastToolButton { get; set; } = KeybindList.Parse("MouseMiddle");
+        // Auto-return to the last used tool after switching
+        public bool AutoReturnToLastTool { get; set; } = false;
 
-        public bool Hoe_in_empty_soil { get; set; } = true;
+        // Automatically switch to hoe when clicking on empty soil
+        public bool HoeForEmptySoil { get; set; } = true;
 
-        public bool Auto_switch_last_tool { get; set; } = false;
+        // Automatically switch to scythe when clicking on grass
+        public bool ScytheForGrass { get; set; } = false;
 
-        public bool Scythe_on_grass { get; set; } = false;
+        // Prioritize using the pickaxe over the watering can on dry soil
+        public bool PickaxeOverWateringCan { get; set; } = false;
 
-        public string Detection_method { get; set; } = "KBM";
+        // Automatically switch to tools that are not a Scythe when clicking on weeds (fibers)
+        public bool AnyToolForWeeds { get; set; } = false;
     }
 }
