@@ -9,6 +9,8 @@ using xTile.Dimensions;
 using xTile.Tiles;
 using StardewValley.TerrainFeatures;
 using StardewValley.Buildings;
+using StardewModdingAPI;
+using static StardewValley.Minigames.CraneGame;
 
 
 
@@ -168,8 +170,19 @@ public class Check
         if (feature is Grass && !(player.CurrentTool is MilkPail or Shears) && ModEntry.Config.ScytheForGrass)
         {
             ModEntry.SetTool(player, typeof(MeleeWeapon));
-
             return true;
+        }
+
+        //Check if is a harvestable bush
+        if (feature is StardewValley.TerrainFeatures.Bush)
+        {
+            StardewValley.TerrainFeatures.Bush bush = (StardewValley.TerrainFeatures.Bush)feature;
+            Console.WriteLine(1);
+            if (bush.inBloom())
+            {
+                ModEntry.SetTool(player, typeof(MeleeWeapon));
+                return true;
+            }
         }
 
         //Check for tillable soil or crops
@@ -194,7 +207,7 @@ public class Check
             }
 
             //Check if need to water the crop
-            if (dirt.crop != null && !dirt.isWatered())
+            if ((!dirt.isWatered() && !dirt.readyForHarvest()) && !(player.isRidingHorse() && player.mount.Name.Contains("tractor") && player.CurrentTool is Hoe))
             {
                 if (!(ModEntry.Config.PickaxeOverWateringCan && player.CurrentTool is Pickaxe))
                 {
@@ -216,6 +229,7 @@ public class Check
         {
             if (location.resourceClumps[i].occupiesTile((int)tile.X, (int)tile.Y))
             {
+                Console.WriteLine(location.resourceClumps[i].parentSheetIndex);
                 switch (location.resourceClumps[i].parentSheetIndex)
                 {
                     //Id's for logs and stumps
@@ -356,6 +370,12 @@ public class Check
     {
         bool isNotScythe = true;
         bool isDiggable = location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Diggable", "Back") != null;
+
+        if (player.isRidingHorse() && player.mount.Name.Contains("tractor"))
+        {
+            return false;
+
+        }
 
         //Check if it should swap to Hoe
         if (!isDiggable)
