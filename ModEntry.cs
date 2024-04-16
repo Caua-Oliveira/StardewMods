@@ -28,7 +28,10 @@ namespace AutomateToolSwap
             // Subscribe to events
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             helper.Events.Input.ButtonPressed += OnButtonPressed;
+            helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
+
         }
+
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             Config.Enabled = true;
@@ -126,6 +129,28 @@ namespace AutomateToolSwap
 
         IndexSwitcher switcher = new IndexSwitcher(0);
 
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+        {
+            //Code for Tractor Mod
+            if (Game1.player.isRidingHorse() && Game1.player.mount.Name.Contains("tractor"))
+            {
+                Farmer player = Game1.player;
+                GameLocation currentLocation = Game1.currentLocation;
+                ICursorPosition cursorPos = this.Helper.Input.GetCursorPosition();
+                Vector2 cursorTile = cursorPos.GrabTile;
+                Vector2 toolLocation = new Vector2((int)Game1.player.GetToolLocation().X / Game1.tileSize, (int)Game1.player.GetToolLocation().Y / Game1.tileSize);
+
+                switch (Config.DetectionMethod)
+                {
+                    case "Cursor":
+                        CheckTile(currentLocation, cursorTile, player);
+                        break;
+                    case "Player":
+                        CheckTile(currentLocation, toolLocation, player);
+                        break;
+                }
+            }
+        }
 
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
@@ -160,12 +185,12 @@ namespace AutomateToolSwap
                 return;
             }
 
-
             Farmer player = Game1.player;
             GameLocation currentLocation = Game1.currentLocation;
             ICursorPosition cursorPos = this.Helper.Input.GetCursorPosition();
             Vector2 cursorTile = cursorPos.GrabTile;
             Vector2 toolLocation = new Vector2((int)Game1.player.GetToolLocation().X / Game1.tileSize, (int)Game1.player.GetToolLocation().Y / Game1.tileSize);
+
             switch (Config.DetectionMethod)
             {
                 case "Cursor":
