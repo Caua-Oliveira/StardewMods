@@ -20,6 +20,7 @@ namespace AutomateToolSwap
         internal static ModEntry Instance { get; set; } = null!;
         internal static ModConfig Config { get; private set; } = null!; // Declare static instance of ModConfig
         internal static Check check { get; private set; } = null!;
+        internal static bool isTractorModInstalled;
         public override void Entry(IModHelper helper)
         {
             Instance = this;
@@ -29,7 +30,7 @@ namespace AutomateToolSwap
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             helper.Events.Input.ButtonPressed += OnButtonPressed;
             helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
-
+            isTractorModInstalled = Helper.ModRegistry.IsLoaded("Pathoschild.TractorMod");
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -42,6 +43,12 @@ namespace AutomateToolSwap
                 mod: this.ModManifest,
                 reset: () => Config = new ModConfig(),
                 save: () => this.Helper.WriteConfig(Config)
+            );
+
+            // Add the general settings
+            configMenu.AddSectionTitle(
+                mod: this.ModManifest,
+                text: () => "General Settings"
             );
 
             // Keybind for toggling mod on/off
@@ -125,12 +132,36 @@ namespace AutomateToolSwap
                 getValue: () => Config.AnyToolForWeeds,
                 setValue: isEnabled => Config.AnyToolForWeeds = isEnabled
             );
+
+            // Add the Tractor settings
+            if (isTractorModInstalled)
+            {
+                configMenu.AddSectionTitle(
+                    mod: this.ModManifest,
+                    text: () => "Tractor Settings"
+                );
+
+                // Prioritize pickaxe over watering can
+                configMenu.AddBoolOption(
+                    mod: this.ModManifest,
+                    name: () => "Disable Auto Swap in Tractor",
+                    tooltip: () => "Disable Auto Swap in Tractor",
+                    getValue: () => Config.DisableTractorSwap,
+                    setValue: isEnabled => Config.DisableTractorSwap = isEnabled
+                );
+
+            }
+
         }
 
         IndexSwitcher switcher = new IndexSwitcher(0);
 
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
+            if (!isTractorModInstalled || Config.DisableTractorSwap)
+            {
+                return;
+            }
             //Code for Tractor Mod
             if (Game1.player.isRidingHorse() && Game1.player.mount.Name.Contains("tractor"))
             {
@@ -180,7 +211,7 @@ namespace AutomateToolSwap
             }
 
             // ignore if player didnt left-click or mod is disabled
-            if (!Config.SwapKey.JustPressed() || !Config.Enabled || !(Game1.player.canMove))
+            if (!(Config.SwapKey.JustPressed()) || !Config.Enabled || !(Game1.player.canMove))
             {
                 return;
             }
