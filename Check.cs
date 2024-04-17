@@ -177,7 +177,6 @@ public class Check
         if (feature is StardewValley.TerrainFeatures.Bush)
         {
             StardewValley.TerrainFeatures.Bush bush = (StardewValley.TerrainFeatures.Bush)feature;
-            Console.WriteLine(1);
             if (bush.inBloom())
             {
                 ModEntry.SetTool(player, typeof(MeleeWeapon));
@@ -229,7 +228,6 @@ public class Check
         {
             if (location.resourceClumps[i].occupiesTile((int)tile.X, (int)tile.Y))
             {
-                Console.WriteLine(location.resourceClumps[i].parentSheetIndex);
                 switch (location.resourceClumps[i].parentSheetIndex)
                 {
                     //Id's for logs and stumps
