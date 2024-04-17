@@ -32,5 +32,7 @@ namespace AutomateToolSwap
 
         // Automatically switch to tools that are not a Scythe when clicking on weeds (fibers)
         public bool AnyToolForWeeds { get; set; } = false;
+
+        public bool DisableTractorSwap { get; set; } = false;
     }
 }
