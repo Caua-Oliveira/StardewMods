@@ -39,7 +39,8 @@ namespace AutomateToolSwap
         {
             Config.Enabled = true;
             var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (configMenu == null) { return; }
+            if (configMenu == null)
+                return;
 
             configMenu.Register(
                 mod: this.ModManifest,
@@ -50,7 +51,25 @@ namespace AutomateToolSwap
             // Add the general settings
             configMenu.AddSectionTitle(
                 mod: this.ModManifest,
-                text: () => "General Settings"
+                text: () => "Detection Settings"
+            );
+
+            //If you should use the custumizable SwapKey or the game default
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Use Custom Swap Key",
+                tooltip: () => "If you should use the custumizable Tool Swap Keybind or the game default.",
+                getValue: () => Config.UseDifferentSwapKey,
+                setValue: isEnabled => Config.UseDifferentSwapKey = isEnabled
+            );
+
+            // Keybind for swapping tools
+            configMenu.AddKeybindList(
+                mod: this.ModManifest,
+                name: () => "Tool Swap Keybind",
+                tooltip: () => "The keybind to switch between tools (Only if you check the option above). Otherwise, it will use the default game keybind for Using Tools.",
+                getValue: () => Config.SwapKey,
+                setValue: keybinds => Config.SwapKey = keybinds
             );
 
             // Keybind for toggling mod on/off
@@ -88,6 +107,12 @@ namespace AutomateToolSwap
                 tooltip: () => "Automatically return to the previously used tool after swapping.",
                 getValue: () => Config.AutoReturnToLastTool,
                 setValue: isEnabled => Config.AutoReturnToLastTool = isEnabled
+            );
+
+            // Add the general settings
+            configMenu.AddSectionTitle(
+                mod: this.ModManifest,
+                text: () => "Custom Swaps Settings"
             );
 
             // Switch to hoe when clicking on empty soil
@@ -152,9 +177,8 @@ namespace AutomateToolSwap
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
             if (!isTractorModInstalled || Config.DisableTractorSwap || (!Config.Enabled && !Config.DisableTractorSwap))
-            {
                 return;
-            }
+
             //Code for Tractor Mod
             if (Game1.player.isRidingHorse() && Game1.player.mount.Name.Contains("tractor"))
             {
@@ -204,17 +228,27 @@ namespace AutomateToolSwap
 
             // check if the mod should try to swap
             bool buttonMatched = false;
-            foreach (var button in Game1.options.useToolButton)
+
+            if (Config.UseDifferentSwapKey)
             {
-                if (e.Button == button.ToSButton() || e.Button == SButton.ControllerX)
-                {
+                if (Config.SwapKey.JustPressed())
                     buttonMatched = true;
-                    break;
+
+            }
+            else
+            {
+                foreach (var button in Game1.options.useToolButton)
+                {
+                    if (e.Button == button.ToSButton() || e.Button == SButton.ControllerX)
+                    {
+                        buttonMatched = true;
+                        break;
+                    }
                 }
             }
+
             if (!buttonMatched || !Config.Enabled || !(Game1.player.canMove))
                 return;
-
 
 
             Farmer player = Game1.player;
@@ -323,6 +357,7 @@ namespace AutomateToolSwap
         public void SetItem(Farmer player, string categorie, string item)
         {
             switcher.canSwitch = Config.AutoReturnToLastTool;
+
             var items = player.Items;
             //Handles trash
             if (categorie == "Trash")

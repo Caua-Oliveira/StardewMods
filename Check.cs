@@ -25,6 +25,7 @@ public class Check
 
     public bool Objects(GameLocation location, Vector2 tile, Farmer player)
     {
+
         var Config = ModEntry.Config;
         // Get the object at the specified tile
         StardewValley.Object obj = location.getObjectAtTile((int)tile.X, (int)tile.Y);
@@ -129,6 +130,12 @@ public class Check
         if (obj.Name == "Bone Mill")
         {
             ModEntry.SetItem(player, "Resource", "Bone Fragment");
+            return true;
+        }
+
+        if (obj.Name == "Loom")
+        {
+            ModEntry.SetItem(player, "Animal Product", "Wool");
             return true;
         }
 
