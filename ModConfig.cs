@@ -9,9 +9,6 @@ namespace AutomateToolSwap
         // Keybind to toggle mod on/off
         public KeybindList ToggleKey { get; set; } = KeybindList.Parse("CapsLock");
 
-        // Keybind to swap tools
-        public KeybindList SwapKey { get; set; } = KeybindList.Parse("MouseLeft");
-
         // Keybind to switch back to the last used tool
         public KeybindList LastToolKey { get; set; } = KeybindList.Parse("MouseMiddle");
 
