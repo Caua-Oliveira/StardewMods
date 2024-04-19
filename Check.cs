@@ -366,26 +366,18 @@ public class Check
 
     public bool ShouldSwapToHoe(GameLocation location, Vector2 tile, Farmer player)
     {
+        if (!ModEntry.isTractorModInstalled || (player.isRidingHorse() && player.mount.Name.Contains("tractor")))
+            return false;
         bool isNotScythe = true;
         bool isDiggable = location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Diggable", "Back") != null;
+        bool isFightingLocations = location is Mine or MineShaft or VolcanoDungeon;
+        if (player.CurrentItem != null)
+            isNotScythe = player.CurrentItem.getCategoryName().Contains("Level");
 
-        if (player.isRidingHorse() && player.mount.Name.Contains("tractor"))
-        {
-            return false;
-
-        }
 
         //Check if it should swap to Hoe
-        if (!isDiggable)
-        {
+        if (!isDiggable || isFightingLocations)
             return false;
-        }
-
-        if (player.CurrentItem != null)
-        {
-            isNotScythe = player.CurrentItem.getCategoryName().Contains("Level");
-        }
-
         if (!ModEntry.Config.HoeForEmptySoil)
             return false;
         if (location.isPath(tile))
