@@ -3,6 +3,7 @@ using GenericModConfigMenu;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Locations;
@@ -23,14 +24,15 @@ namespace AutomateToolSwap
         internal static bool isTractorModInstalled;
         public override void Entry(IModHelper helper)
         {
+            isTractorModInstalled = Helper.ModRegistry.IsLoaded("Pathoschild.TractorMod");
             Instance = this;
             Config = Helper.ReadConfig<ModConfig>();
             check = new Check(this);
-            // Subscribe to events
+
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             helper.Events.Input.ButtonPressed += OnButtonPressed;
             helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
-            isTractorModInstalled = Helper.ModRegistry.IsLoaded("Pathoschild.TractorMod");
+
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -60,15 +62,6 @@ namespace AutomateToolSwap
                 setValue: keybinds => Config.ToggleKey = keybinds
             );
 
-            // Keybind for swapping tools
-            configMenu.AddKeybindList(
-                mod: this.ModManifest,
-                name: () => "Tool Swap Keybind",
-                tooltip: () => "The keybind to switch between tools (suggested: same keybind for breaking items).",
-                getValue: () => Config.SwapKey,
-                setValue: keybinds => Config.SwapKey = keybinds
-            );
-
             // Keybind to switch back to last used tool
             configMenu.AddKeybindList(
                 mod: this.ModManifest,
@@ -82,7 +75,7 @@ namespace AutomateToolSwap
             configMenu.AddTextOption(
                 mod: this.ModManifest,
                 name: () => "Tool Selection Mode",
-                tooltip: () => "Choose how tools are switched: 'Cursor' uses the mouse pointer, 'Player' uses the player's orientation.",
+                tooltip: () => "Choose how tools are switched: 'Cursor' uses the mouse pointer, 'Player' uses the player's orientation. (USE THIS FOR CONTROLLER)",
                 allowedValues: new string[] { "Cursor", "Player" },
                 getValue: () => Config.DetectionMethod,
                 setValue: method => Config.DetectionMethod = method
@@ -145,7 +138,7 @@ namespace AutomateToolSwap
                 configMenu.AddBoolOption(
                     mod: this.ModManifest,
                     name: () => "Disable Auto Swap in Tractor",
-                    tooltip: () => "Disable Auto Swap in Tractor",
+                    tooltip: () => "Disables Auto Swap in Tractor ALWAYS, otherwise you can use the Toggle Keybind to disable it",
                     getValue: () => Config.DisableTractorSwap,
                     setValue: isEnabled => Config.DisableTractorSwap = isEnabled
                 );
@@ -158,7 +151,7 @@ namespace AutomateToolSwap
 
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (!isTractorModInstalled || Config.DisableTractorSwap)
+            if (!isTractorModInstalled || Config.DisableTractorSwap || (!Config.Enabled && !Config.DisableTractorSwap))
             {
                 return;
             }
@@ -185,7 +178,6 @@ namespace AutomateToolSwap
 
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-
             // ignore if player hasn't loaded a save yet
             if (!Context.IsWorldReady)
             {
@@ -210,11 +202,20 @@ namespace AutomateToolSwap
                 switcher.GoToLastIndex();
             }
 
-            // ignore if player didnt left-click or mod is disabled
-            if (!(Config.SwapKey.JustPressed()) || !Config.Enabled || !(Game1.player.canMove))
+            // check if the mod should try to swap
+            bool buttonMatched = false;
+            foreach (var button in Game1.options.useToolButton)
             {
-                return;
+                if (e.Button == button.ToSButton() || e.Button == SButton.ControllerX)
+                {
+                    buttonMatched = true;
+                    break;
+                }
             }
+            if (!buttonMatched || !Config.Enabled || !(Game1.player.canMove))
+                return;
+
+
 
             Farmer player = Game1.player;
             GameLocation currentLocation = Game1.currentLocation;
@@ -237,41 +238,29 @@ namespace AutomateToolSwap
         // detects what is in the tile that the player is looking at and calls the function to swap tools
         private void CheckTile(GameLocation location, Vector2 tile, Farmer player)
         {
+            if (player.CurrentItem is Slingshot)
+                return;
 
             if (check.Objects(location, tile, player))
-            {
                 return;
-            }
 
             if (check.TerrainFeatures(location, tile, player))
-            {
                 return;
-            }
 
             if (check.ResourceClumps(location, tile, player))
-            {
                 return;
-            }
 
             if (check.Water(location, tile, player))
-            {
                 return;
-            }
 
             if (check.Monsters(location, tile, player))
-            {
                 return;
-            }
 
             if (check.Animals(location, tile, player))
-            {
                 return;
-            }
 
             if (check.ShouldSwapToHoe(location, tile, player))
-            {
                 return;
-            }
 
         }
 
