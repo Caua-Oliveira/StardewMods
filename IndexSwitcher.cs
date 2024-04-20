@@ -1,4 +1,4 @@
-﻿
+﻿using AutomateToolSwap;
 using StardewValley;
 
 public class IndexSwitcher
@@ -24,18 +24,23 @@ public class IndexSwitcher
         {
             await Waiter();
         }
+
     }
+
     public async Task Waiter()
     {
         await Task.Delay(500);
-        if (!Game1.player.canMove)
-        {
-            while (!Game1.player.canMove)
-            {
-                await Task.Delay(20);
-            }
-        }
+
+        while (ModEntry.Config.SwapKey.IsDown())
+            if (!ModEntry.Config.SwapKey.IsDown())
+                break;
+
+        while (!Game1.player.canMove)
+            await Task.Delay(20);
+
         GoToLastIndex();
+
+
     }
     public void GoToLastIndex()
     {

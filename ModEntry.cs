@@ -114,6 +114,14 @@ namespace AutomateToolSwap
                 mod: this.ModManifest,
                 text: () => "Custom Swaps Settings"
             );
+            // Switch to Weapon when clicking monsters
+            configMenu.AddBoolOption(
+               mod: this.ModManifest,
+               name: () => "Weapon for Monsters",
+               tooltip: () => "Automatically switch to Melee Weapons when clicking on monsters.",
+               getValue: () => Config.WeaponOnMonsters,
+               setValue: isEnabled => Config.WeaponOnMonsters = isEnabled
+           );
 
             // Switch to hoe when clicking on empty soil
             configMenu.AddBoolOption(
@@ -287,8 +295,9 @@ namespace AutomateToolSwap
             if (check.Water(location, tile, player))
                 return;
 
-            if (check.Monsters(location, tile, player))
-                return;
+            if (Config.WeaponOnMonsters)
+                if (check.Monsters(location, tile, player))
+                    return;
 
             if (check.Animals(location, tile, player))
                 return;

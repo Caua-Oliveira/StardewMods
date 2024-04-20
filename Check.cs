@@ -213,7 +213,7 @@ public class Check
             }
 
             //Check if need to water the crop
-            if ((!dirt.isWatered() && !dirt.readyForHarvest()) && !(player.isRidingHorse() && player.mount.Name.Contains("tractor") && player.CurrentTool is Hoe))
+            if ((dirt.crop != null && !dirt.isWatered() && !dirt.readyForHarvest()) && !(player.isRidingHorse() && player.mount.Name.Contains("tractor") && player.CurrentTool is Hoe))
             {
                 if (!(ModEntry.Config.PickaxeOverWateringCan && player.CurrentTool is Pickaxe))
                 {

@@ -21,6 +21,9 @@ namespace AutomateToolSwap
         // Detection method for tool switching (cursor or player orientation)
         public string DetectionMethod { get; set; } = "Cursor";
 
+        // Switch to Weapon on Monsters
+        public bool WeaponOnMonsters { get; set; } = true;
+
         // Auto-return to the last used tool after switching
         public bool AutoReturnToLastTool { get; set; } = false;
 
