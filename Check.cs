@@ -11,6 +11,9 @@ using StardewValley.TerrainFeatures;
 using StardewValley.Buildings;
 using StardewModdingAPI;
 using static StardewValley.Minigames.CraneGame;
+using StardewValley.Monsters;
+using StardewValley.Characters;
+using Netcode;
 
 
 
@@ -152,7 +155,7 @@ public class Check
         var feature = location.terrainFeatures[tile];
 
         //Check if need Axe
-        if (feature is GiantCrop or FruitTree)
+        if (feature is GiantCrop)
         {
             ModEntry.SetTool(player, typeof(Axe));
 
@@ -168,8 +171,13 @@ public class Check
 
                 return true;
             }
-            ModEntry.SetTool(player, typeof(Axe));
 
+            if (!(tree.growthStage < Tree.treeStage && ModEntry.Config.IgnoreGrowingTrees))
+            {
+                ModEntry.SetTool(player, typeof(Axe));
+
+                return true;
+            }
             return true;
         }
 
@@ -189,6 +197,7 @@ public class Check
                 ModEntry.SetTool(player, typeof(MeleeWeapon));
                 return true;
             }
+            return true;
         }
 
         //Check for tillable soil or crops
@@ -263,16 +272,22 @@ public class Check
             Vector2 monsterTile = monster.Tile;
             float distance = Vector2.Distance(tile, monsterTile);
 
-            if (monster.IsMonster && distance < 3)
+            if (monster.IsMonster && distance < ModEntry.Config.MonsterRangeDetection)
             {
                 //Pickaxe for non-moving cave crab
-                if (monster.displayName.Contains("Crab") && !monster.isMoving())
+                if (monster is RockCrab)
                 {
-                    ModEntry.SetTool(player, typeof(Pickaxe));
+                    RockCrab crab = monster as RockCrab;
+                    var isShellLess = ModEntry.Helper.Reflection.GetField<NetBool>(crab, "shellGone").GetValue();
+                    if (!isShellLess && !monster.isMoving())
+                    {
+                        ModEntry.SetTool(player, typeof(Pickaxe));
 
-                    return true;
+                        return true;
 
+                    }
                 }
+
                 if (player.CurrentItem == null || (!player.CurrentItem.Name.Contains("Bomb") && !player.CurrentItem.Name.Contains("Staircase")))
                 {
                     ModEntry.SetTool(player, typeof(MeleeWeapon), "Weapon");
@@ -311,7 +326,7 @@ public class Check
         }
 
         //Check for water for fishing
-        if (!(location is Farm or VolcanoDungeon || location.InIslandContext() || location.isGreenhouse) && hasWater && !(player.CurrentTool is WateringCan or Pan))
+        if (ModEntry.Config.FishingRodOnWater && (!(location is Farm or VolcanoDungeon || location.InIslandContext() || location.isGreenhouse) && hasWater && !(player.CurrentTool is WateringCan or Pan)))
         {
             ModEntry.SetTool(player, typeof(FishingRod));
 
@@ -332,11 +347,13 @@ public class Check
 
     public bool Animals(GameLocation location, Vector2 tile, Farmer player)
     {
+
         //Check for animals to milk or shear
         if (!(location is Farm or AnimalHouse))
         {
             return false;
         }
+
         foreach (FarmAnimal animal in location.getAllFarmAnimals())
         {
             string[] canMilk = { "Goat", "Cow" };
@@ -350,7 +367,7 @@ public class Check
                 return true;
             }
 
-            if (canShear.Any(animal.displayType.Contains) && distance < 2 && animal.currentLocation == player.currentLocation)
+            if (canShear.Any(animal.displayType.Contains) && distance <= 1 && animal.currentLocation == player.currentLocation)
             {
                 ModEntry.SetTool(player, typeof(Shears));
 
