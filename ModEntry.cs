@@ -11,6 +11,8 @@ using StardewValley.Monsters;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
+using xTile.Dimensions;
+using xTile.Tiles;
 
 
 
@@ -123,6 +125,26 @@ namespace AutomateToolSwap
                setValue: isEnabled => Config.WeaponOnMonsters = isEnabled
            );
 
+            // Alternative method to swapping on Monsters
+            configMenu.AddBoolOption(
+               mod: this.ModManifest,
+               name: () => "Alternative \"Weapon for Monsters\"",
+               tooltip: () => "Alternative method to swapping on Monsters",
+               getValue: () => Config.AlternativeWeaponOnMonsters,
+               setValue: isEnabled => Config.AlternativeWeaponOnMonsters = isEnabled
+            );
+
+            // Add a NumberOption for MonsterRangeDetections 
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Monster Range Detection",
+                tooltip: () => "The range in which the mod detects monsters (in tiles).",
+                getValue: () => Config.MonsterRangeDetection,
+                setValue: value => Config.MonsterRangeDetection = value,
+                min: 1,
+                max: 10
+            );
+
             // Switch to hoe when clicking on empty soil
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
@@ -159,6 +181,24 @@ namespace AutomateToolSwap
                 setValue: isEnabled => Config.AnyToolForWeeds = isEnabled
             );
 
+            // Switch to fishing rod when clicking on water
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "FishingRod On Water",
+                tooltip: () => "Automatically switch to the Fishing Rod when clicking on water outside of Farm.",
+                getValue: () => Config.FishingRodOnWater,
+                setValue: isEnabled => Config.FishingRodOnWater = isEnabled
+            );
+
+            // Disabled swap on growing trees
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Ignore Growing Trees",
+                tooltip: () => "Growing Trees do not swap to Axe.",
+                getValue: () => Config.IgnoreGrowingTrees,
+                setValue: isEnabled => Config.IgnoreGrowingTrees = isEnabled
+            );
+
             // Add the Tractor settings
             if (isTractorModInstalled)
             {
@@ -184,6 +224,27 @@ namespace AutomateToolSwap
 
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
+            if (!Context.IsWorldReady)
+                return;
+
+            if (Config.AlternativeWeaponOnMonsters && Config.WeaponOnMonsters)
+            {
+                Vector2 tile = Game1.player.Tile;
+                foreach (var monster in Game1.currentLocation.characters)
+                {
+                    Vector2 monsterTile = monster.Tile;
+                    float distance = Vector2.Distance(tile, monsterTile);
+
+                    if (monster.IsMonster && distance < Config.MonsterRangeDetection && Game1.player.canMove)
+                    {
+                        if (check.Monsters(Game1.currentLocation, tile, Game1.player))
+                            return;
+                    }
+
+                }
+
+            }
+
             if (!isTractorModInstalled || Config.DisableTractorSwap || (!Config.Enabled && !Config.DisableTractorSwap))
                 return;
 
@@ -212,9 +273,7 @@ namespace AutomateToolSwap
         {
             // ignore if player hasn't loaded a save yet
             if (!Context.IsWorldReady)
-            {
                 return;
-            }
 
             // turns mod on/off
             if (Config.ToggleKey.JustPressed())
@@ -235,27 +294,7 @@ namespace AutomateToolSwap
             }
 
             // check if the mod should try to swap
-            bool buttonMatched = false;
-
-            if (Config.UseDifferentSwapKey)
-            {
-                if (Config.SwapKey.JustPressed())
-                    buttonMatched = true;
-
-            }
-            else
-            {
-                foreach (var button in Game1.options.useToolButton)
-                {
-                    if (e.Button == button.ToSButton() || e.Button == SButton.ControllerX)
-                    {
-                        buttonMatched = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!buttonMatched || !Config.Enabled || !(Game1.player.canMove))
+            if (!ButtonMatched(e) || !Config.Enabled || !(Game1.player.canMove))
                 return;
 
 
@@ -280,6 +319,9 @@ namespace AutomateToolSwap
         // detects what is in the tile that the player is looking at and calls the function to swap tools
         private void CheckTile(GameLocation location, Vector2 tile, Farmer player)
         {
+            if (Config.AlternativeWeaponOnMonsters && player.CurrentItem is MeleeWeapon && !player.CurrentItem.Name.Contains("Scythe"))
+                return;
+
             if (player.CurrentItem is Slingshot)
                 return;
 
@@ -295,7 +337,7 @@ namespace AutomateToolSwap
             if (check.Water(location, tile, player))
                 return;
 
-            if (Config.WeaponOnMonsters)
+            if (Config.WeaponOnMonsters && !Config.AlternativeWeaponOnMonsters)
                 if (check.Monsters(location, tile, player))
                     return;
 
@@ -418,6 +460,27 @@ namespace AutomateToolSwap
                 }
             }
             return;
+        }
+
+        public bool ButtonMatched(ButtonPressedEventArgs e)
+        {
+            if (Config.UseDifferentSwapKey)
+            {
+                if (Config.SwapKey.JustPressed())
+                    return true;
+                return false;
+
+            }
+            else
+            {
+                foreach (var button in Game1.options.useToolButton)
+                {
+                    if (e.Button == button.ToSButton() || e.Button == SButton.ControllerX)
+                        return true;
+
+                }
+                return false;
+            }
         }
 
     }
