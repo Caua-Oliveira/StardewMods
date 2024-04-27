@@ -11,6 +11,7 @@ using StardewValley.Monsters;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
+using System.Collections.Immutable;
 using xTile.Dimensions;
 using xTile.Tiles;
 
@@ -129,7 +130,7 @@ namespace AutomateToolSwap
             configMenu.AddBoolOption(
                mod: this.ModManifest,
                name: () => "Alternative \"Weapon for Monsters\"",
-               tooltip: () => "Alternative method to swapping on Monsters",
+               tooltip: () => "When enabled, you will swap to a Weapon whenever there is a monster nearby, without the need to click, but if you have a Weapon in hands, it wont swap to anything",
                getValue: () => Config.AlternativeWeaponOnMonsters,
                setValue: isEnabled => Config.AlternativeWeaponOnMonsters = isEnabled
             );
@@ -152,6 +153,15 @@ namespace AutomateToolSwap
                 tooltip: () => "Automatically switch to the hoe when clicking on empty soil.",
                 getValue: () => Config.HoeForEmptySoil,
                 setValue: isEnabled => Config.HoeForEmptySoil = isEnabled
+            );
+
+            // Switch to any Seed when clicking on tilled dirt
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Seeds for Tilled Dirt",
+                tooltip: () => "Automatically switch to the first seed when clicking on empty soil.",
+                getValue: () => Config.SeedForTilledDirt,
+                setValue: isEnabled => Config.SeedForTilledDirt = isEnabled
             );
 
             // Switch to scythe when clicking on grass
@@ -190,7 +200,7 @@ namespace AutomateToolSwap
                 setValue: isEnabled => Config.FishingRodOnWater = isEnabled
             );
 
-            // Disabled swap on growing trees
+            // Disable swap on growing trees
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
                 name: () => "Ignore Growing Trees",
@@ -198,6 +208,36 @@ namespace AutomateToolSwap
                 getValue: () => Config.IgnoreGrowingTrees,
                 setValue: isEnabled => Config.IgnoreGrowingTrees = isEnabled
             );
+
+            // Swaps to Crops for Seed Maker
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Swap for Seed Maker",
+                tooltip: () => "Swaps to first Crop in your inventory for Seed Maker",
+                getValue: () => Config.SwapForSeedMaker,
+                setValue: isEnabled => Config.SwapForSeedMaker = isEnabled
+            );
+
+            // Swaps to Crops for Kegs
+            configMenu.AddTextOption(
+                mod: this.ModManifest,
+                name: () => "Swap for Kegs",
+                tooltip: () => "Swaps to first fruit or vegetables for Kegs",
+                allowedValues: new string[] { "None", "Fruit", "Vegetable", "Both" },
+                getValue: () => Config.SwapForKegs,
+                setValue: type => Config.SwapForKegs = type
+                );
+
+            // Swaps to Crops for Preserves Jar
+            configMenu.AddTextOption(
+                mod: this.ModManifest,
+                name: () => "Swap for Preserves Jar",
+                tooltip: () => "Swaps to first fruit or vegetables for Preserves Jar",
+                allowedValues: new string[] { "None", "Fruit", "Vegetable", "Both" },
+                getValue: () => Config.SwapForPreservesJar,
+                setValue: type => Config.SwapForPreservesJar = type
+                );
+
 
             // Add the Tractor settings
             if (isTractorModInstalled)
@@ -227,6 +267,7 @@ namespace AutomateToolSwap
             if (!Context.IsWorldReady)
                 return;
 
+            //Alternative "Weapon for Monsters"
             if (Config.AlternativeWeaponOnMonsters && Config.WeaponOnMonsters)
             {
                 Vector2 tile = Game1.player.Tile;
@@ -245,10 +286,10 @@ namespace AutomateToolSwap
 
             }
 
+            //Code for Tractor Mod
             if (!isTractorModInstalled || Config.DisableTractorSwap || (!Config.Enabled && !Config.DisableTractorSwap))
                 return;
 
-            //Code for Tractor Mod
             if (Game1.player.isRidingHorse() && Game1.player.mount.Name.Contains("tractor"))
             {
                 Farmer player = Game1.player;
@@ -303,7 +344,6 @@ namespace AutomateToolSwap
             ICursorPosition cursorPos = this.Helper.Input.GetCursorPosition();
             Vector2 cursorTile = cursorPos.GrabTile;
             Vector2 toolLocation = new Vector2((int)Game1.player.GetToolLocation().X / Game1.tileSize, (int)Game1.player.GetToolLocation().Y / Game1.tileSize);
-
             switch (Config.DetectionMethod)
             {
                 case "Cursor":
@@ -328,10 +368,10 @@ namespace AutomateToolSwap
             if (check.Objects(location, tile, player))
                 return;
 
-            if (check.TerrainFeatures(location, tile, player))
+            if (check.ResourceClumps(location, tile, player))
                 return;
 
-            if (check.ResourceClumps(location, tile, player))
+            if (check.TerrainFeatures(location, tile, player))
                 return;
 
             if (check.Water(location, tile, player))
@@ -402,10 +442,8 @@ namespace AutomateToolSwap
 
         }
 
-
-
         //Any item \/
-        public void SetItem(Farmer player, string categorie, string item)
+        public void SetItem(Farmer player, string categorie, string item = "", string crops = "Both")
         {
             switcher.canSwitch = Config.AutoReturnToLastTool;
 
@@ -437,25 +475,51 @@ namespace AutomateToolSwap
                     if (items[i] != null && items[i].getCategoryName() == categorie && items[i].Name.Contains(item) && items[i].Stack >= 5)
                     {
                         if (player.CurrentToolIndex != i)
-                        {
                             switcher.SwitchIndex(i);
-                        }
+
                         return;
                     }
                 }
                 return;
             }
 
+            //Handles Crops
+            if (categorie == "Crops")
+            {
+                bool canFruit = crops == "Both" || crops == "Fruit";
+                bool canVegetable = crops == "Both" || crops == "Vegetable";
+
+                for (int i = 0; i < player.maxItems; i++)
+                {
+                    bool isFruit(Item Item) { return Item != null && Item.getCategoryName() == "Fruit"; }
+
+                    bool isVegetable(Item Item) { return Item != null && Item.getCategoryName() == "Vegetable"; }
+
+                    if (items[i] != null && (canFruit && isFruit(items[i]) || canVegetable && isVegetable(items[i])))
+                    {
+                        if (isFruit(player.CurrentItem) || isVegetable(player.CurrentItem))
+                            return;
+
+                        if (player.CurrentToolIndex != i)
+                            switcher.SwitchIndex(i);
+
+                        return;
+                    }
+                }
+                return;
+            }
             //Handles any other item
             for (int i = 0; i < player.maxItems; i++)
             {
 
                 if (items[i] != null && items[i].getCategoryName() == categorie && items[i].Name.Contains(item))
                 {
+                    if (player.CurrentItem != null && player.CurrentItem.getCategoryName() == categorie)
+                        return;
+
                     if (player.CurrentToolIndex != i)
-                    {
                         switcher.SwitchIndex(i);
-                    }
+
                     return;
                 }
             }
