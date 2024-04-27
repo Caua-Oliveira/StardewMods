@@ -5,7 +5,6 @@ using System;
 using StardewValley.Locations;
 using StardewValley.Objects;
 using StardewValley.Tools;
-using xTile.Dimensions;
 using xTile.Tiles;
 using StardewValley.TerrainFeatures;
 using StardewValley.Buildings;
@@ -14,6 +13,7 @@ using static StardewValley.Minigames.CraneGame;
 using StardewValley.Monsters;
 using StardewValley.Characters;
 using Netcode;
+using xTile.Layers;
 
 
 
@@ -28,139 +28,176 @@ public class Check
 
     public bool Objects(GameLocation location, Vector2 tile, Farmer player)
     {
-
-        var Config = ModEntry.Config;
         // Get the object at the specified tile
         StardewValley.Object obj = location.getObjectAtTile((int)tile.X, (int)tile.Y);
-
+        bool itemCantBreak = !(player.CurrentItem is Pickaxe or Axe);
         // If obj is null, return false immediately
         if (obj == null)
         {
             return false;
         }
 
-        // Check for objects and conditions
-        if (obj.IsWeeds())
+        switch (obj)
         {
-            if (Config.AnyToolForWeeds && !(location is MineShaft))
-            {
-                ModEntry.SetTool(player, typeof(Pickaxe), anyTool: true);
-                return true;
-            }
-            ModEntry.SetTool(player, typeof(MeleeWeapon));
-            return true;
-        }
+            case var _ when obj.IsWeeds():
+                if (ModEntry.Config.AnyToolForWeeds && !(location is MineShaft))
+                {
+                    ModEntry.SetTool(player, typeof(Pickaxe), anyTool: true);
+                    break;
+                }
+                ModEntry.SetTool(player, typeof(MeleeWeapon));
+                break;
 
-        if (obj is CrabPot crabPot)
-        {
-            if (crabPot.bait.Value == null)
-            {
+            case CrabPot crabPot when crabPot.bait.Value == null:
                 ModEntry.SetItem(player, "Bait", "Bait");
+                break;
 
-            }
-            return true;
+            case var _ when obj.IsBreakableStone():
+                if (player.CurrentItem == null || (!player.CurrentItem.Name.Contains("Bomb") && !player.CurrentItem.Name.Contains("Staircase")))
+                {
+                    ModEntry.SetTool(player, typeof(Pickaxe));
+                    break;
+                }
+                break;
+
+            case var _ when obj.IsTwig():
+                ModEntry.SetTool(player, typeof(Axe));
+                break;
+
+            case var _ when obj.Name == "Furnace":
+                if (itemCantBreak)
+                {
+                    ModEntry.SetItem(player, "Resource", "Ore");
+                    break;
+                }
+                break;
+
+            case var _ when obj.Name == "Cheese Press":
+                if (itemCantBreak)
+                {
+                    ModEntry.SetItem(player, "Animal Product", "Milk");
+                    break;
+                }
+                break;
+
+            case var _ when obj.Name == "Mayonnaise Machine":
+                if (itemCantBreak)
+                {
+                    ModEntry.SetItem(player, "Animal Product", "Egg");
+                    break;
+                }
+                break;
+
+            case var _ when obj.Name == "Artifact Spot":
+                ModEntry.SetTool(player, typeof(Hoe));
+                break;
+
+            case var _ when obj.Name == "Garden Pot":
+                if (itemCantBreak)
+                {
+                    ModEntry.SetTool(player, typeof(WateringCan));
+                    break;
+                }
+                break;
+
+            case var _ when obj.Name == "Seed Spot":
+                ModEntry.SetTool(player, typeof(Hoe));
+                break;
+
+            case var _ when obj.Name == "Barrel":
+                ModEntry.SetTool(player, typeof(MeleeWeapon), "Weapon");
+                break;
+
+            case var _ when obj.Name == "Supply Crate":
+                ModEntry.SetTool(player, typeof(Hoe), anyTool: true);
+                break;
+
+            case var _ when obj.Name == "Recycling Machine":
+                if (itemCantBreak)
+                    ModEntry.SetItem(player, "Trash", "Joja");
+
+                break;
+
+            case var _ when obj.Name == "Bone Mill":
+                if (itemCantBreak)
+                    ModEntry.SetItem(player, "Resource", "Bone Fragment");
+
+                break;
+
+            case var _ when obj.Name == "Loom":
+                if (itemCantBreak)
+                    ModEntry.SetItem(player, "Animal Product", "Wool");
+
+                break;
+
+            case var _ when obj.Name == "Fish Smoker":
+                if (itemCantBreak)
+                    ModEntry.SetItem(player, "Fish");
+
+                break;
+
+            case var _ when obj.Name == "Bait Maker":
+                if (itemCantBreak)
+                    ModEntry.SetItem(player, "Fish");
+
+                break;
+
+            case var _ when obj.Name == "Crystalarium":
+                if (itemCantBreak && player.CurrentItem != null && player.CurrentItem.getCategoryName() != "Mineral")
+                    ModEntry.SetItem(player, "Mineral");
+
+                break;
+
+            case var _ when obj.Name == "Seed Maker":
+                if (itemCantBreak && ModEntry.Config.SwapForSeedMaker)
+                    ModEntry.SetItem(player, "Crops");
+
+                break;
+
+            case var _ when obj.Name == "Keg":
+                if (itemCantBreak && ModEntry.Config.SwapForKegs != "None")
+                    ModEntry.SetItem(player, "Crops", crops: ModEntry.Config.SwapForKegs);
+
+                break;
+
+            case var _ when obj.Name == "Preserves Jar":
+                if (itemCantBreak && ModEntry.Config.SwapForPreservesJar != "None")
+                    ModEntry.SetItem(player, "Crops", crops: ModEntry.Config.SwapForPreservesJar);
+                break;
         }
-
-        if (obj.IsBreakableStone())
-        {
-            if (player.CurrentItem == null || (!player.CurrentItem.Name.Contains("Bomb") && !player.CurrentItem.Name.Contains("Staircase")))
-            {
-                ModEntry.SetTool(player, typeof(Pickaxe));
-                return true;
-            }
-        }
-
-        if (obj.IsTwig())
-        {
-            ModEntry.SetTool(player, typeof(Axe));
-            return true;
-        }
-
-        if (obj.Name == "Furnace")
-        {
-            ModEntry.SetItem(player, "Resource", "Ore");
-            return true;
-        }
-
-        if (obj.Name == "Cheese Press")
-        {
-            ModEntry.SetItem(player, "Animal Product", "Milk");
-            return true;
-        }
-
-        if (obj.Name == "Mayonnaise Machine")
-        {
-            ModEntry.SetItem(player, "Animal Product", "Egg");
-            return true;
-        }
-
-        if (obj.Name == "Artifact Spot")
-        {
-            ModEntry.SetTool(player, typeof(Hoe));
-            return true;
-        }
-
-        if (obj.Name == "Garden Pot")
-        {
-            ModEntry.SetTool(player, typeof(WateringCan));
-            return true;
-        }
-
-        if (obj.Name == "Seed Spot")
-        {
-            ModEntry.SetTool(player, typeof(Hoe));
-            return true;
-        }
-
-        if (obj.Name == "Barrel")
-        {
-            ModEntry.SetTool(player, typeof(MeleeWeapon), "Weapon");
-            return true;
-        }
-
-        if (obj.Name == "Supply Crate")
-        {
-            ModEntry.SetTool(player, typeof(Hoe), anyTool: true);
-            return true;
-        }
-
-        if (obj.Name == "Recycling Machine")
-        {
-            ModEntry.SetItem(player, "Trash", "Joja");
-            return true;
-        }
-
-        if (obj.Name == "Bone Mill")
-        {
-            ModEntry.SetItem(player, "Resource", "Bone Fragment");
-            return true;
-        }
-
-        if (obj.Name == "Loom")
-        {
-            ModEntry.SetItem(player, "Animal Product", "Wool");
-            return true;
-        }
-
-        return false;
+        return true;
     }
-
     public bool TerrainFeatures(GameLocation location, Vector2 tile, Farmer player)
     {
+        //Check for Bushes
+        foreach (var vbush in location.largeTerrainFeatures)
+        {
+            if (!(vbush is StardewValley.TerrainFeatures.Bush))
+                break;
+
+            StardewValley.TerrainFeatures.Bush bush = vbush as StardewValley.TerrainFeatures.Bush;
+            var bushBox = bush.getBoundingBox();
+            Vector2 tilePixel = new Vector2(tile.X * Game1.tileSize, tile.Y * Game1.tileSize);
+
+            // Check if the tile is within the bounding box
+            if (bushBox.Contains((int)tilePixel.X, (int)tilePixel.Y) && bush.inBloom())
+            {
+                ModEntry.SetTool(player, typeof(MeleeWeapon));
+
+                return true;
+            }
+        }
+
+        //Returns if there is no TerrainFeatures
         bool hasTerrainFeature = location.terrainFeatures.ContainsKey(tile);
         if (!hasTerrainFeature)
         {
             return false;
         }
+
         var feature = location.terrainFeatures[tile];
 
         //Check if need Axe
-        if (feature is GiantCrop)
-        {
-            ModEntry.SetTool(player, typeof(Axe));
-
-            return true;
-        }
         if (feature is Tree tree)
         {
             if (player.CurrentItem != null && player.CurrentItem.Name == "Tapper") { return true; }
@@ -188,23 +225,18 @@ public class Check
             return true;
         }
 
-        //Check if is a harvestable bush
-        if (feature is StardewValley.TerrainFeatures.Bush)
-        {
-            StardewValley.TerrainFeatures.Bush bush = (StardewValley.TerrainFeatures.Bush)feature;
-            if (bush.inBloom())
-            {
-                ModEntry.SetTool(player, typeof(MeleeWeapon));
-                return true;
-            }
-            return true;
-        }
-
         //Check for tillable soil or crops
         if (feature is HoeDirt)
         {
             HoeDirt dirt = feature as HoeDirt;
 
+            if (dirt.crop == null && ModEntry.Config.SeedForTilledDirt)
+            {
+                if (player.CurrentItem == null || player.CurrentItem.getCategoryName() != "Seed")
+                    ModEntry.SetItem(player, "Seed");
+
+                return true;
+            }
             //Check if can harvest the crop
             if (dirt.crop != null && dirt.readyForHarvest())
             {
@@ -221,6 +253,14 @@ public class Check
 
             }
 
+            // Check if it is ginger crop
+            if (dirt.crop != null && (string)dirt.crop.whichForageCrop == "2")
+            {
+                ModEntry.SetTool(player, typeof(Hoe));
+
+                return true;
+            }
+
             //Check if need to water the crop
             if ((dirt.crop != null && !dirt.isWatered() && !dirt.readyForHarvest()) && !(player.isRidingHorse() && player.mount.Name.Contains("tractor") && player.CurrentTool is Hoe))
             {
@@ -234,17 +274,27 @@ public class Check
             }
             return true;
         }
-        return false;
+        return true;
     }
 
     public bool ResourceClumps(GameLocation location, Vector2 tile, Farmer player)
     {
+
         //Check if it is an boulder or logs and stumps
         for (int i = 0; i < location.resourceClumps.Count; i++)
         {
-            if (location.resourceClumps[i].occupiesTile((int)tile.X, (int)tile.Y))
+            var clump = location.resourceClumps[i];
+            bool tileHasClump = clump.occupiesTile((int)tile.X, (int)tile.Y);
+            if (tileHasClump)
             {
-                switch (location.resourceClumps[i].parentSheetIndex)
+                if (clump is GiantCrop)
+                {
+                    ModEntry.SetTool(player, typeof(Axe));
+
+                    return true;
+                }
+
+                switch (clump.parentSheetIndex)
                 {
                     //Id's for logs and stumps
                     case 602 or 600:
@@ -313,9 +363,7 @@ public class Check
         bool hasWater = location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Water", "Back") != null;
 
         if (hasBuilding)
-        {
             isPetBowlOrStable = location.getBuildingAt(tile).GetType() == typeof(PetBowl) || location.getBuildingAt(tile).GetType() == typeof(Stable);
-        }
 
         if (isPetBowlOrStable)
         {
@@ -323,6 +371,17 @@ public class Check
 
             return true;
 
+        }
+
+        //Check for pan spots
+        var dtile = player.GetToolLocation(false) / 64;
+        dtile = new Vector2((int)tile.X, (int)tile.Y);
+        Rectangle orePanRect = new Rectangle(player.currentLocation.orePanPoint.X * 64 - 64, player.currentLocation.orePanPoint.Y * 64 - 64, 256, 256);
+        if (orePanRect.Contains((int)dtile.X * 64, (int)dtile.Y * 64) && Utility.distance((float)player.StandingPixel.X, (float)orePanRect.Center.X, (float)player.StandingPixel.Y, (float)orePanRect.Center.Y) <= 192f)
+        {
+            ModEntry.SetTool(player, typeof(Pan));
+
+            return true;
         }
 
         //Check for water for fishing
@@ -357,7 +416,7 @@ public class Check
         foreach (FarmAnimal animal in location.getAllFarmAnimals())
         {
             string[] canMilk = { "Goat", "Cow" };
-            string[] canShear = { "Rabbit", "Sheep" };
+            string[] canShear = { "Sheep" };
             float distance = Vector2.Distance(tile, animal.Tile);
 
             if (canMilk.Any(animal.displayType.Contains) && distance <= 1 && animal.currentLocation == player.currentLocation)
