@@ -1,6 +1,5 @@
 ﻿using AutomateToolSwap;
 using StardewValley;
-
 public class IndexSwitcher
 {
     public int currentIndex;
@@ -24,7 +23,6 @@ public class IndexSwitcher
         {
             await Waiter();
         }
-
     }
 
     public async Task Waiter()
