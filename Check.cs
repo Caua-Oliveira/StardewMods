@@ -394,7 +394,7 @@ public class Check
         }
 
         //Check for water source to refil watering can
-        if ((hasWaterSource || hasWater) && !(player.CurrentTool is FishingRod or Pan))
+        if (ModEntry.Config.WateringCanOnWater && ((hasWaterSource || hasWater) && !(player.CurrentTool is FishingRod or Pan)))
         {
             ModEntry.SetTool(player, typeof(WateringCan));
 

@@ -22,6 +22,8 @@ namespace AutomateToolSwap
 
         public int MonsterRangeDetection { get; set; } = 3;
 
+        public bool WateringCanOnWater { get; set; } = true;
+
         public bool FishingRodOnWater { get; set; } = true;
 
         public bool IgnoreGrowingTrees { get; set; } = false;
@@ -43,6 +45,7 @@ namespace AutomateToolSwap
         public string SwapForKegs { get; set; } = "None";
 
         public string SwapForPreservesJar { get; set; } = "None";
+
         public bool DisableTractorSwap { get; set; } = false;
     }
 }

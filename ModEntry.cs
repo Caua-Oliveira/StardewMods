@@ -54,14 +54,14 @@ namespace AutomateToolSwap
             // Add the general settings
             configMenu.AddSectionTitle(
                 mod: this.ModManifest,
-                text: () => "Detection Settings"
+                text: () => Helper.Translation.Get("config.detectionSettings.title")
             );
 
-            //If you should use the custumizable SwapKey or the game default
+            // If you should use the customizable SwapKey or the game default
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
-                name: () => "Use Custom Swap Key",
-                tooltip: () => "If you should use the custumizable Tool Swap Keybind or the game default.",
+                name: () => Helper.Translation.Get("config.useCustomSwapKey.name"),
+                tooltip: () => Helper.Translation.Get("config.useCustomSwapKey.tooltip"),
                 getValue: () => Config.UseDifferentSwapKey,
                 setValue: isEnabled => Config.UseDifferentSwapKey = isEnabled
             );
@@ -69,8 +69,8 @@ namespace AutomateToolSwap
             // Keybind for swapping tools
             configMenu.AddKeybindList(
                 mod: this.ModManifest,
-                name: () => "Tool Swap Keybind",
-                tooltip: () => "The keybind to switch between tools (Only if you check the option above). Otherwise, it will use the default game keybind for Using Tools.",
+                name: () => Helper.Translation.Get("config.swapKey.name"),
+                tooltip: () => Helper.Translation.Get("config.swapKey.tooltip"),
                 getValue: () => Config.SwapKey,
                 setValue: keybinds => Config.SwapKey = keybinds
             );
@@ -78,8 +78,8 @@ namespace AutomateToolSwap
             // Keybind for toggling mod on/off
             configMenu.AddKeybindList(
                 mod: this.ModManifest,
-                name: () => "Toggle Mod Keybind",
-                tooltip: () => "The keybind to toggle the mod on or off.",
+                name: () => Helper.Translation.Get("config.toggleKey.name"),
+                tooltip: () => Helper.Translation.Get("config.toggleKey.tooltip"),
                 getValue: () => Config.ToggleKey,
                 setValue: keybinds => Config.ToggleKey = keybinds
             );
@@ -87,8 +87,8 @@ namespace AutomateToolSwap
             // Keybind to switch back to last used tool
             configMenu.AddKeybindList(
                 mod: this.ModManifest,
-                name: () => "Last Tool Keybind",
-                tooltip: () => "The keybind to switch back to the last used tool.",
+                name: () => Helper.Translation.Get("config.lastToolKey.name"),
+                tooltip: () => Helper.Translation.Get("config.lastToolKey.tooltip"),
                 getValue: () => Config.LastToolKey,
                 setValue: keybinds => Config.LastToolKey = keybinds
             );
@@ -96,9 +96,12 @@ namespace AutomateToolSwap
             // Detection method for tool switching
             configMenu.AddTextOption(
                 mod: this.ModManifest,
-                name: () => "Tool Selection Mode",
-                tooltip: () => "Choose how tools are switched: 'Cursor' uses the mouse pointer, 'Player' uses the player's orientation. (USE THIS FOR CONTROLLER)",
-                allowedValues: new string[] { "Cursor", "Player" },
+                name: () => Helper.Translation.Get("config.detectionMethod.name"),
+                tooltip: () => Helper.Translation.Get("config.detectionMethod.tooltip"),
+                allowedValues: new string[] {
+                    "Cursor",
+                    "Player"
+                },
                 getValue: () => Config.DetectionMethod,
                 setValue: method => Config.DetectionMethod = method
             );
@@ -106,8 +109,8 @@ namespace AutomateToolSwap
             // Auto-return to last tool after switching
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
-                name: () => "Auto-Return to Last Tool",
-                tooltip: () => "Automatically return to the previously used tool after swapping.",
+                name: () => Helper.Translation.Get("config.autoReturnToLastTool.name"),
+                tooltip: () => Helper.Translation.Get("config.autoReturnToLastTool.tooltip"),
                 getValue: () => Config.AutoReturnToLastTool,
                 setValue: isEnabled => Config.AutoReturnToLastTool = isEnabled
             );
@@ -115,31 +118,32 @@ namespace AutomateToolSwap
             // Add the general settings
             configMenu.AddSectionTitle(
                 mod: this.ModManifest,
-                text: () => "Custom Swaps Settings"
+                text: () => Helper.Translation.Get("config.customSwapsSettings.title")
             );
+
             // Switch to Weapon when clicking monsters
             configMenu.AddBoolOption(
-               mod: this.ModManifest,
-               name: () => "Weapon for Monsters",
-               tooltip: () => "Automatically switch to Melee Weapons when clicking on monsters.",
-               getValue: () => Config.WeaponOnMonsters,
-               setValue: isEnabled => Config.WeaponOnMonsters = isEnabled
-           );
+                mod: this.ModManifest,
+                name: () => Helper.Translation.Get("config.weaponOnMonsters.name"),
+                tooltip: () => Helper.Translation.Get("config.weaponOnMonsters.tooltip"),
+                getValue: () => Config.WeaponOnMonsters,
+                setValue: isEnabled => Config.WeaponOnMonsters = isEnabled
+            );
 
             // Alternative method to swapping on Monsters
             configMenu.AddBoolOption(
-               mod: this.ModManifest,
-               name: () => "Alternative \"Weapon for Monsters\"",
-               tooltip: () => "When enabled, you will swap to a Weapon whenever there is a monster nearby, without the need to click, but if you have a Weapon in hands, it wont swap to anything",
-               getValue: () => Config.AlternativeWeaponOnMonsters,
-               setValue: isEnabled => Config.AlternativeWeaponOnMonsters = isEnabled
+                mod: this.ModManifest,
+                name: () => Helper.Translation.Get("config.alternativeWeaponOnMonsters.name"),
+                tooltip: () => Helper.Translation.Get("config.alternativeWeaponOnMonsters.tooltip"),
+                getValue: () => Config.AlternativeWeaponOnMonsters,
+                setValue: isEnabled => Config.AlternativeWeaponOnMonsters = isEnabled
             );
 
             // Add a NumberOption for MonsterRangeDetections 
             configMenu.AddNumberOption(
                 mod: this.ModManifest,
-                name: () => "Monster Range Detection",
-                tooltip: () => "The range in which the mod detects monsters (in tiles).",
+                name: () => Helper.Translation.Get("config.monsterRangeDetection.name"),
+                tooltip: () => Helper.Translation.Get("config.monsterRangeDetection.tooltip"),
                 getValue: () => Config.MonsterRangeDetection,
                 setValue: value => Config.MonsterRangeDetection = value,
                 min: 1,
@@ -149,8 +153,8 @@ namespace AutomateToolSwap
             // Switch to hoe when clicking on empty soil
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
-                name: () => "Hoe for Empty Soil",
-                tooltip: () => "Automatically switch to the hoe when clicking on empty soil.",
+                name: () => Helper.Translation.Get("config.hoeForEmptySoil.name"),
+                tooltip: () => Helper.Translation.Get("config.hoeForEmptySoil.tooltip"),
                 getValue: () => Config.HoeForEmptySoil,
                 setValue: isEnabled => Config.HoeForEmptySoil = isEnabled
             );
@@ -158,8 +162,8 @@ namespace AutomateToolSwap
             // Switch to any Seed when clicking on tilled dirt
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
-                name: () => "Seeds for Tilled Dirt",
-                tooltip: () => "Automatically switch to the first seed when clicking on empty soil.",
+                name: () => Helper.Translation.Get("config.seedForTilledDirt.name"),
+                tooltip: () => Helper.Translation.Get("config.seedForTilledDirt.tooltip"),
                 getValue: () => Config.SeedForTilledDirt,
                 setValue: isEnabled => Config.SeedForTilledDirt = isEnabled
             );
@@ -167,8 +171,8 @@ namespace AutomateToolSwap
             // Switch to scythe when clicking on grass
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
-                name: () => "Scythe for Grass",
-                tooltip: () => "Automatically switch to the scythe when clicking on grass.",
+                name: () => Helper.Translation.Get("config.scytheForGrass.name"),
+                tooltip: () => Helper.Translation.Get("config.scytheForGrass.tooltip"),
                 getValue: () => Config.ScytheForGrass,
                 setValue: isEnabled => Config.ScytheForGrass = isEnabled
             );
@@ -176,8 +180,8 @@ namespace AutomateToolSwap
             // Prioritize pickaxe over watering can
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
-                name: () => "Pickaxe Over Watering Can",
-                tooltip: () => "Prioritize using the pickaxe instead of switching to the watering can on dry soil.",
+                name: () => Helper.Translation.Get("config.pickaxeOverWateringCan.name"),
+                tooltip: () => Helper.Translation.Get("config.pickaxeOverWateringCan.tooltip"),
                 getValue: () => Config.PickaxeOverWateringCan,
                 setValue: isEnabled => Config.PickaxeOverWateringCan = isEnabled
             );
@@ -185,8 +189,8 @@ namespace AutomateToolSwap
             // Use pickaxe for weeds instead of scythe
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
-                name: () => "Pickaxe for Weeds",
-                tooltip: () => "Automatically switch to the pickaxe instead of the scythe when clicking on weeds (fibers).",
+                name: () => Helper.Translation.Get("config.anyToolForWeeds.name"),
+                tooltip: () => Helper.Translation.Get("config.anyToolForWeeds.tooltip"),
                 getValue: () => Config.AnyToolForWeeds,
                 setValue: isEnabled => Config.AnyToolForWeeds = isEnabled
             );
@@ -194,17 +198,26 @@ namespace AutomateToolSwap
             // Switch to fishing rod when clicking on water
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
-                name: () => "FishingRod On Water",
-                tooltip: () => "Automatically switch to the Fishing Rod when clicking on water outside of Farm.",
+                name: () => Helper.Translation.Get("config.fishingRodOnWater.name"),
+                tooltip: () => Helper.Translation.Get("config.fishingRodOnWater.tooltip"),
                 getValue: () => Config.FishingRodOnWater,
                 setValue: isEnabled => Config.FishingRodOnWater = isEnabled
+            );
+
+            // Switch to watering can when clicking on water
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => Helper.Translation.Get("config.wateringCanOnWater.name"),
+                tooltip: () => Helper.Translation.Get("config.wateringCanOnWater.tooltip"),
+                getValue: () => Config.WateringCanOnWater,
+                setValue: isEnabled => Config.WateringCanOnWater = isEnabled
             );
 
             // Disable swap on growing trees
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
-                name: () => "Ignore Growing Trees",
-                tooltip: () => "Growing Trees do not swap to Axe.",
+                name: () => Helper.Translation.Get("config.ignoreGrowingTrees.name"),
+                tooltip: () => Helper.Translation.Get("config.ignoreGrowingTrees.tooltip"),
                 getValue: () => Config.IgnoreGrowingTrees,
                 setValue: isEnabled => Config.IgnoreGrowingTrees = isEnabled
             );
@@ -212,8 +225,8 @@ namespace AutomateToolSwap
             // Swaps to Crops for Seed Maker
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
-                name: () => "Swap for Seed Maker",
-                tooltip: () => "Swaps to first Crop in your inventory for Seed Maker",
+                name: () => Helper.Translation.Get("config.swapForSeedMaker.name"),
+                tooltip: () => Helper.Translation.Get("config.swapForSeedMaker.tooltip"),
                 getValue: () => Config.SwapForSeedMaker,
                 setValue: isEnabled => Config.SwapForSeedMaker = isEnabled
             );
@@ -221,43 +234,50 @@ namespace AutomateToolSwap
             // Swaps to Crops for Kegs
             configMenu.AddTextOption(
                 mod: this.ModManifest,
-                name: () => "Swap for Kegs",
-                tooltip: () => "Swaps to first fruit or vegetables for Kegs",
-                allowedValues: new string[] { "None", "Fruit", "Vegetable", "Both" },
+                name: () => Helper.Translation.Get("config.swapForKegs.name"),
+                tooltip: () => Helper.Translation.Get("config.swapForKegs.tooltip"),
+                allowedValues: new string[] {
+                    "None",
+                    "Fruit",
+                    "Vegetable",
+                    "Both"
+                },
                 getValue: () => Config.SwapForKegs,
                 setValue: type => Config.SwapForKegs = type
-                );
+            );
 
             // Swaps to Crops for Preserves Jar
             configMenu.AddTextOption(
                 mod: this.ModManifest,
-                name: () => "Swap for Preserves Jar",
-                tooltip: () => "Swaps to first fruit or vegetables for Preserves Jar",
-                allowedValues: new string[] { "None", "Fruit", "Vegetable", "Both" },
+                name: () => Helper.Translation.Get("config.swapForPreservesJar.name"),
+                tooltip: () => Helper.Translation.Get("config.swapForPreservesJar.tooltip"),
+                allowedValues: new string[] {
+                    "None",
+                    "Fruit",
+                    "Vegetable",
+                    "Both"
+                },
                 getValue: () => Config.SwapForPreservesJar,
                 setValue: type => Config.SwapForPreservesJar = type
-                );
-
+            );
 
             // Add the Tractor settings
             if (isTractorModInstalled)
             {
                 configMenu.AddSectionTitle(
                     mod: this.ModManifest,
-                    text: () => "Tractor Settings"
+                    text: () => Helper.Translation.Get("config.disableTractorSwap.name")
                 );
 
-                // Prioritize pickaxe over watering can
+                // Disable auto swap in tractor
                 configMenu.AddBoolOption(
                     mod: this.ModManifest,
-                    name: () => "Disable Auto Swap in Tractor",
-                    tooltip: () => "Disables Auto Swap in Tractor ALWAYS, otherwise you can use the Toggle Keybind to disable it",
+                    name: () => Helper.Translation.Get("config.disableTractorSwap.name"),
+                    tooltip: () => Helper.Translation.Get("config.disableTractorSwap.tooltip"),
                     getValue: () => Config.DisableTractorSwap,
                     setValue: isEnabled => Config.DisableTractorSwap = isEnabled
                 );
-
             }
-
         }
 
         IndexSwitcher switcher = new IndexSwitcher(0);
