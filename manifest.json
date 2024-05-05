@@ -1,8 +1,8 @@
 {
   "Name": "AutomateToolSwap",
   "Author": "Trapyy",
-  "Version": "1.2.5",
-  "Description": "Swap tool based on what you are trying to break",
+  "Version": "1.2.6",
+  "Description": "Selects the correct tool or item for you whenever you click something that requires it",
   "UniqueID": "Trapyy.AutomatetoolSwap",
   "EntryDll": "AutomateToolSwap.dll",
   "MinimumApiVersion": "3.0.0",
