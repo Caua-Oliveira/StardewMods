@@ -245,8 +245,8 @@ namespace AutomateToolSwap
             configMenu.AddBoolOption(ModManifest,
                 name: () => i18n.Get("config.ScytheForGrass.name"),
                 tooltip: () => i18n.Get("config.ScytheForGrass.tooltip"),
-                getValue: () => Config.ScytheForCrops,
-                setValue: isEnabled => Config.ScytheForCrops = isEnabled
+                getValue: () => Config.ScytheForGrass,
+                setValue: isEnabled => Config.ScytheForGrass = isEnabled
             );
             configMenu.AddPage(ModManifest, String.Empty, () => i18n.Get("config.goBack"));
 
@@ -313,12 +313,6 @@ namespace AutomateToolSwap
                 setValue: isEnabled => Config.PanForPanningSpots = isEnabled
             );
             configMenu.AddBoolOption(ModManifest,
-                name: () => i18n.Get("config.PanForPanningSpots.name"),
-                tooltip: () => i18n.Get("config.PanForPanningSpots.tooltip"),
-                getValue: () => Config.PanForPanningSpots,
-                setValue: isEnabled => Config.PanForPanningSpots = isEnabled
-            );
-            configMenu.AddBoolOption(ModManifest,
                 name: () => i18n.Get("config.HayForFeedingBench.name"),
                 tooltip: () => i18n.Get("config.HayForFeedingBench.tooltip"),
                 getValue: () => Config.HayForFeedingBench,
@@ -335,6 +329,12 @@ namespace AutomateToolSwap
                 tooltip: () => i18n.Get("config.ShearsForSheeps.tooltip"),
                 getValue: () => Config.ShearsForSheeps,
                 setValue: isEnabled => Config.ShearsForSheeps = isEnabled
+            );
+            configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.swapForSeedMaker.name"),
+                tooltip: () => i18n.Get("config.swapForSeedMaker.tooltip"),
+                getValue: () => Config.SwapForSeedMaker,
+                setValue: isEnabled => Config.SwapForSeedMaker = isEnabled
             );
             configMenu.AddTextOption(ModManifest,
                 name: () => i18n.Get("config.SwapForKegs.name"),
