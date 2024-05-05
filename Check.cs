@@ -49,8 +49,7 @@ public class Check
                 break;
 
             case var _ when obj.IsBreakableStone():
-                bool notMineItem = (!player.CurrentItem.Name.Contains("Bomb") && !player.CurrentItem.Name.Contains("Staircase"));
-                if (config.PickaxeForStoneAndOres && (player.CurrentItem == null || notMineItem))
+                if (config.PickaxeForStoneAndOres && (player.CurrentItem == null || !player.CurrentItem.Name.Contains("Bomb") && !player.CurrentItem.Name.Contains("Staircase")))
                     ModEntry.SetTool(player, typeof(Pickaxe));
                 break;
 
@@ -60,7 +59,7 @@ public class Check
                 break;
 
             case var _ when obj.Name == "Furnace":
-                if (config.OresForFurnaces && itemCantBreak && player.CurrentItem != null && !player.CurrentItem.Name.Contains("Ore"))
+                if (config.OresForFurnaces && itemCantBreak && (player.CurrentItem == null || !player.CurrentItem.Name.Contains("Ore")))
                     ModEntry.SetItem(player, "Resource", "Ore");
                 break;
 
@@ -80,7 +79,7 @@ public class Check
                 break;
 
             case var _ when obj.Name == "Garden Pot":
-                if ((player.CurrentItem == null && config.WateringCanForGardenPot) || (config.WateringCanForGardenPot && (itemCantBreak || player.CurrentItem.getCategoryName() != "Seed")))
+                if (config.WateringCanForGardenPot && (player.CurrentItem == null || (itemCantBreak && player.CurrentItem.getCategoryName() != "Seed")))
                     ModEntry.SetTool(player, typeof(WateringCan));
                 break;
 
@@ -126,12 +125,12 @@ public class Check
                 break;
 
             case var _ when obj.Name == "Crystalarium":
-                if ((player.CurrentItem == null && config.MineralsForCrystalarium) || (config.MineralsForCrystalarium && (itemCantBreak && player.CurrentItem.getCategoryName() != "Mineral")))
+                if (config.MineralsForCrystalarium && (player.CurrentItem == null || (itemCantBreak && player.CurrentItem.getCategoryName() != "Mineral")))
                     ModEntry.SetItem(player, "Mineral");
                 break;
 
             case var _ when obj.Name == "Seed Maker":
-                if ((player.CurrentItem == null && config.SwapForSeedMaker) || (config.SwapForSeedMaker && itemCantBreak))
+                if (config.SwapForSeedMaker && itemCantBreak)
                     ModEntry.SetItem(player, "Crops");
 
                 break;
@@ -203,6 +202,7 @@ public class Check
         //Check if need to harvest Grass
         if (feature is Grass && !(player.CurrentTool is MilkPail or Shears) && config.ScytheForGrass)
         {
+            Console.WriteLine(0);
             ModEntry.SetTool(player, typeof(MeleeWeapon));
             return true;
         }
