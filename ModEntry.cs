@@ -21,7 +21,6 @@ namespace AutomateToolSwap
 
         public override void Entry(IModHelper helper)
         {
-            isTractorModInstalled = Helper.ModRegistry.IsLoaded("Pathoschild.TractorMod");
             Instance = this;
             Config = Helper.ReadConfig<ModConfig>();
             check = new Check(Instance);
@@ -34,6 +33,7 @@ namespace AutomateToolSwap
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
+            isTractorModInstalled = Helper.ModRegistry.IsLoaded("Pathoschild.TractorMod");
             ConfigSetup.SetupConfig(Helper, this);
         }
 
