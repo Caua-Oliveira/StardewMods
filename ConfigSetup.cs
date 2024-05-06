@@ -283,52 +283,67 @@ namespace AutomateToolSwap
             );
             configMenu.AddPage(ModManifest, String.Empty, () => i18n.Get("config.goBack"));
 
+
             /****
-            ** Other Options
+            ** MACHINES PAGE
             ****/
-            configMenu.AddSectionTitle(ModManifest, () => i18n.Get("config.otherOptions.text"));
+            configMenu.AddPageLink(ModManifest, "MachinesID", () => i18n.Get("config.machinesPage.title"));
+            configMenu.AddParagraph(ModManifest, () => i18n.Get("config.machinesPage.paragraph"));
+            configMenu.AddPage(ModManifest, "MachinesID", () => i18n.Get("config.machinesPage.title"));
             /*Options*/
             configMenu.AddBoolOption(ModManifest,
-                name: () => i18n.Get("config.AnyToolForWeeds.name"),
-                tooltip: () => i18n.Get("config.AnyToolForWeeds.tooltip"),
-                getValue: () => Config.AnyToolForWeeds,
-                setValue: isEnabled => Config.AnyToolForWeeds = isEnabled
+                name: () => i18n.Get("config.WoolForLoom.name"),
+                tooltip: () => i18n.Get("config.WoolForLoom.tooltip"),
+                getValue: () => Config.WoolForLoom,
+                setValue: isEnabled => Config.WoolForLoom = isEnabled
             );
             configMenu.AddBoolOption(ModManifest,
-                name: () => i18n.Get("config.FishingRodOnWater.name"),
-                tooltip: () => i18n.Get("config.FishingRodOnWater.tooltip"),
-                getValue: () => Config.FishingRodOnWater,
-                setValue: isEnabled => Config.FishingRodOnWater = isEnabled
+                name: () => i18n.Get("config.BoneForBoneMill.name"),
+                tooltip: () => i18n.Get("config.BoneForBoneMill.tooltip"),
+                getValue: () => Config.BoneForBoneMill,
+                setValue: isEnabled => Config.BoneForBoneMill = isEnabled
             );
             configMenu.AddBoolOption(ModManifest,
-                name: () => i18n.Get("config.SeedForTilledDirt.name"),
-                tooltip: () => i18n.Get("config.SeedForTilledDirt.tooltip"),
-                getValue: () => Config.SeedForTilledDirt,
-                setValue: isEnabled => Config.SeedForTilledDirt = isEnabled
+                name: () => i18n.Get("config.EggsForMayoMachine.name"),
+                tooltip: () => i18n.Get("config.EggsForMayoMachine.tooltip"),
+                getValue: () => Config.EggsForMayoMachine,
+                setValue: isEnabled => Config.EggsForMayoMachine = isEnabled
             );
             configMenu.AddBoolOption(ModManifest,
-                name: () => i18n.Get("config.PanForPanningSpots.name"),
-                tooltip: () => i18n.Get("config.PanForPanningSpots.tooltip"),
-                getValue: () => Config.PanForPanningSpots,
-                setValue: isEnabled => Config.PanForPanningSpots = isEnabled
+                name: () => i18n.Get("config.MilkForCheesePress.name"),
+                tooltip: () => i18n.Get("config.MilkForCheesePress.tooltip"),
+                getValue: () => Config.MilkForCheesePress,
+                setValue: isEnabled => Config.MilkForCheesePress = isEnabled
             );
             configMenu.AddBoolOption(ModManifest,
-                name: () => i18n.Get("config.HayForFeedingBench.name"),
-                tooltip: () => i18n.Get("config.HayForFeedingBench.tooltip"),
-                getValue: () => Config.HayForFeedingBench,
-                setValue: isEnabled => Config.HayForFeedingBench = isEnabled
+                name: () => i18n.Get("config.MineralsForCrystalarium.name"),
+                tooltip: () => i18n.Get("config.MineralsForCrystalarium.tooltip"),
+                getValue: () => Config.MineralsForCrystalarium,
+                setValue: isEnabled => Config.MineralsForCrystalarium = isEnabled
             );
             configMenu.AddBoolOption(ModManifest,
-                name: () => i18n.Get("config.MilkPailForCowsAndGoats.name"),
-                tooltip: () => i18n.Get("config.MilkPailForCowsAndGoats.tooltip"),
-                getValue: () => Config.MilkPailForCowsAndGoats,
-                setValue: isEnabled => Config.MilkPailForCowsAndGoats = isEnabled
+                name: () => i18n.Get("config.OresForFurnace.name"),
+                tooltip: () => i18n.Get("config.OresForFurnace.tooltip"),
+                getValue: () => Config.OresForFurnace,
+                setValue: isEnabled => Config.OresForFurnace = isEnabled
             );
             configMenu.AddBoolOption(ModManifest,
-                name: () => i18n.Get("config.ShearsForSheeps.name"),
-                tooltip: () => i18n.Get("config.ShearsForSheeps.tooltip"),
-                getValue: () => Config.ShearsForSheeps,
-                setValue: isEnabled => Config.ShearsForSheeps = isEnabled
+                name: () => i18n.Get("config.FishForSmoker.name"),
+                tooltip: () => i18n.Get("config.FishForSmoker.tooltip"),
+                getValue: () => Config.FishForSmoker,
+                setValue: isEnabled => Config.FishForSmoker = isEnabled
+            );
+            configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.FishForBaitMaker.name"),
+                tooltip: () => i18n.Get("config.FishForBaitMaker.tooltip"),
+                getValue: () => Config.FishForBaitMaker,
+                setValue: isEnabled => Config.FishForBaitMaker = isEnabled
+            );
+            configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.BaitForCrabPot.name"),
+                tooltip: () => i18n.Get("config.BaitForCrabPot.tooltip"),
+                getValue: () => Config.BaitForCrabPot,
+                setValue: isEnabled => Config.BaitForCrabPot = isEnabled
             );
             configMenu.AddBoolOption(ModManifest,
                 name: () => i18n.Get("config.swapForSeedMaker.name"),
@@ -360,6 +375,68 @@ namespace AutomateToolSwap
                 getValue: () => Config.SwapForPreservesJar,
                 setValue: type => Config.SwapForPreservesJar = type
             );
+            configMenu.AddPage(ModManifest, String.Empty, () => i18n.Get("config.goBack"));
+
+            /****
+            ** Other Options
+            ****/
+            configMenu.AddSectionTitle(ModManifest, () => i18n.Get("config.otherOptions.text"));
+            /*Options*/
+            configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.SeedForTilledDirt.name"),
+                tooltip: () => i18n.Get("config.SeedForTilledDirt.tooltip"),
+                getValue: () => Config.SeedForTilledDirt,
+                setValue: isEnabled => Config.SeedForTilledDirt = isEnabled
+            );
+            configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.FertilizerForCrops.name"),
+                tooltip: () => i18n.Get("config.FertilizerForCrops.tooltip"),
+                getValue: () => Config.FertilizerForCrops,
+                setValue: isEnabled => Config.FertilizerForCrops = isEnabled
+            );
+            configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.FishingRodOnWater.name"),
+                tooltip: () => i18n.Get("config.FishingRodOnWater.tooltip"),
+                getValue: () => Config.FishingRodOnWater,
+                setValue: isEnabled => Config.FishingRodOnWater = isEnabled
+            );
+            configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.AnyToolForWeeds.name"),
+                tooltip: () => i18n.Get("config.AnyToolForWeeds.tooltip"),
+                getValue: () => Config.AnyToolForWeeds,
+                setValue: isEnabled => Config.AnyToolForWeeds = isEnabled
+            );
+            configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.AnyToolForSupplyCrates.name"),
+                tooltip: () => i18n.Get("config.AnyToolForSupplyCrates.tooltip"),
+                getValue: () => Config.AnyToolForSupplyCrates,
+                setValue: isEnabled => Config.AnyToolForSupplyCrates = isEnabled
+            );
+            configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.PanForPanningSpots.name"),
+                tooltip: () => i18n.Get("config.PanForPanningSpots.tooltip"),
+                getValue: () => Config.PanForPanningSpots,
+                setValue: isEnabled => Config.PanForPanningSpots = isEnabled
+            );
+            configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.HayForFeedingBench.name"),
+                tooltip: () => i18n.Get("config.HayForFeedingBench.tooltip"),
+                getValue: () => Config.HayForFeedingBench,
+                setValue: isEnabled => Config.HayForFeedingBench = isEnabled
+            );
+            configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.MilkPailForCowsAndGoats.name"),
+                tooltip: () => i18n.Get("config.MilkPailForCowsAndGoats.tooltip"),
+                getValue: () => Config.MilkPailForCowsAndGoats,
+                setValue: isEnabled => Config.MilkPailForCowsAndGoats = isEnabled
+            );
+            configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.ShearsForSheeps.name"),
+                tooltip: () => i18n.Get("config.ShearsForSheeps.tooltip"),
+                getValue: () => Config.ShearsForSheeps,
+                setValue: isEnabled => Config.ShearsForSheeps = isEnabled
+            );
+
 
 
             // Add the Tractor settings
