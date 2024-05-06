@@ -93,6 +93,8 @@ namespace AutomateToolSwap
         public bool HayForFeedingBench { get; set; } = true;
         public bool MilkPailForCowsAndGoats { get; set; } = true;
         public bool ShearsForSheeps { get; set; } = true;
+        public bool OresForFurnace { get; set; } = true;
+        public bool FertilizerForCrops { get; set; } = false;
         public string SwapForKegs { get; set; } = "None";
         public string SwapForPreservesJar { get; set; } = "None";
 
