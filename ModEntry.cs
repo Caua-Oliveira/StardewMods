@@ -41,7 +41,7 @@ namespace AutomateToolSwap
 
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (!Context.IsWorldReady)
+            if (!Context.IsWorldReady || Game1.activeClickableMenu != null)
                 return;
 
             //Alternative "Weapon for Monsters"
@@ -94,7 +94,7 @@ namespace AutomateToolSwap
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
             // ignore if player hasn't loaded a save yet
-            if (!Context.IsWorldReady)
+            if (!Context.IsWorldReady || Game1.activeClickableMenu != null)
                 return;
 
             // turns mod on/off
@@ -164,7 +164,7 @@ namespace AutomateToolSwap
             if (check.Animals(location, tile, player))
                 return;
 
-            if (check.ShouldSwapToHoe(location, tile, player))
+            if (check.DiggableSoil(location, tile, player))
                 return;
 
         }
@@ -210,14 +210,20 @@ namespace AutomateToolSwap
 
             for (int i = 0; i < player.maxItems; i++)
             {
+                //foreach (var cu in items[i].GetContextTags())
+                //Console.WriteLine(cu);
                 if ((items[i] != null && items[i].GetType() == toolType) || (anyTool && items[i] is Axe or Pickaxe or Hoe))
                 {
                     if (player.CurrentToolIndex != i)
                     {
                         switcher.SwitchIndex(i);
+
                     }
+                    Console.WriteLine();
                     return;
                 }
+                Console.WriteLine();
+                Console.WriteLine();
             }
 
         }
@@ -229,7 +235,7 @@ namespace AutomateToolSwap
 
             var items = player.Items;
             //Handles trash
-            if (categorie == "Trash")
+            if (categorie == "Trash" || categorie == "Fertilizer")
             {
                 for (int i = 0; i < player.maxItems; i++)
                 {
@@ -251,8 +257,23 @@ namespace AutomateToolSwap
             {
                 for (int i = 0; i < player.maxItems; i++)
                 {
-
+                    Console.WriteLine(items[i] == null);
                     if (items[i] != null && items[i].getCategoryName() == categorie && items[i].Name.Contains(item) && items[i].Stack >= 5)
+                    {
+                        if (player.CurrentToolIndex != i)
+                            switcher.SwitchIndex(i);
+
+                        return;
+                    }
+                }
+                return;
+            }
+
+            if (categorie == "Seed")
+            {
+                for (int i = 0; i < player.maxItems; i++)
+                {
+                    if (items[i] != null && items[i].getCategoryName() == categorie && !items[i].HasContextTag("tree_seed_item"))
                     {
                         if (player.CurrentToolIndex != i)
                             switcher.SwitchIndex(i);
@@ -288,10 +309,11 @@ namespace AutomateToolSwap
                 }
                 return;
             }
+
+
             //Handles any other item
             for (int i = 0; i < player.maxItems; i++)
             {
-
                 if (items[i] != null && items[i].getCategoryName() == categorie && items[i].Name.Contains(item))
                 {
                     if (player.CurrentItem != null && player.CurrentItem.getCategoryName() == categorie)
