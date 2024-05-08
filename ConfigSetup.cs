@@ -7,6 +7,8 @@ namespace AutomateToolSwap
     internal static class ConfigSetup
     {
         internal static bool isTractorModInstalled;
+
+        //CRIAÇÃO DO MENU DE CONFIGURACOES
         public static void SetupConfig(IModHelper helper, Mod modInstance)
         {
 

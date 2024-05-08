@@ -2,6 +2,7 @@
 
 namespace AutomateToolSwap
 {
+    //CONFIGURAÇÕES DO MOD
     internal class ModConfig
     {
         /****

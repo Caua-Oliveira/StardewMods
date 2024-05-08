@@ -13,18 +13,22 @@ public class IndexSwitcher
         auxIndex = initialIndex;
     }
 
-    public async Task SwitchIndex(int newIndex)
+    //Métodos para trocar o index do Item utilizado pelo jogador
+    public void SwitchIndex(int newIndex)
     {
+        //Coloca o Index do item desejado no Index do atual item do jogador, realizando assim a troca de items
         lastIndex = Game1.player.CurrentToolIndex;
         Game1.player.CurrentToolIndex = newIndex;
         currentIndex = newIndex;
 
+        //Caso a opção de retornar para o ultimo item esteja ativada
         if (canSwitch)
         {
-            await Waiter();
+            Waiter();
         }
     }
 
+    //Espera o jogador terminar de usar o item, para pode trocar para o ultimo item selecionado
     public async Task Waiter()
     {
         await Task.Delay(500);
@@ -40,8 +44,11 @@ public class IndexSwitcher
 
 
     }
+
+    //Retorna para o ultimo item selecionado
     public void GoToLastIndex()
     {
+        //Troca de valores de 2 variaveis com ajuda de uma auxiliar
         auxIndex = Game1.player.CurrentToolIndex;
         Game1.player.CurrentToolIndex = lastIndex;
         currentIndex = lastIndex;
