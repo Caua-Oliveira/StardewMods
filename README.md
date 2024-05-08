@@ -1,4 +1,5 @@
-﻿
+**Mod availabe in [NEXUS MODS](https://www.nexusmods.com/stardewvalley/mods/21050)
+ 
 **PLEASE READ THE CONFIG OPTIONS!!!**
 
 **How it works:** Just click whatever you want and it will select the correct item for it, the action will be performed at the same time as your click, like you were holding that item from the beggining, if the item is not found nothing happens. The items dont need to be on your hotbar, if it is in your inventory, it will work.  
