@@ -1,4 +1,4 @@
-**Mod availabe in [NEXUS MODS](https://www.nexusmods.com/stardewvalley/mods/21050)
+**Mod availabe in [Nexus Mods](https://www.nexusmods.com/stardewvalley/mods/21050)**
  
 **PLEASE READ THE CONFIG OPTIONS!!!**
 
