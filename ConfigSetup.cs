@@ -1,14 +1,13 @@
 ﻿using GenericModConfigMenu;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewValley;
 
 namespace AutomateToolSwap
 {
     internal static class ConfigSetup
     {
         internal static bool isTractorModInstalled;
-
-        //CRIAÇÃO DO MENU DE CONFIGURACOES
         public static void SetupConfig(IModHelper helper, Mod modInstance)
         {
 
@@ -60,7 +59,23 @@ namespace AutomateToolSwap
             configMenu.AddTextOption(ModManifest,
                 name: () => i18n.Get("config.DetectionMethod.name"),
                 tooltip: () => i18n.Get("config.detectionMethod.tooltip"),
-                allowedValues: new string[] { "Cursor", "Player" },
+                allowedValues: new string[] {
+                    "Cursor",
+                    "Player"
+                },
+                formatAllowedValue: (string val) =>
+                {
+                    //construct the game's translated display name for each entry
+                    switch (val)
+                    {
+                        case "Cursor":
+                            return i18n.Get("config.DetectionMethod.cursor");
+                        case "Player":
+                            return i18n.Get("config.DetectionMethod.player");
+                        default:
+                            return null;
+                    }
+                },
                 getValue: () => Config.DetectionMethod,
                 setValue: method => Config.DetectionMethod = method
             );
@@ -250,6 +265,12 @@ namespace AutomateToolSwap
                 getValue: () => Config.ScytheForGrass,
                 setValue: isEnabled => Config.ScytheForGrass = isEnabled
             );
+            configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.ScytheForForage.name"),
+                tooltip: () => i18n.Get("config.ScytheForForage.tooltip"),
+                getValue: () => Config.ScytheForForage,
+                setValue: isEnabled => Config.ScytheForForage = isEnabled
+            );
             configMenu.AddPage(ModManifest, String.Empty, () => i18n.Get("config.goBack"));
 
             /****
@@ -362,6 +383,23 @@ namespace AutomateToolSwap
                     "Vegetable",
                     "Both"
                 },
+                formatAllowedValue: (string val) =>
+                {
+                    //construct the game's translated display name for each entry
+                    switch (val)
+                    {
+                        case "None":
+                            return i18n.Get("config.KegsAndJar.none");
+                        case "Fruit":
+                            return i18n.Get("config.KegsAndJar.fruit");
+                        case "Vegetable":
+                            return i18n.Get("config.KegsAndJar.vegetable");
+                        case "Both":
+                            return i18n.Get("config.KegsAndJar.both");
+                        default:
+                            return null;
+                    }
+                },
                 getValue: () => Config.SwapForKegs,
                 setValue: type => Config.SwapForKegs = type
             );
@@ -373,6 +411,23 @@ namespace AutomateToolSwap
                     "Fruit",
                     "Vegetable",
                     "Both"
+                },
+                formatAllowedValue: (string val) =>
+                {
+                    //construct the game's translated display name for each entry
+                    switch (val)
+                    {
+                        case "None":
+                            return i18n.Get("config.KegsAndJar.none");
+                        case "Fruit":
+                            return i18n.Get("config.KegsAndJar.fruit");
+                        case "Vegetable":
+                            return i18n.Get("config.KegsAndJar.vegetable");
+                        case "Both":
+                            return i18n.Get("config.KegsAndJar.both");
+                        default:
+                            return null;
+                    }
                 },
                 getValue: () => Config.SwapForPreservesJar,
                 setValue: type => Config.SwapForPreservesJar = type
