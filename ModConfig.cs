@@ -1,8 +1,6 @@
 ﻿using StardewModdingAPI.Utilities;
-
 namespace AutomateToolSwap
 {
-    //CONFIGURAÇÕES DO MOD
     internal class ModConfig
     {
         /****
@@ -59,17 +57,33 @@ namespace AutomateToolSwap
         public bool ScytheForMossOnTrees { get; set; } = true;
         public bool ScytheForCrops { get; set; } = true;
         public bool ScytheForGrass { get; set; } = false;
-
+        public bool ScytheForForage { get; set; } = false;
 
         /****
         ** WateringCan Page Options
         ****/
-
         public bool WateringCanForGardenPot { get; set; } = true;
         public bool WateringCanForUnwateredCrop { get; set; } = true;
         public bool WateringCanForPetBowl { get; set; } = true;
         public bool WateringCanForWater { get; set; } = true;
 
+        /****
+        ** Machines Page Options
+        ****/
+        public bool OresForFurnaces { get; set; } = true;
+        public bool MilkForCheesePress { get; set; } = true;
+        public bool EggsForMayoMachine { get; set; } = true;
+        public bool TrashForRecycling { get; set; } = true;
+        public bool BoneForBoneMill { get; set; } = true;
+        public bool WoolForLoom { get; set; } = true;
+        public bool FishForSmoker { get; set; } = true;
+        public bool FishForBaitMaker { get; set; } = true;
+        public bool MineralsForCrystalarium { get; set; } = true;
+        public bool SwapForSeedMaker { get; set; } = false;
+        public bool BaitForCrabPot { get; set; } = true;
+        public bool OresForFurnace { get; set; } = true;
+        public string SwapForKegs { get; set; } = "None";
+        public string SwapForPreservesJar { get; set; } = "None";
 
         /****
         ** Random Options
@@ -78,26 +92,13 @@ namespace AutomateToolSwap
         public bool FishingRodOnWater { get; set; } = true;
         public bool SeedForTilledDirt { get; set; } = false;
         public bool DisableTractorSwap { get; set; } = false;
-        public bool OresForFurnaces { get; set; } = true;
-        public bool MilkForCheesePress { get; set; } = true;
-        public bool EggsForMayoMachine { get; set; } = true;
-        public bool TrashForRecycling { get; set; } = true;
         public bool AnyToolForSupplyCrates { get; set; } = true;
-        public bool BoneForBoneMill { get; set; } = true;
-        public bool WoolForLoom { get; set; } = true;
-        public bool FishForSmoker { get; set; } = true;
-        public bool FishForBaitMaker { get; set; } = true;
-        public bool MineralsForCrystalarium { get; set; } = true;
-        public bool SwapForSeedMaker { get; set; } = false;
-        public bool BaitForCrabPot { get; set; } = true;
         public bool PanForPanningSpots { get; set; } = true;
         public bool HayForFeedingBench { get; set; } = true;
         public bool MilkPailForCowsAndGoats { get; set; } = true;
         public bool ShearsForSheeps { get; set; } = true;
-        public bool OresForFurnace { get; set; } = true;
         public bool FertilizerForCrops { get; set; } = false;
-        public string SwapForKegs { get; set; } = "None";
-        public string SwapForPreservesJar { get; set; } = "None";
+
 
     }
 
