@@ -1,4 +1,7 @@
 ﻿using AutomateToolSwap;
+using Microsoft.Xna.Framework.Input;
+using StardewModdingAPI;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 public class IndexSwitcher
 {
@@ -6,36 +9,53 @@ public class IndexSwitcher
     public int lastIndex;
     public int auxIndex;
     public bool canSwitch;
+    public List<KeybindList> keys = new List<KeybindList>();
+
+
     public IndexSwitcher(int initialIndex)
     {
         currentIndex = initialIndex;
         lastIndex = initialIndex;
         auxIndex = initialIndex;
+        keys.Add(KeybindList.Parse("ControllerX"));
+        keys.Add(KeybindList.Parse("C"));
+        keys.Add(KeybindList.Parse("MouseLeft"));
     }
 
-    //Métodos para trocar o index do Item utilizado pelo jogador
-    public void SwitchIndex(int newIndex)
+    public async Task SwitchIndex(int newIndex)
     {
-        //Coloca o Index do item desejado no Index do atual item do jogador, realizando assim a troca de items
+
         lastIndex = Game1.player.CurrentToolIndex;
         Game1.player.CurrentToolIndex = newIndex;
         currentIndex = newIndex;
 
-        //Caso a opção de retornar para o ultimo item esteja ativada
         if (canSwitch)
         {
-            Waiter();
+            await Waiter();
         }
     }
 
-    //Espera o jogador terminar de usar o item, para pode trocar para o ultimo item selecionado
     public async Task Waiter()
     {
-        await Task.Delay(500);
 
-        while (ModEntry.Config.SwapKey.IsDown())
-            if (!ModEntry.Config.SwapKey.IsDown())
-                break;
+        await Task.Delay(500);
+        if (ModEntry.Config.UseDifferentSwapKey)
+        {
+            while (ModEntry.Config.SwapKey.IsDown())
+                if (!ModEntry.Config.SwapKey.IsDown())
+                    break;
+        }
+        else
+        {
+            for (int i = 0; i < keys.Count; i++)
+            {
+                if (keys[i].IsDown())
+                    while (keys[i].IsDown())
+                        if (!keys[i].IsDown())
+                            break;
+            }
+        }
+
 
         while (!Game1.player.canMove)
             await Task.Delay(20);
@@ -44,11 +64,8 @@ public class IndexSwitcher
 
 
     }
-
-    //Retorna para o ultimo item selecionado
     public void GoToLastIndex()
     {
-        //Troca de valores de 2 variaveis com ajuda de uma auxiliar
         auxIndex = Game1.player.CurrentToolIndex;
         Game1.player.CurrentToolIndex = lastIndex;
         currentIndex = lastIndex;
