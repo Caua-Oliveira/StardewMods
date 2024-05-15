@@ -29,6 +29,7 @@ The keybind to switch back to the last used tool.
 
 Choose how tools are switched: 'Cursor' uses the mouse pointer, 'Player' uses the player's orientation. (USE PLAYER FOR CONTROLLER)
 - **"Auto-Return to Last Tool" - true / <u>false<u>**
+
 Automatically return to the previously used tool after swapping.
 
 ![](https://i.imgur.com/IJ4MG2X.png)
