@@ -13,16 +13,23 @@ _underlined_ is default
 
 ![](https://i.imgur.com/YiGdsBw.png)
 - **"Use Custom Swap Key" - true / <u>false<u>**
+
 If you should use the custumizable Tool Swap Keybind or the game default.
 - **"Tool Swap Keybind" - _*MouseLeft*_** 
+
 The keybind to switch between tools (Only if you check the option above). Otherwise, it will use the default game keybind for Using Tools.
 - **"Toggle Mod Keybind" - *_CapsLock_***
+
 The keybind to toggle the mod on or off.
+
 - **"Last Tool Keybind" -** *_**MouseMiddle**_*
+
 The keybind to switch back to the last used tool.
 - **"Tool Selection Mode" -  "Player / <u>"Cursor"<u>**
+
 Choose how tools are switched: 'Cursor' uses the mouse pointer, 'Player' uses the player's orientation. (USE PLAYER FOR CONTROLLER)
 - **"Auto-Return to Last Tool" - true / <u>false<u>**
+- 
 Automatically return to the previously used tool after swapping.
 
 ![](https://i.imgur.com/IJ4MG2X.png)
