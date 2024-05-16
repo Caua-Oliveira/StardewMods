@@ -15,7 +15,7 @@ namespace AutomateToolSwap
     public class ModEntry : Mod
     {
         internal static ModEntry Instance { get; set; } = null!;
-        internal static ModConfig Config { get; private set; } = null!; // Declare static instance of ModConfig
+        internal static ModConfig Config { get; private set; } = null!;
         internal static Check check { get; private set; } = null!;
         internal static ITranslationHelper i18n;
         internal static bool isTractorModInstalled;
