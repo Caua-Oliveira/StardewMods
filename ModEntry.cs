@@ -71,6 +71,7 @@ namespace AutomateToolSwap
             }
 
             //Code for Tractor Mod
+            //Codigo para o Mod de Trator
             if (!isTractorModInstalled || Config.DisableTractorSwap || (!Config.Enabled && !Config.DisableTractorSwap))
                 return;
 
@@ -93,11 +94,13 @@ namespace AutomateToolSwap
 
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            // ignore if player hasn't loaded a save yet
+            // ignore if player hasn't loaded a save yet or is in a menu
+            // ignora se o jogador não tiver carregado um save ou estiver em um menu
             if (!Context.IsWorldReady || Game1.activeClickableMenu != null)
                 return;
 
             // turns mod on/off
+            // desliga e liga o mod
             if (Config.ToggleKey.JustPressed())
             {
                 Config.Enabled = !Config.Enabled;
@@ -108,14 +111,17 @@ namespace AutomateToolSwap
             }
 
             // swap to the last item
+            // troca para o item mais recente
             if (Config.LastToolKey.JustPressed() && Game1.player.canMove)
                 switcher.GoToLastIndex();
 
-            // check if the mod should try to swap
+            // check if the mod should try to swap items
+            // verifica se o mod deve tentar trocar itens
             if (!ButtonMatched(e) || !Config.Enabled || !(Game1.player.canMove))
                 return;
 
-
+            // variables for the main method
+            // variáveis para o método principal
             Farmer player = Game1.player;
             GameLocation currentLocation = Game1.currentLocation;
             ICursorPosition cursorPos = this.Helper.Input.GetCursorPosition();
@@ -129,7 +135,8 @@ namespace AutomateToolSwap
 
         }
 
-        // detects what is in the tile that the player is looking at and calls the function to swap tools
+        // detects what is in the tile that the player is looking at and calls the function to swap items
+        // detecta o que está no bloco que o jogador está olhando e chama a função para trocar items
         private void CheckTile(GameLocation location, Vector2 tile, Farmer player)
         {
             if (Config.AlternativeWeaponOnMonsters && player.CurrentItem is MeleeWeapon && !player.CurrentItem.Name.Contains("Scythe") && monsterNearby)
@@ -163,11 +170,13 @@ namespace AutomateToolSwap
         }
 
         //Looks for the tool necessary for the action
+        //Procura pelo ferramenta necessária para a ação
         public void SetTool(Farmer player, Type toolType, string aux = "", bool anyTool = false)
         {
             switcher.canSwitch = Config.AutoReturnToLastTool;
             var items = player.Items;
-            //Melee Weapons \/
+            //Melee Weapons (swords and scythes) \/
+            //Armas de curta distância (espadas e foice) \/
             if (toolType == typeof(MeleeWeapon))
             {
                 if (aux == "Scythe" || aux == "ScytheOnly")
@@ -202,6 +211,7 @@ namespace AutomateToolSwap
             }
 
             //Any other tool \/
+            //Qualquer outra ferramenta
 
             for (int i = 0; i < player.maxItems; i++)
             {
@@ -221,13 +231,15 @@ namespace AutomateToolSwap
 
         }
 
-        //Any item \/
+        //Looks for the item necessary for the action
+        //Procura pelo item necessário para a ação
         public void SetItem(Farmer player, string categorie, string item = "", string crops = "Both", int aux = 0)
         {
             switcher.canSwitch = Config.AutoReturnToLastTool;
 
             var items = player.Items;
             //Handles trash
+            //Trata da categoria lixo
             if (categorie == "Trash" || categorie == "Fertilizer")
             {
                 for (int i = 0; i < player.maxItems; i++)
@@ -246,6 +258,7 @@ namespace AutomateToolSwap
             }
 
             //Handles resources
+            //Trata da categoria recursos
             if (categorie == "Resource")
             {
                 for (int i = 0; i < player.maxItems; i++)
@@ -261,6 +274,8 @@ namespace AutomateToolSwap
                 return;
             }
 
+            //Handles Seeds
+            //Trata da categoria sementes
             if (categorie == "Seed")
             {
                 for (int i = 0; i < player.maxItems; i++)
@@ -278,6 +293,7 @@ namespace AutomateToolSwap
             }
 
             //Handles Crops
+            //Trata da categoria plantações
             if (categorie == "Crops")
             {
                 bool canFruit = crops == "Both" || crops == "Fruit";
@@ -305,6 +321,7 @@ namespace AutomateToolSwap
 
 
             //Handles any other item
+            //Trata de qualquer outro item
             for (int i = 0; i < player.maxItems; i++)
             {
                 if (items[i] != null && items[i].category == aux && items[i].Name.Contains(item))
@@ -321,6 +338,8 @@ namespace AutomateToolSwap
             return;
         }
 
+        //Checks if the button pressed matches the config
+        //Verifica se o botão pressionado corresponde a config
         public bool ButtonMatched(ButtonPressedEventArgs e)
         {
             if (Config.UseDifferentSwapKey)
