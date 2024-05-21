@@ -203,7 +203,7 @@ public class Check
 
             // Return if the player has a tapper in hand (item that can be put in tree)
             // Retorna se o jogador estiver segurando um tapper na mão (item que pode ser colocado em árvores)
-            if (!config.AxeForTrees || (player.CurrentItem != null && player.CurrentItem.Name == "Tapper"))
+            if (!config.AxeForTrees || (player.CurrentItem != null && (player.CurrentItem.Name == "Tapper" || player.CurrentItem.Name == "Tree Fertilizer")))
                 return true;
 
             // If the tree is not fully grown and the config to ignore it is enabled, skips, otherwise swaps to Axe 
@@ -285,7 +285,7 @@ public class Check
 
     // ResourceClumps are stumps, logs, boulders and giant crops (they occupie more than one tile)
     // ResourceClumps são tocos, troncos, pedregulhos plantas gigantes (ocupam mais de um bloco)
-    public bool ResourceClumps(GameLocation location, Vector2 tilePosition, Farmer farmer)
+    public bool ResourceClumps(GameLocation location, Vector2 tilePosition, Farmer player)
     {
         bool IsStumpOrLog(ResourceClump resourceClump)
         {
@@ -303,19 +303,20 @@ public class Check
             {
                 if (config.AxeForGiantCrops && resourceClump is GiantCrop)
                 {
-                    ModEntry.SetTool(farmer, typeof(Axe));
+                    if (player.CurrentItem.Name != "Tapper")
+                        ModEntry.SetTool(player, typeof(Axe));
                     return true;
                 }
 
                 if (config.AxeForStumpsAndLogs && IsStumpOrLog(resourceClump))
                 {
-                    ModEntry.SetTool(farmer, typeof(Axe));
+                    ModEntry.SetTool(player, typeof(Axe));
                     return true;
                 }
 
                 if (config.PickaxeForBoulders && IsBoulder(resourceClump))
                 {
-                    ModEntry.SetTool(farmer, typeof(Pickaxe));
+                    ModEntry.SetTool(player, typeof(Pickaxe));
                     return true;
                 }
             }
