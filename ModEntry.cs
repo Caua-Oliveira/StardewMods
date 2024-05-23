@@ -21,6 +21,9 @@ namespace AutomateToolSwap
         internal static bool isTractorModInstalled;
         internal static bool monsterNearby = false;
 
+
+        //When the mods are loading
+        //Quando os mods estão carregando
         public override void Entry(IModHelper helper)
         {
             Instance = this;
@@ -34,6 +37,8 @@ namespace AutomateToolSwap
 
         }
 
+        //When the game opes
+        //Quando o jogo abre
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             isTractorModInstalled = Helper.ModRegistry.IsLoaded("Pathoschild.TractorMod");
@@ -42,6 +47,8 @@ namespace AutomateToolSwap
 
         IndexSwitcher switcher = new IndexSwitcher(0);
 
+        //Special cases
+        //Casos especiais
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
             if (!Context.IsWorldReady || Game1.activeClickableMenu != null)
