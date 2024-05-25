@@ -82,7 +82,7 @@ namespace AutomateToolSwap
             if (!isTractorModInstalled || Config.DisableTractorSwap || (!Config.Enabled && !Config.DisableTractorSwap))
                 return;
 
-            if (Game1.player.isRidingHorse() && Game1.player.mount.Name.Contains("tractor"))
+            if (Game1.player.isRidingHorse() && Game1.player.mount.Name.ToLower().Contains("tractor"))
             {
                 Farmer player = Game1.player;
                 GameLocation currentLocation = Game1.currentLocation;
