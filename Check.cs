@@ -268,7 +268,7 @@ public class Check
 
             // Swap to Watering Can if plant is not watered
             // Troca para Regador se a planta não estiver regada
-            if (hoeDirt.crop != null && !hoeDirt.isWatered() && !hoeDirt.readyForHarvest() && config.WateringCanForUnwateredCrop && !(player.isRidingHorse() && player.mount.Name.Contains("tractor") && player.CurrentTool is Hoe))
+            if (hoeDirt.crop != null && !hoeDirt.isWatered() && !hoeDirt.readyForHarvest() && config.WateringCanForUnwateredCrop && !(player.isRidingHorse() && player.mount.Name.ToLower().Contains("tractor") && player.CurrentTool is Hoe))
             {
                 if (!(config.PickaxeOverWateringCan && player.CurrentTool is Pickaxe))
                     ModEntry.SetTool(player, typeof(WateringCan));
@@ -459,7 +459,7 @@ public class Check
 
     public bool DiggableSoil(GameLocation location, Vector2 tile, Farmer player)
     {
-        if (!ModEntry.isTractorModInstalled || (player.isRidingHorse() && player.mount.Name.Contains("tractor")))
+        if (!ModEntry.isTractorModInstalled || (player.isRidingHorse() && player.mount.Name.ToLower().Contains("tractor")))
             return false;
 
         bool isNotScythe = player.CurrentItem?.category == -98;
