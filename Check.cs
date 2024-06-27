@@ -12,7 +12,6 @@ using System.Threading;
 
 
 //Get the object at the specified tile
-//Obtem o objeto no bloco especificado
 public class Check
 {
     private ModEntry ModEntry;
@@ -26,8 +25,6 @@ public class Check
 
     public bool Objects(GameLocation location, Vector2 tile, Farmer player)
     {
-        // Get the object at the specified tile
-        // Obtem o objeto no bloco especificado
         var obj = location.getObjectAtTile((int)tile.X, (int)tile.Y);
         bool itemCantBreak = !(player.CurrentItem is Pickaxe or Axe);
 
@@ -35,7 +32,6 @@ public class Check
             return false;
 
         // Checks for characteristics of the object, and swaps items accordlingly
-        // Verifica as características do objeto e troca os itens conforme necessário
         switch (obj)
         {
             case var _ when obj.IsWeeds():
@@ -72,7 +68,6 @@ public class Check
         }
 
         // Checks for the name of the objects, and swaps items accordlingly
-        // Verifica o nome dos objetos e troca os itens conforme necessário
         switch (obj.Name)
         {
             case "Furnace":
@@ -165,11 +160,9 @@ public class Check
 
 
     // TerrainFeatures are trees, bushes, grass and tilled dirt
-    // TerrainFeatures são árvores, arbustos, gramas e terra arada
     public bool TerrainFeatures(GameLocation location, Vector2 tile, Farmer player)
     {
         // bushes are a special case because they occupie more than one tile
-        // arbustos são um caso especial porque eles ocupam mais de um bloco
         foreach (var terrainFeature in location.largeTerrainFeatures)
         {
             if (terrainFeature is not Bush || !config.ScytheForBushes)
@@ -196,7 +189,6 @@ public class Check
         if (feature is Tree tree)
         {
             // Remove moss if needed swapping to Scythe
-            // Remove o musgo se necessário trocando para Foice
             if (tree.hasMoss && tree.growthStage >= Tree.stageForMossGrowth && config.ScytheForMossOnTrees)
             {
                 ModEntry.SetTool(player, typeof(MeleeWeapon), "Scythe");
@@ -204,12 +196,10 @@ public class Check
             }
 
             // Return if the player has a tapper in hand (item that can be put in tree)
-            // Retorna se o jogador estiver segurando um tapper na mão (item que pode ser colocado em árvores)
             if (!config.AxeForTrees || (player.CurrentItem != null && (player.CurrentItem.Name == "Tapper" || player.CurrentItem.Name == "Tree Fertilizer")))
                 return true;
 
             // If the tree is not fully grown and the config to ignore it is enabled, skips, otherwise swaps to Axe 
-            // Se a árvore não estiver completamente crescida e a configuração para ignorá-la estiver ativada, skipa, caso contrário, troca para o Machado
             if (!(tree.growthStage < Tree.treeStage && config.IgnoreGrowingTrees))
             {
                 ModEntry.SetTool(player, typeof(Axe));
@@ -220,7 +210,6 @@ public class Check
         }
 
         // It does not swap to Scythe if the player is holding a animal tool, because it could break grass by mistake when trying to "harvest" a animal
-        // Não troca para a Foice se o jogador estiver segurando uma ferramenta de animal, porque poderia quebrar grama por engano tentando "colher" de um animal
         if (feature is Grass && !(player.CurrentTool is MilkPail || player.CurrentTool is Shears) && config.ScytheForGrass)
         {
             ModEntry.SetTool(player, typeof(MeleeWeapon), "ScytheOnly");
@@ -229,13 +218,10 @@ public class Check
 
 
         // Tilled dirt
-        // Terra arada
         if (feature is HoeDirt dirt)
         {
             bool dirtHasCrop = dirt.crop != null;
 
-            // Swap to seed if it can be used
-            // Troca para semente se puder ser usado
             if (!dirtHasCrop && config.SeedForTilledDirt)
             {
                 if (!(config.PickaxeOverWateringCan && player.CurrentTool is Pickaxe))
@@ -245,16 +231,12 @@ public class Check
                 return true;
             }
 
-            // Swap to scythe if it is a grown crop or a dead crop
-            // Troca para Foice se for uma planta crescida ou uma planta morta
             if (dirtHasCrop && (dirt.readyForHarvest() || dirt.crop.dead) && config.ScytheForCrops)
             {
                 ModEntry.SetTool(player, typeof(MeleeWeapon), "ScytheOnly");
                 return true;
             }
 
-            // Swap to fertilizer if it can be used
-            // Troca para fertilizante se puder ser usado
             if (dirtHasCrop && !dirt.HasFertilizer() && dirt.CanApplyFertilizer("(O)369") && config.FertilizerForCrops)
             {
                 if (!(config.PickaxeOverWateringCan) && player.CurrentTool is not Pickaxe && player.CurrentItem.category != -19)
@@ -262,8 +244,7 @@ public class Check
                 return true;
             }
 
-            // Swap to Hoe if it is a Ginger Crop
-            // Troca para Enxada se for uma planta de Gengibre
+
             if (dirtHasCrop && dirt.crop.whichForageCrop == "2" && config.HoeForGingerCrop)
             {
                 ModEntry.SetTool(player, typeof(Hoe));
@@ -271,7 +252,6 @@ public class Check
             }
 
             // Swap to Watering Can if plant is not watered
-            // Troca para Regador se a planta não estiver regada
             if (dirtHasCrop && !dirt.isWatered() && !dirt.readyForHarvest() && config.WateringCanForUnwateredCrop && !(player.isRidingHorse() && player.mount.Name.ToLower().Contains("tractor") && player.CurrentTool is Hoe))
             {
                 if (!(config.PickaxeOverWateringCan && player.CurrentTool is Pickaxe))
@@ -288,11 +268,8 @@ public class Check
 
 
     // ResourceClumps are stumps, logs, boulders and giant crops (they occupie more than one tile)
-    // ResourceClumps são tocos, troncos, pedregulhos plantas gigantes (ocupam mais de um bloco)
     public bool ResourceClumps(GameLocation location, Vector2 tilePosition, Farmer player)
     {
-        // Variables for the checks
-        // Variáveis para as checagens
         bool IsStumpOrLog(ResourceClump resourceClump)
         {
             return new List<int> { 602, 600 }.Contains(resourceClump.parentSheetIndex);
@@ -303,8 +280,6 @@ public class Check
         }
 
 
-        // Checks
-        // Checagens
         foreach (var resourceClump in location.resourceClumps)
         {
             if (resourceClump.occupiesTile((int)tilePosition.X, (int)tilePosition.Y))
@@ -338,12 +313,9 @@ public class Check
     {
         foreach (var character in location.characters)
         {
-            // If monster is close to player, swaps to weapon
-            // Se o monstro estiver perto do jogador, troca para arma
             if (character.IsMonster && Vector2.Distance(tile, character.Tile) < config.MonsterRangeDetection)
             {
-                // Crabs is a special case
-                // Carangueijos é um caso especial
+                // Crabs are a special case
                 if (character is RockCrab crab)
                 {
                     if (config.IgnoreCrabs)
@@ -358,7 +330,6 @@ public class Check
                 }
 
                 // If player is holding a bomb or staircase, don't swaps to weapon because they are used as escapes
-                // Se o jogador estiver carregando uma bomba ou escada, não troca para arma por que eles são usados para escapar
                 if (player.CurrentItem == null || !player.CurrentItem.Name.Contains("Bomb") && !player.CurrentItem.Name.Contains("Staircase"))
                 {
                     ModEntry.SetTool(player, typeof(MeleeWeapon), "Weapon");
@@ -372,11 +343,8 @@ public class Check
         return false;
     }
 
-    // Check for water or things that neeed water
     public bool Water(GameLocation location, Vector2 tile, Farmer player)
     {
-        // Variables for the checks
-        // Variáveis para as checagens
         bool IsPetBowlOrStable(GameLocation location, Vector2 tile)
         {
             var building = location.getBuildingAt(tile);
@@ -398,8 +366,7 @@ public class Check
         bool shouldUseWateringCan = location is Farm || location is VolcanoDungeon || location.InIslandContext() || location.isGreenhouse;
 
 
-        // Checks
-        // Checagens
+        //Checks
         if (IsPetBowlOrStable(location, tile) && config.WateringCanForPetBowl)
         {
             ModEntry.SetTool(player, typeof(WateringCan));
@@ -436,8 +403,6 @@ public class Check
         {
             float distanceToAnimal = Vector2.Distance(tile, animal.Tile);
 
-            // If animal is in range, swaps to milk pail or shears
-            // Se o animal estiver perto, troca para balde de leite ou tesouras
             if (config.MilkPailForCowsAndGoats && animalsThatCanBeMilked.Any(animal.type.Contains)
                 && distanceToAnimal <= 1 && animal.currentLocation == player.currentLocation)
             {
@@ -452,8 +417,6 @@ public class Check
             }
         }
 
-        // Check for feeding bench availability and swaps to hay
-        // Verifica se a mesa de alimentação está disponível e troca para palha
         bool isFeedingBench = location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Trough", "Back") != null;
         if (location is AnimalHouse && isFeedingBench)
         {
@@ -467,7 +430,6 @@ public class Check
     public bool DiggableSoil(GameLocation location, Vector2 tile, Farmer player)
     {
         // If the player is in a tractor it will not swap to hoe because it would tille all the ground when moving
-        // Se o jogador estiver em um trator, não vai trocar para enxada porque iria arar todo o terreno ao se mover
         if (ModEntry.isTractorModInstalled && player.isRidingHorse() && player.mount.Name.ToLower().Contains("tractor"))
             return false;
 
