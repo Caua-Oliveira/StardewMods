@@ -19,14 +19,12 @@ public class IndexSwitcher
         auxIndex = initialIndex;
 
         // Default game keys
-        // Botões padrão do jogo
         keys.Add(KeybindList.Parse("ControllerX"));
         keys.Add(KeybindList.Parse("C"));
         keys.Add(KeybindList.Parse("MouseLeft"));
     }
 
     // Changes the index of the player inventory, so it holds the desired item
-    // Troca o index do inventário do jogador, para que ele tenha o item desejado
     public async Task SwitchIndex(int newIndex)
     {
         lastIndex = Game1.player.CurrentToolIndex;
@@ -39,8 +37,7 @@ public class IndexSwitcher
         }
     }
 
-    // Waits until the player can move or stops using the item and goes back to the last used index
-    // Espera até que o jogador possa se mover ou parar de usar o item e volta para o index usado anteriormente
+    // Waits until the player can move or stops using the item
     public async Task Waiter()
     {
 
@@ -72,7 +69,6 @@ public class IndexSwitcher
     }
 
     // Goes back to last used index
-    // Vai para o index usado anteriormente
     public void GoToLastIndex()
     {
         auxIndex = Game1.player.CurrentToolIndex;
