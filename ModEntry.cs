@@ -1,4 +1,8 @@
 ﻿
+using System;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
 using GenericModConfigMenu;
 using Microsoft.Xna.Framework;
 using Netcode;
@@ -8,6 +12,7 @@ using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Monsters;
 using StardewValley.Tools;
+using xTile.Tiles;
 
 
 namespace AutomateToolSwap
@@ -19,8 +24,9 @@ namespace AutomateToolSwap
         internal static Check tileHas { get; private set; } = null!;
         internal static ITranslationHelper i18n;
         internal static bool isTractorModInstalled;
+        internal static bool isRangedToolsInstalled;
         internal static bool monsterNearby = false;
-
+        internal static string modsPath;
 
         //Called when the mod is loading
         //Chamada quando o mod está carregando
@@ -42,7 +48,9 @@ namespace AutomateToolSwap
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             isTractorModInstalled = Helper.ModRegistry.IsLoaded("Pathoschild.TractorMod");
+            isRangedToolsInstalled = Helper.ModRegistry.IsLoaded("vgperson.RangedTools");
             ConfigSetup.SetupConfig(Helper, Instance);
+            modsPath = Path.Combine(AppContext.BaseDirectory, "Mods");
         }
 
         IndexSwitcher switcher = new IndexSwitcher(0);
@@ -50,6 +58,7 @@ namespace AutomateToolSwap
 
         //Called when a button is pressed
         //Chamada quando um botão é pressionado
+        [EventPriority(EventPriority.High)]
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
             if (!Context.IsWorldReady || Game1.activeClickableMenu != null)
@@ -75,21 +84,7 @@ namespace AutomateToolSwap
             if (!ButtonMatched(e) || !Config.Enabled || !(Game1.player.canMove))
                 return;
 
-            // variables for the main method
-            // variáveis para o método principal
-            Farmer player = Game1.player;
-            GameLocation currentLocation = Game1.currentLocation;
-            ICursorPosition cursorPos = this.Helper.Input.GetCursorPosition();
-            Vector2 cursorTile = cursorPos.GrabTile;
-            Vector2 frontOfPlayerTile = new Vector2((int)Game1.player.GetToolLocation().X / Game1.tileSize, (int)Game1.player.GetToolLocation().Y / Game1.tileSize);
-
-            // different methods for detecting tiels
-            // diferentes métodos para detectar blocos
-            if (Config.DetectionMethod == "Cursor")
-                CheckTile(currentLocation, cursorTile, player);
-            else if (Config.DetectionMethod == "Player")
-                CheckTile(currentLocation, frontOfPlayerTile, player);
-
+            callMainMethod();
         }
 
         // detects what is in the tile that the player is looking at 
@@ -379,6 +374,59 @@ namespace AutomateToolSwap
             }
         }
 
+        public void callMainMethod()
+        {
+            // variables for the main method
+            // variáveis para o método principal
+            Farmer player = Game1.player;
+            GameLocation currentLocation = Game1.currentLocation;
+            ICursorPosition cursorPos = Helper.Input.GetCursorPosition();
+            Vector2 frontOfPlayerTile = new Vector2((int)Game1.player.GetToolLocation().X / Game1.tileSize, (int)Game1.player.GetToolLocation().Y / Game1.tileSize);
+
+            // different methods for detecting tiles
+            // diferentes métodos para detectar blocos
+            string folderPath = Path.Combine(modsPath, "RangedTools");
+            string configFilePath = Path.Combine(folderPath, "config.json");
+            int toolRange = 1;
+            if (File.Exists(configFilePath))
+            {
+                string jsonString = File.ReadAllText(configFilePath);
+                using (JsonDocument doc = JsonDocument.Parse(jsonString))
+                {
+                    JsonElement root = doc.RootElement;
+                    if (root.TryGetProperty("AxeRange", out JsonElement toolRangeElement))
+                    {
+                        toolRange = toolRangeElement.GetInt32();
+                    }
+                }
+            }
+
+            if (Config.DetectionMethod == "Cursor")
+            {
+                if (isRangedToolsInstalled)
+                {
+                    // Calculate Chebyshev distance
+                    double distance = Math.Max(Math.Abs(player.Tile.X - cursorPos.Tile.X), Math.Abs(player.Tile.Y - cursorPos.Tile.Y));
+                    if (toolRange == -1 || distance <= toolRange)
+                    {
+                        CheckTile(currentLocation, cursorPos.Tile, player);
+                    }
+                    else
+                    {
+                        CheckTile(currentLocation, cursorPos.GrabTile, player);
+                    }
+                }
+                else
+                {
+                    CheckTile(currentLocation, cursorPos.GrabTile, player);
+                }
+            }
+            else if (Config.DetectionMethod == "Player")
+            {
+                CheckTile(currentLocation, frontOfPlayerTile, player);
+            }
+
+        }
     }
 }
 
