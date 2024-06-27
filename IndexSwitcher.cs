@@ -44,7 +44,7 @@ public class IndexSwitcher
     public async Task Waiter()
     {
 
-        await Task.Delay(500);
+        await Task.Delay(700);
         if (ModEntry.Config.UseDifferentSwapKey)
         {
             while (ModEntry.Config.SwapKey.IsDown())
@@ -64,7 +64,7 @@ public class IndexSwitcher
 
 
         while (!Game1.player.canMove)
-            await Task.Delay(20);
+            await Task.Delay(1);
 
         GoToLastIndex();
 
