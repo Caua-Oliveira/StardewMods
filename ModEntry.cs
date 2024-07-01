@@ -59,6 +59,8 @@ namespace AutomateToolSwap
             if (!Context.IsWorldReady || Game1.activeClickableMenu != null)
                 return;
 
+            Farmer player = Game1.player;
+
             if (Config.ToggleKey.JustPressed())
             {
                 Config.Enabled = !Config.Enabled;
@@ -69,22 +71,22 @@ namespace AutomateToolSwap
             }
 
             // swaps to the last used item
-            if (Config.LastToolKey.JustPressed() && Game1.player.canMove)
-                indexSwitcher.GoToLastIndex();
+            if (Config.LastToolKey.JustPressed() && player.canMove)
+                indexSwitcher.GoToLastIndex(player);
 
 
-            if (!ButtonMatched(e) || !Config.Enabled || !(Game1.player.canMove))
+            if (!ButtonMatched(e) || !Config.Enabled || !(player.canMove))
                 return;
 
-            startMod();
+
+            startMod(player);
         }
 
-        public void startMod()
+        public void startMod(Farmer player)
         {
-            Farmer player = Game1.player;
-            GameLocation currentLocation = Game1.currentLocation;
+            GameLocation currentLocation = player.currentLocation;
             ICursorPosition cursorPos = Helper.Input.GetCursorPosition();
-            Vector2 frontOfPlayerTile = new Vector2((int)Game1.player.GetToolLocation().X / Game1.tileSize, (int)Game1.player.GetToolLocation().Y / Game1.tileSize);
+            Vector2 frontOfPlayerTile = new Vector2((int)player.GetToolLocation().X / Game1.tileSize, (int)player.GetToolLocation().Y / Game1.tileSize);
 
             // compatibility with RangedTools
             string folderPath = Path.Combine(modsPath, "RangedTools");
@@ -236,7 +238,7 @@ namespace AutomateToolSwap
                         {
                             if (player.CurrentToolIndex != i)
                             {
-                                indexSwitcher.SwitchIndex(i);
+                                indexSwitcher.SwitchIndex(i, player);
                             }
                             return;
                         }
@@ -251,7 +253,7 @@ namespace AutomateToolSwap
                     {
                         if (player.CurrentToolIndex != i)
                         {
-                            indexSwitcher.SwitchIndex(i);
+                            indexSwitcher.SwitchIndex(i, player);
                         }
                         return;
                     }
@@ -267,7 +269,7 @@ namespace AutomateToolSwap
                 {
                     if (player.CurrentToolIndex != i)
                     {
-                        indexSwitcher.SwitchIndex(i);
+                        indexSwitcher.SwitchIndex(i, player);
 
                     }
 
@@ -294,7 +296,7 @@ namespace AutomateToolSwap
                     {
                         if (player.CurrentToolIndex != i)
                         {
-                            indexSwitcher.SwitchIndex(i);
+                            indexSwitcher.SwitchIndex(i, player);
                         }
                         return;
                     }
@@ -310,7 +312,7 @@ namespace AutomateToolSwap
                     if (items[i] != null && items[i].category == -15 && items[i].Name.Contains(item) && items[i].Stack >= 5)
                     {
                         if (player.CurrentToolIndex != i)
-                            indexSwitcher.SwitchIndex(i);
+                            indexSwitcher.SwitchIndex(i, player);
 
                         return;
                     }
@@ -327,7 +329,7 @@ namespace AutomateToolSwap
                     if (items[i] != null && items[i].category == -74 && !items[i].HasContextTag("tree_seed_item"))
                     {
                         if (player.CurrentToolIndex != i)
-                            indexSwitcher.SwitchIndex(i);
+                            indexSwitcher.SwitchIndex(i, player);
 
                         return;
                     }
@@ -353,7 +355,7 @@ namespace AutomateToolSwap
                             return;
 
                         if (player.CurrentToolIndex != i)
-                            indexSwitcher.SwitchIndex(i);
+                            indexSwitcher.SwitchIndex(i, player);
 
                         return;
                     }
@@ -371,7 +373,7 @@ namespace AutomateToolSwap
                         return;
 
                     if (player.CurrentToolIndex != i)
-                        indexSwitcher.SwitchIndex(i);
+                        indexSwitcher.SwitchIndex(i, player);
 
                     return;
                 }
