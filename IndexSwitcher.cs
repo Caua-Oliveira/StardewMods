@@ -25,20 +25,20 @@ public class IndexSwitcher
     }
 
     // Changes the index of the player inventory, so it holds the desired item
-    public async Task SwitchIndex(int newIndex)
+    public async Task SwitchIndex(int newIndex, Farmer player)
     {
-        lastIndex = Game1.player.CurrentToolIndex;
-        Game1.player.CurrentToolIndex = newIndex;
+        lastIndex = player.CurrentToolIndex;
+        player.CurrentToolIndex = newIndex;
         currentIndex = newIndex;
 
         if (canSwitch)
         {
-            await Waiter();
+            await Waiter(player);
         }
     }
 
     // Waits until the player can move or stops using the item
-    public async Task Waiter()
+    public async Task Waiter(Farmer player)
     {
 
         await Task.Delay(700);
@@ -60,19 +60,19 @@ public class IndexSwitcher
         }
 
 
-        while (!Game1.player.canMove)
+        while (!player.canMove)
             await Task.Delay(1);
 
-        GoToLastIndex();
+        GoToLastIndex(player);
 
 
     }
 
     // Goes back to last used index
-    public void GoToLastIndex()
+    public void GoToLastIndex(Farmer player)
     {
-        auxIndex = Game1.player.CurrentToolIndex;
-        Game1.player.CurrentToolIndex = lastIndex;
+        auxIndex = player.CurrentToolIndex;
+        player.CurrentToolIndex = lastIndex;
         currentIndex = lastIndex;
         lastIndex = auxIndex;
 
