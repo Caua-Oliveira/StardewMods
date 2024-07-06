@@ -1,6 +1,13 @@
 {
   "config.goBack": "Return",
 
+
+  /***
+** NEW
+***/
+  "config.detectionMethod.tooltip": "Choose how tools are switched:\n'Cursor' uses the mouse pointer and if its out of reach, it uses the player orientation;\n'Cursor ONLY' uses only the mouse pointer;\n 'Player' uses the player's orientation. (USE THIS FOR CONTROLLER)",
+  "config.DetectionMethod.cursorOnly": "Cursor ONLY",
+
   /***
 ** MAIN SETTINGS
 ***/
@@ -20,7 +27,9 @@
   "config.lastToolKey.tooltip": "The keybind to switch back to the last used tool.",
 
   "config.detectionMethod.name": "Tool Selection Mode",
-  "config.detectionMethod.tooltip": "Choose how tools are switched: 'Cursor' uses the mouse pointer, 'Player' uses the player's orientation. (USE THIS FOR CONTROLLER)",
+  "config.DetectionMethod.cursor": "Cursor",
+  "config.DetectionMethod.player": "Player",
+
 
   "config.autoReturnToLastTool.name": "Auto-Return to Last Tool",
   "config.autoReturnToLastTool.tooltip": "Automatically return to the previously used tool after swapping.",
@@ -227,18 +236,11 @@
   "config.AnyToolForSupplyCrates.name": "Any Tool for Supply Crates",
   "config.AnyToolForSupplyCrates.tooltip": "Automatically switch to the first tool when clicking on Supply Crates.",
 
-  /***
-** NEW
-***/
-  "config.DetectionMethod.cursor": "Cursor",
-  "config.DetectionMethod.player": "Player",
-
-  // Make it so the Fruit and Vegetable translations is equal to the Item Category name that shows up when you hover the mouse on a item
-  // (Otherwise the swap will not work)
   "config.KegsAndJar.both": "Both",
   "config.KegsAndJar.vegetable": "Vegetable",
   "config.KegsAndJar.fruit": "Fruit",
   "config.KegsAndJar.none": "None",
   "mod.Enabled": "Enabled",
   "mod.Disabled": "Disabled"
+
 }
