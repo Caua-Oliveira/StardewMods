@@ -78,7 +78,6 @@ namespace AutomatedTractorMod
                             // Remove moss if needed swapping to Scythe
                             if (tree.hasMoss && tree.growthStage >= Tree.stageForMossGrowth)
                             {
-
                                 return true;
                             }
 
@@ -89,7 +88,6 @@ namespace AutomatedTractorMod
                             // If the tree is not fully grown and the config to ignore it is enabled, skips, otherwise swaps to Axe 
                             if (!(tree.growthStage < Tree.treeStage))
                             {
-
                                 return true;
                             }
 
