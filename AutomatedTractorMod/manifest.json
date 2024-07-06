@@ -1,0 +1,10 @@
+{
+  "Name": "AutomatedTractorMod",
+  "Author": "Trapyy",
+  "Version": "0.0.1",
+  "Description": "Automates the Tractor from the Tractor Mod by pathoschild",
+  "UniqueID": "Trapyy.AutomatedTractorMod",
+  "EntryDll": "AutomatedTractorMod.dll",
+  "MinimumApiVersion": "3.0.0",
+  "UpdateKeys": []
+}
