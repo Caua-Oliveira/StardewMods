@@ -61,6 +61,7 @@ namespace AutomateToolSwap
                 tooltip: () => i18n.Get("config.detectionMethod.tooltip"),
                 allowedValues: new string[] {
                     "Cursor",
+                    "Cursor ONLY",
                     "Player"
                 },
                 formatAllowedValue: (string val) =>
@@ -72,6 +73,8 @@ namespace AutomateToolSwap
                             return i18n.Get("config.DetectionMethod.cursor");
                         case "Player":
                             return i18n.Get("config.DetectionMethod.player");
+                        case "Cursor ONLY":
+                            return i18n.Get("config.DetectionMethod.cursorOnly");
                         default:
                             return null;
                     }
