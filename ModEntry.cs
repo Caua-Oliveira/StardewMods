@@ -27,7 +27,7 @@ namespace AutomateToolSwap
         internal static bool isRangedToolsInstalled;
         internal static bool monsterNearby = false;
         internal static string modsPath;
-
+        IndexSwitcher indexSwitcher = new IndexSwitcher(0);
 
         public override void Entry(IModHelper helper)
         {
@@ -50,7 +50,7 @@ namespace AutomateToolSwap
             modsPath = Path.Combine(AppContext.BaseDirectory, "Mods");
         }
 
-        IndexSwitcher indexSwitcher = new IndexSwitcher(0);
+
 
 
         [EventPriority(EventPriority.High)]
@@ -129,6 +129,10 @@ namespace AutomateToolSwap
             else if (Config.DetectionMethod == "Player")
             {
                 CheckTile(currentLocation, frontOfPlayerTile, player);
+            }
+            else if (Config.DetectionMethod == "Cursor ONLY")
+            {
+                CheckTile(currentLocation, cursorPos.Tile, player);
             }
 
         }
