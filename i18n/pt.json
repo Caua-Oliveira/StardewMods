@@ -129,6 +129,7 @@
   "config.AnyToolForSupplyCrates.name": "Qualquer Ferramenta para Caixas de Suprimentos",
   "config.AnyToolForSupplyCrates.tooltip": "Troca automaticamente para a primeira ferramenta ao clicar nas caixas de suprimentos.",
   "config.DetectionMethod.cursor": "Cursor",
+  "config.DetectionMethod.cursorOnly": "Cursor APENAS",
   "config.DetectionMethod.player": "Jogador",
   "config.KegsAndJar.both": "Ambos",
   "config.KegsAndJar.vegetable": "Vegetal",
