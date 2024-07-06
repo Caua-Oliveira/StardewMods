@@ -89,3 +89,5 @@ npm-debug.log*
 
 /AutomateToolSwap/.vs
 /AutomateToolSwap/obj
+/AutomatedTractorMod/obj
+/AutomatedTractorMod/.vs
