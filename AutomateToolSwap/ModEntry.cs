@@ -158,12 +158,12 @@ namespace AutomateToolSwap
             if (tileHas.TerrainFeatures(location, tile, player))
                 return;
 
-            if (tileHas.Water(location, tile, player))
-                return;
-
             if (Config.WeaponOnMonsters && !Config.AlternativeWeaponOnMonsters)
                 if (tileHas.Monsters(location, tile, player))
                     return;
+
+            if (tileHas.Water(location, tile, player))
+                return;
 
             if (tileHas.Animals(location, tile, player))
                 return;
