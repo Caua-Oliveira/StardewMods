@@ -78,8 +78,8 @@ namespace AutomateToolSwap
             if (!ButtonMatched(e) || !Config.Enabled || !(player.canMove))
                 return;
 
-
-            startMod(player);
+            if(Config.RequireClick)
+                startMod(player);
         }
 
         public void startMod(Farmer player)
@@ -180,6 +180,9 @@ namespace AutomateToolSwap
             if (!Context.IsWorldReady || Game1.activeClickableMenu != null)
                 return;
 
+            if (!Config.RequireClick && Game1.player.canMove)
+                startMod(Game1.player);
+
             //Alternative for the option "Weapon for Monsters"
             if (Config.AlternativeWeaponOnMonsters && Config.WeaponOnMonsters)
             {
@@ -230,6 +233,10 @@ namespace AutomateToolSwap
         {
             indexSwitcher.canSwitch = Config.AutoReturnToLastTool;
             var items = player.Items;
+            
+
+            if (player.Items[indexSwitcher.currentIndex] != null && player.Items[indexSwitcher.currentIndex].GetType() == toolType && !Config.RequireClick)
+                return;
 
             //Melee Weapons (swords and scythes) \/
             if (toolType == typeof(MeleeWeapon))
