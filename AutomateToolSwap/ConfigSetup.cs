@@ -83,6 +83,12 @@ namespace AutomateToolSwap
                 setValue: method => Config.DetectionMethod = method
             );
             configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.RequireClick.name"),
+                tooltip: () => i18n.Get("config.RequireClick.tooltip"),
+                getValue: () => Config.RequireClick,
+                setValue: isEnabled => Config.RequireClick = isEnabled
+            );
+            configMenu.AddBoolOption(ModManifest,
                 name: () => i18n.Get("config.AutoReturnToLastTool.name"),
                 tooltip: () => i18n.Get("config.AutoReturnToLastTool.tooltip"),
                 getValue: () => Config.AutoReturnToLastTool,
