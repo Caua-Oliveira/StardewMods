@@ -12,6 +12,7 @@ namespace AutomateToolSwap
         public KeybindList SwapKey { get; set; } = KeybindList.Parse("MouseLeft");
         public KeybindList LastToolKey { get; set; } = KeybindList.Parse("MouseMiddle");
         public string DetectionMethod { get; set; } = "Cursor";
+        public bool RequireClick { get; set; } = true;
         public bool AutoReturnToLastTool { get; set; } = false;
 
 
