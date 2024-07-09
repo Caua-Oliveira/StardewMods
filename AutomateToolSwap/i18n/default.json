@@ -5,8 +5,8 @@
   /***
 ** NEW
 ***/
-  "config.detectionMethod.tooltip": "Choose how tools are switched:\n'Cursor' uses the mouse pointer and if its out of reach, it uses the player orientation;\n'Cursor ONLY' uses only the mouse pointer;\n 'Player' uses the player's orientation. (USE THIS FOR CONTROLLER)",
-  "config.DetectionMethod.cursorOnly": "Cursor ONLY",
+  "config.RequireClick.name": "Require click to switch tools",
+  "config.RequireClick.tooltip": "If active, you need to click to switch tools, otherwise it will always switch automatically with no need to click.\n(This is recomended).",
 
   /***
 ** MAIN SETTINGS
@@ -27,8 +27,11 @@
   "config.lastToolKey.tooltip": "The keybind to switch back to the last used tool.",
 
   "config.detectionMethod.name": "Tool Selection Mode",
+  "config.detectionMethod.tooltip": "Choose how tools are switched:\n'Cursor' uses the mouse pointer and if its out of reach, it uses the player orientation;\n'Cursor ONLY' uses only the mouse pointer;\n 'Player' uses the player's orientation. (USE THIS FOR CONTROLLER)",
+  "config.DetectionMethod.cursorOnly": "Cursor ONLY",
   "config.DetectionMethod.cursor": "Cursor",
   "config.DetectionMethod.player": "Player",
+
 
 
   "config.autoReturnToLastTool.name": "Auto-Return to Last Tool",
