@@ -25,7 +25,9 @@
   "config.DetectionMethod.cursor": "Curseur",
   "config.DetectionMethod.player": "Joueur",
 
-
+  "config.RequireClick.name": "Cliquer pour changer d’outil",
+  "config.RequireClick.tooltip": "Si activé, vous devez cliquer pour changer d’outils. Autrement il changera automatiquement sans avoir besoin de cliquer. (Recommandé)",
+  
   "config.autoReturnToLastTool.name": "Retour auto au dernier outil",
   "config.autoReturnToLastTool.tooltip": "Revenir automatiquement à l'outil précédemment utilisé après l'échange.",
 
