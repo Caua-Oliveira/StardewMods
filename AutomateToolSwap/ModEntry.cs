@@ -78,7 +78,7 @@ namespace AutomateToolSwap
             if (!ButtonMatched(e) || !Config.Enabled || !(player.canMove))
                 return;
 
-            if(Config.RequireClick)
+            if (Config.RequireClick)
                 startMod(player);
         }
 
@@ -177,7 +177,7 @@ namespace AutomateToolSwap
         //Called when the game updates the tick (60 times per second)
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (!Context.IsWorldReady || Game1.activeClickableMenu != null)
+            if (!Context.IsWorldReady || Game1.activeClickableMenu != null || !Config.Enabled)
                 return;
 
             if (!Config.RequireClick && Game1.player.canMove)
@@ -233,7 +233,7 @@ namespace AutomateToolSwap
         {
             indexSwitcher.canSwitch = Config.AutoReturnToLastTool;
             var items = player.Items;
-            
+
 
             if (player.Items[indexSwitcher.currentIndex] != null && player.Items[indexSwitcher.currentIndex].GetType() == toolType && !Config.RequireClick)
                 return;
