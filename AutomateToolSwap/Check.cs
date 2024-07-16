@@ -11,6 +11,7 @@ using Netcode;
 using System.Threading;
 
 
+
 //Get the object at the specified tile
 public class Check
 {
@@ -31,6 +32,18 @@ public class Check
         if (obj == null)
             return false;
 
+        if (obj.DisplayName.Contains("Stone") && obj.HasContextTag("item_type_litter"))
+        {
+            if (config.PickaxeForStoneAndOres && (player.CurrentItem == null || !player.CurrentItem.Name.Contains("Bomb") && !player.CurrentItem.Name.Contains("Staircase")))
+                ModEntry.SetTool(player, typeof(Pickaxe));
+            return true;
+        }
+        if (obj.DisplayName.Contains("Stump") && obj.HasContextTag("item_type_litter"))
+        {
+            if (config.AxeForTwigs)
+                ModEntry.SetTool(player, typeof(Axe));
+            return true;
+        }
         // Checks for characteristics of the object, and swaps items accordlingly
         switch (obj)
         {
