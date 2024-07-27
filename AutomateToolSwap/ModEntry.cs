@@ -294,6 +294,7 @@ namespace AutomateToolSwap
         //Looks for the index of the item necessary for the action
         public void SetItem(Farmer player, string categorie, string item = "", string crops = "Both", int aux = 0)
         {
+
             indexSwitcher.canSwitch = Config.AutoReturnToLastTool;
             var items = player.Items;
 
@@ -363,6 +364,32 @@ namespace AutomateToolSwap
                     if (items[i] != null && (canFruit && isFruit(items[i]) || canVegetable && isVegetable(items[i])))
                     {
                         if (isFruit(player.CurrentItem) || isVegetable(player.CurrentItem))
+                            return;
+
+                        if (player.CurrentToolIndex != i)
+                            indexSwitcher.SwitchIndex(i, player);
+
+                        return;
+                    }
+                }
+                return;
+            }
+
+            //Handles Crops
+            if (categorie == "Dehydratable")
+            {
+                bool canFruit = crops == "Both" || crops == "Fruit";
+                bool canMushroom = crops == "Both" || crops == "Mushroom";
+
+                for (int i = 0; i < player.maxItems; i++)
+                {
+                    bool isFruit(Item Item) { return Item != null && Item.category == -79; }
+
+                    bool isMushroom(Item Item) { return Item != null && Item.category == -81 && Item.Name != "Red Mushroom"; }
+
+                    if (items[i] != null && (canFruit && isFruit(items[i]) || canMushroom && isMushroom(items[i])))
+                    {
+                        if (isFruit(player.CurrentItem) || isMushroom(player.CurrentItem))
                             return;
 
                         if (player.CurrentToolIndex != i)
