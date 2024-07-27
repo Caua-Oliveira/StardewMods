@@ -5,8 +5,11 @@
   /***
 ** NEW
 ***/
-  "config.RequireClick.name": "Require click to switch tools",
-  "config.RequireClick.tooltip": "If active, you need to click to switch tools, otherwise it will always switch automatically with no need to click.\n(This is recomended).",
+
+  "config.SwapForDehydrator.name": "Swap for Dehydrator",
+  "config.SwapForDehydrator.tooltip": "Swaps to first fruit or mushroom when clicking on Dehydrator",
+  "config.KegsAndJar.mushroom": "Mushroom",
+
 
   /***
 ** MAIN SETTINGS
@@ -32,7 +35,8 @@
   "config.DetectionMethod.cursor": "Cursor",
   "config.DetectionMethod.player": "Player",
 
-
+  "config.RequireClick.name": "Require click to switch tools",
+  "config.RequireClick.tooltip": "If active, you need to click to switch tools, otherwise it will always switch automatically with no need to click.\n(This is recomended).",
 
   "config.autoReturnToLastTool.name": "Auto-Return to Last Tool",
   "config.autoReturnToLastTool.tooltip": "Automatically return to the previously used tool after swapping.",
