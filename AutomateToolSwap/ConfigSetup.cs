@@ -441,6 +441,35 @@ namespace AutomateToolSwap
                 getValue: () => Config.SwapForPreservesJar,
                 setValue: type => Config.SwapForPreservesJar = type
             );
+            configMenu.AddTextOption(ModManifest,
+                name: () => i18n.Get("config.SwapForDehydrator.name"),
+                tooltip: () => i18n.Get("config.SwapForDehydrator.tooltip"),
+                allowedValues: new string[] {
+                    "None",
+                    "Fruit",
+                    "Mushroom",
+                    "Both"
+                },
+                formatAllowedValue: (string val) =>
+                {
+                    //construct the game's translated display name for each entry
+                    switch (val)
+                    {
+                        case "None":
+                            return i18n.Get("config.KegsAndJar.none");
+                        case "Fruit":
+                            return i18n.Get("config.KegsAndJar.fruit");
+                        case "Mushroom":
+                            return i18n.Get("config.KegsAndJar.mushroom");
+                        case "Both":
+                            return i18n.Get("config.KegsAndJar.both");
+                        default:
+                            return null;
+                    }
+                },
+                getValue: () => Config.SwapForDehydrator,
+                setValue: type => Config.SwapForDehydrator = type
+            );
             configMenu.AddPage(ModManifest, String.Empty, () => i18n.Get("config.goBack"));
 
             /****
