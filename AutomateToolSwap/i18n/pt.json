@@ -134,6 +134,7 @@
   "config.KegsAndJar.both": "Ambos",
   "config.KegsAndJar.vegetable": "Vegetal",
   "config.KegsAndJar.fruit": "Fruta",
+  "config.KegsAndJar.mushroom": "Cogumelo",
   "config.KegsAndJar.none": "Nenhum",
   "mod.Enabled": "Ativado",
   "mod.Disabled": "Desativado"
