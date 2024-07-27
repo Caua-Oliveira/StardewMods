@@ -85,6 +85,8 @@ namespace AutomateToolSwap
         public bool OresForFurnace { get; set; } = true;
         public string SwapForKegs { get; set; } = "None";
         public string SwapForPreservesJar { get; set; } = "None";
+        public string SwapForDehydrator { get; set; } = "None";
+
 
         /****
         ** Random Options
