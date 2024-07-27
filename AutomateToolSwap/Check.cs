@@ -88,6 +88,11 @@ public class Check
                     ModEntry.SetItem(player, "Resource", "Ore");
                 return true;
 
+            case "Heavy Furnace":
+                if (config.OresForFurnaces && itemCantBreak && (player.CurrentItem == null || !player.CurrentItem.Name.Contains("Ore")))
+                    ModEntry.SetItem(player, "Resource", "Ore");
+                return true;
+
             case "Cheese Press":
                 if (config.MilkForCheesePress && itemCantBreak)
                     ModEntry.SetItem(player, "Animal Product", "Milk", aux: -6);
@@ -167,6 +172,12 @@ public class Check
                 if (itemCantBreak && config.SwapForPreservesJar != "None")
                     ModEntry.SetItem(player, "Crops", crops: config.SwapForPreservesJar);
                 return true;
+
+            case "Dehydrator":
+                if (itemCantBreak && config.SwapForDehydrator != "None")
+                    ModEntry.SetItem(player, "Dehydratable", crops: config.SwapForDehydrator);
+                return true;
+
         }
         return true;
     }
