@@ -383,6 +383,13 @@ namespace AutomateToolSwap
                 getValue: () => Config.SwapForSeedMaker,
                 setValue: isEnabled => Config.SwapForSeedMaker = isEnabled
             );
+
+            configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.SwapForOilMaker.name"),
+                tooltip: () => i18n.Get("config.SwapForOilMaker.tooltip"),
+                getValue: () => Config.TruffleForOilMaker,
+                setValue: isEnabled => Config.TruffleForOilMaker = isEnabled
+            );
             configMenu.AddTextOption(ModManifest,
                 name: () => i18n.Get("config.SwapForKegs.name"),
                 tooltip: () => i18n.Get("config.SwapForKegs.tooltip"),

@@ -178,6 +178,11 @@ public class Check
                     ModEntry.SetItem(player, "Dehydratable", crops: config.SwapForDehydrator);
                 return true;
 
+            case "Oil Maker":
+                if (itemCantBreak && config.TruffleForOilMaker)
+                    ModEntry.SetItem(player, "Oil Maker", "Truffle", aux: -17);
+                return true;
+
         }
         return true;
     }

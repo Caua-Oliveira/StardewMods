@@ -6,10 +6,9 @@
 ** NEW
 ***/
 
-  "config.SwapForDehydrator.name": "Swap for Dehydrator",
-  "config.SwapForDehydrator.tooltip": "Swaps to first fruit or mushroom when clicking on Dehydrator",
-  "config.KegsAndJar.mushroom": "Mushroom",
-
+  "config.SwapForOilMaker.name": "Swap for Oil Maker",
+  "config.SwapForOilMaker.tooltip": "Swaps to truffle when clicking on Oil Maker",
+  
 
   /***
 ** MAIN SETTINGS
@@ -207,6 +206,10 @@
   "config.swapForPreservesJar.name": "Swap for Preserves Jar",
   "config.swapForPreservesJar.tooltip": "Swaps to first fruit or vegetables when clicking on Preserves Jar",
 
+  "config.SwapForDehydrator.name": "Swap for Dehydrator",
+  "config.SwapForDehydrator.tooltip": "Swaps to first fruit or mushroom when clicking on Dehydrator",
+
+
   /***
 ** Other Options
 ***/
@@ -247,6 +250,7 @@
   "config.KegsAndJar.vegetable": "Vegetable",
   "config.KegsAndJar.fruit": "Fruit",
   "config.KegsAndJar.none": "None",
+  "config.KegsAndJar.mushroom": "Mushroom",
   "mod.Enabled": "Enabled",
   "mod.Disabled": "Disabled"
 

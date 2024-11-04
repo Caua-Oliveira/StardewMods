@@ -83,6 +83,7 @@ namespace AutomateToolSwap
         public bool SwapForSeedMaker { get; set; } = false;
         public bool BaitForCrabPot { get; set; } = true;
         public bool OresForFurnace { get; set; } = true;
+        public bool TruffleForOilMaker { get; set; } = true;
         public string SwapForKegs { get; set; } = "None";
         public string SwapForPreservesJar { get; set; } = "None";
         public string SwapForDehydrator { get; set; } = "None";
