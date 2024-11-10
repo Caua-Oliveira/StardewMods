@@ -1,10 +1,10 @@
 {
   "Name": "AutomateToolSwap",
   "Author": "Trapyy",
-  "Version": "1.4.2",
+  "Version": "1.4.4",
   "Description": "Selects the correct tool or item for you whenever you click something that requires it",
   "UniqueID": "Trapyy.AutomatetoolSwap",
   "EntryDll": "AutomateToolSwap.dll",
-  "MinimumApiVersion": "3.0.0",
+  "MinimumApiVersion": "4.1.6",
   "UpdateKeys": [ "Nexus:21050" ]
 }

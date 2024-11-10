@@ -109,7 +109,7 @@ public class Check
                 return true;
 
             case "Garden Pot":
-                if (config.WateringCanForGardenPot && (player.CurrentItem == null || (itemCantBreak && player.CurrentItem.category != -74)))
+                if (config.WateringCanForGardenPot && (player.CurrentItem == null || (itemCantBreak && player.CurrentItem.category.Value != -74)))
                     ModEntry.SetTool(player, typeof(WateringCan));
                 return true;
 
@@ -144,7 +144,7 @@ public class Check
                 return true;
 
             case "Fish Smoker":
-                if (config.FishForSmoker && player.CurrentItem.category != -4 && itemCantBreak)
+                if (config.FishForSmoker && player.CurrentItem.category.Value != -4 && itemCantBreak)
                     ModEntry.SetItem(player, "Fish", aux: -4);
                 return true;
 
@@ -154,7 +154,7 @@ public class Check
                 return true;
 
             case "Crystalarium":
-                if (config.MineralsForCrystalarium && (player.CurrentItem == null || (itemCantBreak && player.CurrentItem.category != -2)))
+                if (config.MineralsForCrystalarium && (player.CurrentItem == null || (itemCantBreak && player.CurrentItem.category.Value != -2)))
                     ModEntry.SetItem(player, "Mineral", aux: -2);
                 return true;
 
@@ -218,7 +218,7 @@ public class Check
         if (feature is Tree tree)
         {
             // Remove moss if needed swapping to Scythe
-            if (tree.hasMoss && tree.growthStage >= Tree.stageForMossGrowth && config.ScytheForMossOnTrees)
+            if (tree.hasMoss.Value && tree.growthStage.Value >= Tree.stageForMossGrowth && config.ScytheForMossOnTrees)
             {
                 ModEntry.SetTool(player, typeof(MeleeWeapon), "Scythe");
                 return true;
@@ -229,7 +229,7 @@ public class Check
                 return true;
 
             // If the tree is not fully grown and the config to ignore it is enabled, skips, otherwise swaps to Axe 
-            if (!(tree.growthStage < Tree.treeStage && config.IgnoreGrowingTrees))
+            if (!(tree.growthStage.Value < Tree.treeStage && config.IgnoreGrowingTrees))
             {
                 ModEntry.SetTool(player, typeof(Axe));
                 return true;
@@ -254,13 +254,13 @@ public class Check
             if (!dirtHasCrop && config.SeedForTilledDirt)
             {
                 if (!(config.PickaxeOverWateringCan && player.CurrentTool is Pickaxe))
-                    if (player.CurrentItem == null || player.CurrentItem.category != -74 || player.CurrentItem.HasContextTag("tree_seed_item"))
+                    if (player.CurrentItem == null || player.CurrentItem.category.Value != -74 || player.CurrentItem.HasContextTag("tree_seed_item"))
                         ModEntry.SetItem(player, "Seed");
 
                 return true;
             }
 
-            if (dirtHasCrop && (dirt.readyForHarvest() || dirt.crop.dead) && config.ScytheForCrops)
+            if (dirtHasCrop && (dirt.readyForHarvest() || dirt.crop.dead.Value) && config.ScytheForCrops)
             {
                 ModEntry.SetTool(player, typeof(MeleeWeapon), "ScytheOnly");
                 return true;
@@ -268,13 +268,13 @@ public class Check
 
             if (dirtHasCrop && !dirt.HasFertilizer() && dirt.CanApplyFertilizer("(O)369") && config.FertilizerForCrops)
             {
-                if (!(config.PickaxeOverWateringCan) && player.CurrentTool is not Pickaxe && player.CurrentItem.category != -19)
+                if (!(config.PickaxeOverWateringCan) && player.CurrentTool is not Pickaxe && player.CurrentItem.category.Value != -19)
                     ModEntry.SetItem(player, "Fertilizer", "Tree", aux: -19);
                 return true;
             }
 
 
-            if (dirtHasCrop && dirt.crop.whichForageCrop == "2" && config.HoeForGingerCrop)
+            if (dirtHasCrop && dirt.crop.whichForageCrop.Value == "2" && config.HoeForGingerCrop)
             {
                 ModEntry.SetTool(player, typeof(Hoe));
                 return true;
@@ -301,11 +301,11 @@ public class Check
     {
         bool IsStumpOrLog(ResourceClump resourceClump)
         {
-            return new List<int> { 602, 600 }.Contains(resourceClump.parentSheetIndex);
+            return new List<int> { 602, 600 }.Contains(resourceClump.parentSheetIndex.Value);
         }
         bool IsBoulder(ResourceClump resourceClump)
         {
-            return new List<int> { 758, 756, 754, 752, 672, 622, 148 }.Contains(resourceClump.parentSheetIndex);
+            return new List<int> { 758, 756, 754, 752, 672, 622, 148 }.Contains(resourceClump.parentSheetIndex.Value);
         }
 
 
@@ -351,7 +351,7 @@ public class Check
                         return true;
 
                     var isShellLess = ModEntry.Helper.Reflection.GetField<NetBool>(crab, "shellGone").GetValue();
-                    if (!isShellLess && !crab.isMoving())
+                    if (!isShellLess.Value && !crab.isMoving())
                     {
                         ModEntry.SetTool(player, typeof(Pickaxe));
                         return true;
@@ -392,7 +392,7 @@ public class Check
         {
             return location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "WaterSource", "Back") != null;
         }
-        bool shouldUseWateringCan = location is Farm || location is VolcanoDungeon || location.InIslandContext() || location.isGreenhouse;
+        bool shouldUseWateringCan = location is Farm || location is VolcanoDungeon || location.InIslandContext() || location.isGreenhouse.Value;
 
 
         //Checks
@@ -461,8 +461,7 @@ public class Check
         // If the player is in a tractor it will not swap to hoe because it would tille all the ground when moving
         if (ModEntry.isTractorModInstalled && player.isRidingHorse() && player.mount.Name.ToLower().Contains("tractor"))
             return false;
-
-        bool isNotScythe = player.CurrentItem?.category == -98;
+        bool isNotScythe = player.CurrentItem?.category.Value == -98;
         bool isDiggable = location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Diggable", "Back") != null;
         bool isInFightingLocations = location is Mine or MineShaft or VolcanoDungeon;
 

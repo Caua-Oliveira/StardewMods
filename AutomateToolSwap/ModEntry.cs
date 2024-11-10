@@ -243,7 +243,7 @@ namespace AutomateToolSwap
             {
                 if (aux == "Scythe" || aux == "ScytheOnly")
                 {
-                    for (int i = 0; i < player.maxItems; i++)
+                    for (int i = 0; i < player.maxItems.Value; i++)
                     {
                         if (items[i] != null && items[i].GetType() == toolType && items[i].Name.Contains("Scythe"))
                         {
@@ -258,7 +258,7 @@ namespace AutomateToolSwap
                         return;
                 }
 
-                for (int i = 0; i < player.maxItems; i++)
+                for (int i = 0; i < player.maxItems.Value; i++)
                 {
                     if (items[i] != null && items[i].GetType() == toolType && !(items[i].Name.Contains("Scythe")))
                     {
@@ -273,7 +273,7 @@ namespace AutomateToolSwap
             }
 
             //Any other tool \/
-            for (int i = 0; i < player.maxItems; i++)
+            for (int i = 0; i < player.maxItems.Value; i++)
             {
 
                 if ((items[i] != null && items[i].GetType() == toolType) || (anyTool && items[i] is Axe or Pickaxe or Hoe))
@@ -301,10 +301,10 @@ namespace AutomateToolSwap
             //Handles trash
             if (categorie == "Trash" || categorie == "Fertilizer")
             {
-                for (int i = 0; i < player.maxItems; i++)
+                for (int i = 0; i < player.maxItems.Value; i++)
                 {
 
-                    if (items[i] != null && items[i].category == aux && !(items[i].Name.Contains(item)))
+                    if (items[i] != null && items[i].category.Value == aux && !(items[i].Name.Contains(item)))
                     {
                         if (player.CurrentToolIndex != i)
                         {
@@ -319,9 +319,9 @@ namespace AutomateToolSwap
             //Handles resources
             if (categorie == "Resource")
             {
-                for (int i = 0; i < player.maxItems; i++)
+                for (int i = 0; i < player.maxItems.Value; i++)
                 {
-                    if (items[i] != null && items[i].category == -15 && items[i].Name.Contains(item) && items[i].Stack >= 5)
+                    if (items[i] != null && items[i].category.Value == -15 && items[i].Name.Contains(item) && items[i].Stack >= 5)
                     {
                         if (player.CurrentToolIndex != i)
                             indexSwitcher.SwitchIndex(i, player);
@@ -335,10 +335,10 @@ namespace AutomateToolSwap
             //Handles Seeds
             if (categorie == "Seed")
             {
-                for (int i = 0; i < player.maxItems; i++)
+                for (int i = 0; i < player.maxItems.Value; i++)
                 {
 
-                    if (items[i] != null && items[i].category == -74 && !items[i].HasContextTag("tree_seed_item"))
+                    if (items[i] != null && items[i].category.Value == -74 && !items[i].HasContextTag("tree_seed_item"))
                     {
                         if (player.CurrentToolIndex != i)
                             indexSwitcher.SwitchIndex(i, player);
@@ -355,11 +355,11 @@ namespace AutomateToolSwap
                 bool canFruit = crops == "Both" || crops == "Fruit";
                 bool canVegetable = crops == "Both" || crops == "Vegetable";
 
-                for (int i = 0; i < player.maxItems; i++)
+                for (int i = 0; i < player.maxItems.Value; i++)
                 {
-                    bool isFruit(Item Item) { return Item != null && Item.category == -79; }
+                    bool isFruit(Item Item) { return Item != null && Item.category.Value == -79; }
 
-                    bool isVegetable(Item Item) { return Item != null && Item.category == -75; }
+                    bool isVegetable(Item Item) { return Item != null && Item.category.Value == -75; }
 
                     if (items[i] != null && (canFruit && isFruit(items[i]) || canVegetable && isVegetable(items[i])))
                     {
@@ -381,11 +381,11 @@ namespace AutomateToolSwap
                 bool canFruit = crops == "Both" || crops == "Fruit";
                 bool canMushroom = crops == "Both" || crops == "Mushroom";
 
-                for (int i = 0; i < player.maxItems; i++)
+                for (int i = 0; i < player.maxItems.Value; i++)
                 {
-                    bool isFruit(Item Item) { return Item != null && Item.category == -79; }
+                    bool isFruit(Item Item) { return Item != null && Item.category.Value == -79; }
 
-                    bool isMushroom(Item Item) { return Item != null && Item.category == -81 && Item.Name != "Red Mushroom"; }
+                    bool isMushroom(Item Item) { return Item != null && Item.category.Value == -81 && Item.Name != "Red Mushroom"; }
 
                     if (items[i] != null && (canFruit && isFruit(items[i]) || canMushroom && isMushroom(items[i])))
                     {
@@ -403,9 +403,9 @@ namespace AutomateToolSwap
 
 
             //Handles any other item
-            for (int i = 0; i < player.maxItems; i++)
+            for (int i = 0; i < player.maxItems.Value; i++)
             {
-                if (items[i] != null && items[i].category == aux && items[i].Name.Contains(item))
+                if (items[i] != null && items[i].category.Value == aux && items[i].Name.Contains(item))
                 {
                     if (player.CurrentItem != null && player.CurrentItem.category.ToString() == categorie)
                         return;
