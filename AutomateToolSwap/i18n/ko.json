@@ -1,0 +1,257 @@
+{
+  "config.goBack": "되돌리기",
+
+
+  /***
+** NEW
+***/
+
+  "config.SwapForOilMaker.name": "착유기",
+  "config.SwapForOilMaker.tooltip": "착유기를 클릭하면 송로버섯으로 자동 전환됩니다.",
+  
+
+  /***
+** MAIN SETTINGS
+***/
+  "config.mainPage.title": "메인 설정",
+  "config.mainPage.paragraph": "주요 기능에 대한 설정 옵션.",
+
+  "config.useCustomSwapKey.name": "사용자 지정 단축키 사용",
+  "config.useCustomSwapKey.tooltip": "사용자 지정 자동 도구 전환 단축키 사용 여부.",
+
+  "config.swapKey.name": "자동 도구 전환 단축키",
+  "config.swapKey.tooltip": "자동으로 도구를 전환하는 단축키.(위 옵션을 체크한 경우에만)\n체크하지 않으면 자동 도구 사용을 위한 기본 게임 단축키를 사용합니다.",
+
+  "config.toggleKey.name": "모드 단축키 전환",
+  "config.toggleKey.tooltip": "모드를 켜거나 끄는 단축키.",
+
+  "config.lastToolKey.name": "이전 사용 도구 전환 단축키 ",
+  "config.lastToolKey.tooltip": "마지막에 사용한 도구로 전환하기 위한 단축키",
+
+  "config.detectionMethod.name": "도구 선택 모드",
+  "config.detectionMethod.tooltip": "도구 전환 방법 선택 :\n커서 - 마우스 포인터를 사용하고, 범위 밖에서는 플레이어가 향하는 방향을 사용합니다.\n커서만 - 마우스 포인터만 사용합니다.\n플레이어 - 플레이어의 방향을 사용합니다. (컨트롤러에 사용)",
+  "config.DetectionMethod.cursorOnly": "커서만",
+  "config.DetectionMethod.cursor": "커서",
+  "config.DetectionMethod.player": "플레이어",
+
+  "config.RequireClick.name": "도구를 전환하려면 클릭하세요.",
+  "config.RequireClick.tooltip": "체크 할 경우 도구를 전환하려면 클릭해야 합니다.\n체크하지 않는 경우 클릭할 필요 없이 항상 자동으로 전환됩니다.(권장)",
+
+  "config.autoReturnToLastTool.name": "이전에 사용한 도구로 자동 전환",
+  "config.autoReturnToLastTool.tooltip": "도구 전환 후 이전에 사용한 도구로 자동으로 되돌릴 수 있습니다.",
+
+
+  /***
+** WEAPONS PAGE
+***/
+  "config.weaponsPage.title": "무기 설정",
+  "config.weaponsPage.paragraph": "무기 전환을 위한 설정 옵션.",
+
+  "config.weaponOnMonsters.name": "몬스터",
+  "config.weaponOnMonsters.tooltip": "몬스터를 클릭하면 자동으로 근접 무기로 자동 전환됩니다.",
+
+  "config.alternativeWeaponOnMonsters.name": "몬스터 - 다른 전환",
+  "config.alternativeWeaponOnMonsters.tooltip": "이 기능을 활성화하면 근처에 몬스터가 있으면 클릭할 필요 없이 무기로 전환됩니다.\n무기가 손에 있는 경우에는 아무것도 전환되지 않습니다.",
+
+  "config.monsterRangeDetection.name": "몬스터 감지 범위",
+  "config.monsterRangeDetection.tooltip": "몬스터가 감지되는 범위.(타일 단위)",
+
+  "config.WeaponForMineBarrels.name": "통",
+  "config.WeaponForMineBarrels.tooltip": "광산의 통을 클릭하면 근접 무기로 자동 전환됩니다.",
+
+  "config.IgnoreCrabs.name": "게 몬스터 무시",
+  "config.IgnoreCrabs.tooltip": "용암게나 바위게 등의 게 몬스터를 클릭해도 무기나 곡괭이로 전환되지 않습니다.",
+
+
+  /***
+** PICKAXE PAGE
+***/
+  "config.pickaxePage.title": "곡괭이 설정",
+  "config.pickaxePage.paragraph": "곡괭이 전환을 위한 설정 옵션.",
+
+  "config.pickaxeForStoneAndOres.name": "돌 또는 광석",
+  "config.pickaxeForStoneAndOres.tooltip": "돌이나 광석을 클릭하면 곡괭이로 자동 전환됩니다.",
+
+  "config.pickaxeForBoulders.name": "바위",
+  "config.pickaxeForBoulders.tooltip": "바위를 클릭하면 곡괭이로 자동 전환됩니다.",
+
+  "config.pickaxeOverWateringCan.name": "물뿌리개",
+  "config.pickaxeOverWateringCan.tooltip": "곡괭이를 들고 있을 때 물을 주지 않은 작물을 클릭하면 물뿌리개로 전환하지 않고 곡괭이를 우선적으로 사용할 수 있습니다.",
+
+
+  /***
+** AXE PAGE
+***/
+  "config.axePage.title": "도끼 설정",
+  "config.axePage.paragraph": "도끼 전환을 위한 설정 옵션.",
+
+  "config.axeForTwigs.name": "나뭇가지",
+  "config.axeForTwigs.tooltip": "나뭇가지를 클릭하면 도끼로 자동 전환됩니다.",
+
+  "config.axeForTrees.name": "나무",
+  "config.axeForTrees.tooltip": "나무를 클릭하면 도끼로 자동 전환됩니다.",
+
+  "config.axeForStumpsAndLogs.name": "그루터기 또는 통나무",
+  "config.axeForStumpsAndLogs.tooltip": "그루터기나 통나무를 클릭하면 도끼로 자동 전환됩니다.",
+
+  "config.axeForFruitTrees.name": "과일나무",
+  "config.axeForFruitTrees.tooltip": "과일나무를 클릭하면 도끼로 자동 전환됩니다.",
+
+  "config.axeForGiantCrops.name": "거대 작물",
+  "config.axeForGiantCrops.tooltip": "거대 작물을 클릭하면 도끼로 자동 전환됩니다.",
+
+
+  /***
+** HOE PAGE
+***/
+  "config.hoePage.title": "호미 설정",
+  "config.hoePage.paragraph": "호미 전환을 위한 설정 옵션.",
+
+  "config.hoeForDiggableSoil.name": "경작 가능한 토지",
+  "config.hoeForDiggableSoil.tooltip": "경작 가능한 토지를 클릭하면 호미로 자동 전환됩니다.",
+
+  "config.hoeForArtifactSpots.name": "유물 발굴",
+  "config.hoeForArtifactSpots.tooltip": "유물 발굴 지점을 클릭하면 호미로 자동 전환됩니다.",
+
+  "config.hoeForGingerCrop.name": "생강",
+  "config.hoeForGingerCrop.tooltip": "생강을 클릭하면 호미로 자동 전환됩니다.",
+
+
+  /***
+** SCYTHE PAGE
+***/
+  "config.scythePage.title": "낫 설정",
+  "config.scythePage.paragraph": "낫 전환을 위한 설정 옵션.",
+
+  "config.ScytheForGrass.name": "잔디",
+  "config.ScytheForGrass.tooltip": "잔디를 클릭하면 낫으로 자동 전환됩니다.",
+
+  "config.ScytheForWeeds.name": "잡초",
+  "config.ScytheForWeeds.tooltip": "잡초를 클릭하면 낫으로 자동 전환됩니다.",
+
+  "config.ScytheForBushes.name": "덤불",
+  "config.ScytheForBushes.tooltip": "덤불을 클릭하면 낫으로 자동 전환됩니다.",
+
+  "config.ScytheForMossOnTrees.name": "이끼",
+  "config.ScytheForMossOnTrees.tooltip": "이끼를 클릭하면 낫으로 자동 전환됩니다.",
+
+  "config.ScytheForCrops.name": "작물",
+  "config.ScytheForCrops.tooltip": "작물을 클릭하면 낫으로 자동 전환됩니다.",
+
+  "config.ScytheForForage.name": "채집물",
+  "config.ScytheForForage.tooltip": "채집물을 클릭하면 낫으로 자동 전환됩니다.",
+
+
+  /***
+** WATERING CAN PAGE
+***/
+  "config.waterincanPage.title": "물뿌리개 설정",
+  "config.waterincanPage.paragraph": "물뿌리개 전환을 위한 설정 옵션.",
+
+  "config.WateringCanForGardenPot.name": "정원 화분용",
+  "config.WateringCanForGardenPot.tooltip": "정원 화분용을 클릭하면 물뿌리개로 자동 전환됩니다.",
+
+  "config.WateringCanForUnwateredCrop.name": "물을 주지 않은 작물",
+  "config.WateringCanForUnwateredCrop.tooltip": "을 클릭하면 물뿌리개로 자동 전환됩니다.",
+
+  "config.WateringCanForPetBowl.name": "애완동물 그릇",
+  "config.WateringCanForPetBowl.tooltip": "애완동물 그릇을 클릭하면 물뿌리개로 자동 전환됩니다.",
+
+  "config.WateringCanForWater.name": "물",
+  "config.WateringCanForWater.tooltip": "물을 클릭하면 물뿌리개로 자동 전환됩니다.",
+
+
+  /***
+** MACHINES PAGE
+***/
+  "config.machinesPage.title": "기계 전환",
+  "config.machinesPage.paragraph": "기계 전환을 위한 설정 옵션.",
+
+  "config.OresForFurnace.name": "용광로",
+  "config.OresForFurnace.tooltip": "용광로를 클릭하면 자동으로 첫 번째 광석으로 전환됩니다.",
+
+  "config.FertilizerForCrops.name": "작물 비료",
+  "config.FertilizerForCrops.tooltip": "심은 작물을 클릭하면 자동으로 첫 번째 비료로 전환됩니다.",
+
+  "config.MineralsForCrystalarium.name": "결정생성기",
+  "config.MineralsForCrystalarium.tooltip": "결정생성기를 클릭하면 자동으로 첫 번째 광물로 전환됩니다.",
+
+  "config.MilkForCheesePress.name": "치즈 착제기",
+  "config.MilkForCheesePress.tooltip": "크리스털리움을 클릭하면 자동으로 첫 번째 우유로 전환됩니다.",
+
+  "config.EggsForMayoMachine.name": "마요네즈 기계",
+  "config.EggsForMayoMachine.tooltip": "마요네즈 기계을 클릭하면 자동으로 첫 번째 계란으로 전환됩니다.",
+
+  "config.BoneForBoneMill.name": "뼈 제분기",
+  "config.BoneForBoneMill.tooltip": "뼈 제분기를 클릭하면 자동으로 첫 번째 뼈로 전환됩니다.",
+
+  "config.WoolForLoom.name": "물레",
+  "config.WoolForLoom.tooltip": "물레를 클릭하면 자동으로 첫 번째 양털로 전환됩니다.",
+
+  "config.FishForSmoker.name": "생선 훈제기",
+  "config.FishForSmoker.tooltip": "생선 훈제기를 클릭하면 자동으로 첫 번째 물고기로 전환됩니다.",
+
+  "config.FishForBaitMaker.name": "미끼 제작기",
+  "config.FishForBaitMaker.tooltip": "미끼 제작기를 클릭하면 자동으로 첫 번째 물고기로 전환됩니다.",
+
+  "config.BaitForCrabPot.name": "게잡이 통발",
+  "config.BaitForCrabPot.tooltip": "게잡이 통발을 클릭하면 자동으로 첫 번째 미끼로 전환됩니다.",
+
+  "config.swapForSeedMaker.name": "씨앗 생성기",
+  "config.swapForSeedMaker.tooltip": "씨앗 생성기를 클릭하면 자동으로 첫 번째 작물로 전환됩니다.",
+
+  "config.swapForKegs.name": "술통",
+  "config.swapForKegs.tooltip": "술통을 클릭하면 자동으로 자동으로 첫 번째 과일 또는 야채로 전환됩니다.",
+
+  "config.swapForPreservesJar.name": "절임통",
+  "config.swapForPreservesJar.tooltip": "절임통을 클릭하면 자동으로 첫 번째 과일 또는 야채로 전환됩니다.",
+
+  "config.SwapForDehydrator.name": "탈수기",
+  "config.SwapForDehydrator.tooltip": "탈수기를 클릭하면 자동으로 첫 번째 과일이나 버섯으로 전환됩니다.",
+
+
+  /***
+** Other Options
+***/
+  "config.otherOptions.text": "다른 설정",
+
+  "config.anyToolForWeeds.name": "잡초",
+  "config.anyToolForWeeds.tooltip": "잡초(섬유)를 클릭할 때 낫 대신 다른 도구로 자동 전환됩니다.",
+
+  "config.fishingRodOnWater.name": "물",
+  "config.fishingRodOnWater.tooltip": "농장 밖의 물을 클릭하면 낚싯대로 자동 전환됩니다.",
+
+  "config.ignoreGrowingTrees.name": "덜 자란 나무 무시",
+  "config.ignoreGrowingTrees.tooltip": "완전히 자라지 않은 나무는 도끼로 전환되지 않습니다.",
+
+  "config.seedForTilledDirt.name": "씨앗",
+  "config.seedForTilledDirt.tooltip": "경작된 흙을 클릭하면 첫 번째 씨앗으로 전환됩니다.",
+
+  "config.PanForPanningSpots.name": "선광 냄비",
+  "config.PanForPanningSpots.tooltip": "패닝 스팟을 클릭하면 선광 냄비로 자동 전환됩니다.",
+
+  "config.HayForFeedingBench.name": "사료 공급 벤치",
+  "config.HayForFeedingBench.tooltip": "사료 공급 벤치를 클릭하면 자동으로 건초로 전환됩니다.",
+
+  "config.MilkPailForCowsAndGoats.name": "우유통",
+  "config.MilkPailForCowsAndGoats.tooltip": "소나 염소를 클릭하면 자동으로 우유통을 사용합니다.",
+
+  "config.ShearsForSheeps.name": "가위",
+  "config.ShearsForSheeps.tooltip": "양을 클릭하면 자동으로 가위를 사용합니다.",
+
+  "config.tractor.text": "트랙터 설정",
+  "config.disableTractorSwap.name": "트랙터",
+  "config.disableTractorSwap.tooltip": "체크하면 트랙터 사용시 자동 전환을 항상 비활성화합니다.\n체크하지 않는 경우 전환 단축키를 사용하여 비활성화할 수 있습니다.",
+
+  "config.AnyToolForSupplyCrates.name": "보급 상자",
+  "config.AnyToolForSupplyCrates.tooltip": "보급 상자를 클릭 시 자동으로 첫 번째 도구로 전환됩니다.",
+
+  "config.KegsAndJar.both": "모두 사용",
+  "config.KegsAndJar.vegetable": "야채",
+  "config.KegsAndJar.fruit": "과일",
+  "config.KegsAndJar.none": "없음",
+  "config.KegsAndJar.mushroom": "버섯",
+  "mod.Enabled": "활성화됨",
+  "mod.Disabled": "비활성화"
+
+}
