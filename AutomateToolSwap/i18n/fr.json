@@ -1,6 +1,15 @@
 {
   "config.goBack": "Retour",
 
+
+  /***
+** NEW
+***/
+
+  "config.SwapForOilMaker.name": "Échange pour la machine à huile",
+  "config.SwapForOilMaker.tooltip": "Échanger contre la truffe lors du clic sur la machine à huile.",
+  
+
   /***
 ** MAIN SETTINGS
 ***/
@@ -27,7 +36,7 @@
 
   "config.RequireClick.name": "Cliquer pour changer d’outil",
   "config.RequireClick.tooltip": "Si activé, vous devez cliquer pour changer d’outils. Autrement il changera automatiquement sans avoir besoin de cliquer. (Recommandé)",
-  
+
   "config.autoReturnToLastTool.name": "Retour auto au dernier outil",
   "config.autoReturnToLastTool.tooltip": "Revenir automatiquement à l'outil précédemment utilisé après l'échange.",
 
@@ -197,6 +206,10 @@
   "config.swapForPreservesJar.name": "Échange pour le bocal",
   "config.swapForPreservesJar.tooltip": "Échanger contre la première récolte dans votre inventaire lors du clic sur le bocal.\nAu choix : \nNone (désactivé) / Fruit (uniquement pour les fruits)\n- Vegetable (uniquement pour les légumes) / Both (n’importe quel fruit ou légume)",
 
+  "config.SwapForDehydrator.name": "Échange pour le déshydrateur",
+  "config.SwapForDehydrator.tooltip": "Échanger au premier fruit ou champignon lors du clic sur le déshydrateur.",
+
+
   /***
 ** Other Options
 ***/
@@ -237,6 +250,7 @@
   "config.KegsAndJar.vegetable": "Légume",
   "config.KegsAndJar.fruit": "Fruit",
   "config.KegsAndJar.none": "Aucun",
+  "config.KegsAndJar.mushroom": "Champignon",
   "mod.Enabled": "Activé",
   "mod.Disabled": "Désactivé"
 
