@@ -6,9 +6,12 @@
 ** NEW
 ***/
 
-  "config.SwapForOilMaker.name": "Swap for Oil Maker",
-  "config.SwapForOilMaker.tooltip": "Swaps to truffle when clicking on Oil Maker",
-  
+  "config.pickaxeForFloorTile.name": "Pickaxe For Floor Tile",
+  "config.pickaxeForFloorTile.tooltip": "Swaps to pickaxe when clicking in a floor tile",
+
+  "config.IgnoreSlimesOnFarm.name": "Ignore Slimes On Farm",
+  "config.IgnoreSlimesOnFarm.tooltip": "The mod will not choose a weapon when clicking on slime on farms.",
+
 
   /***
 ** MAIN SETTINGS
@@ -209,6 +212,8 @@
   "config.SwapForDehydrator.name": "Swap for Dehydrator",
   "config.SwapForDehydrator.tooltip": "Swaps to first fruit or mushroom when clicking on Dehydrator",
 
+  "config.SwapForOilMaker.name": "Swap for Oil Maker",
+  "config.SwapForOilMaker.tooltip": "Swaps to truffle when clicking on Oil Maker",
 
   /***
 ** Other Options

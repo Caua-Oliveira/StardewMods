@@ -24,12 +24,14 @@ namespace AutomateToolSwap
         public int MonsterRangeDetection { get; set; } = 3;
         public bool WeaponForMineBarrels { get; set; } = true;
         public bool IgnoreCrabs { get; set; } = true;
+        public bool IgnoreSlimesOnFarm { get; set; } = true;
         /****
         ** Pickaxe Page Options
         ****/
         public bool PickaxeForStoneAndOres { get; set; } = true;
         public bool PickaxeForBoulders { get; set; } = true;
         public bool PickaxeOverWateringCan { get; set; } = false;
+        public bool PickaxeForFloorTile { get; set; } = false;
 
 
         /****

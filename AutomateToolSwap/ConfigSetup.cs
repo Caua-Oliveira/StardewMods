@@ -108,7 +108,7 @@ namespace AutomateToolSwap
                 tooltip: () => i18n.Get("config.WeaponOnMonsters.tooltip"),
                 getValue: () => Config.WeaponOnMonsters,
                 setValue: isEnabled => Config.WeaponOnMonsters = isEnabled
-                );
+            );
             configMenu.AddBoolOption(ModManifest,
                 name: () => i18n.Get("config.AlternativeWeaponOnMonsters.name"),
                 tooltip: () => i18n.Get("config.AlternativeWeaponOnMonsters.tooltip"),
@@ -134,6 +134,12 @@ namespace AutomateToolSwap
                 tooltip: () => i18n.Get("config.IgnoreCrabs.tooltip"),
                 getValue: () => Config.IgnoreCrabs,
                 setValue: isEnabled => Config.IgnoreCrabs = isEnabled
+            );
+            configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.IgnoreSlimesOnFarm.name"),
+                tooltip: () => i18n.Get("config.IgnoreSlimesOnFarm.tooltip"),
+                getValue: () => Config.IgnoreSlimesOnFarm,
+                setValue: isEnabled => Config.IgnoreSlimesOnFarm = isEnabled
             );
             configMenu.AddPage(ModManifest, String.Empty, () => i18n.Get("config.goBack"));
 
@@ -161,7 +167,13 @@ namespace AutomateToolSwap
                tooltip: () => i18n.Get("config.PickaxeOverWateringCan.tooltip"),
                getValue: () => Config.PickaxeOverWateringCan,
                setValue: isEnabled => Config.PickaxeOverWateringCan = isEnabled
-           );
+            );
+            configMenu.AddBoolOption(ModManifest,
+               name: () => i18n.Get("config.PickaxeForFloorTile.name"),
+               tooltip: () => i18n.Get("config.PickaxeForFloorTile.tooltip"),
+               getValue: () => Config.PickaxeForFloorTile,
+               setValue: isEnabled => Config.PickaxeForFloorTile = isEnabled
+            );
             configMenu.AddPage(ModManifest, String.Empty, () => i18n.Get("config.goBack"));
 
             /****
