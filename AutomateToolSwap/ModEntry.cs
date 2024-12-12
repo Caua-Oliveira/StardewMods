@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using AutomteToolSwap;
 using GenericModConfigMenu;
 using Microsoft.Xna.Framework;
 using Netcode;
@@ -27,6 +28,7 @@ namespace AutomateToolSwap
         internal static bool isRangedToolsInstalled;
         internal static bool monsterNearby = false;
         internal static string modsPath;
+        internal static IApi ItemExtensionsAPI;
         IndexSwitcher indexSwitcher = new IndexSwitcher(0);
 
         public override void Entry(IModHelper helper)
@@ -48,6 +50,8 @@ namespace AutomateToolSwap
             isRangedToolsInstalled = Helper.ModRegistry.IsLoaded("vgperson.RangedTools");
             ConfigSetup.SetupConfig(Helper, Instance);
             modsPath = Path.Combine(AppContext.BaseDirectory, "Mods");
+            ItemExtensionsAPI = Helper.ModRegistry.GetApi<IApi>("mistyspring.ItemExtensions");
+            
         }
 
 

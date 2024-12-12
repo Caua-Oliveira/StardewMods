@@ -9,6 +9,7 @@ using StardewValley.Buildings;
 using StardewValley.Monsters;
 using Netcode;
 using System.Threading;
+using StardewModdingAPI;
 
 
 
@@ -28,22 +29,34 @@ public class Check
     {
         var obj = location.getObjectAtTile((int)tile.X, (int)tile.Y);
         bool itemCantBreak = !(player.CurrentItem is Pickaxe or Axe);
-
+        bool isNotItemForEscape = player.CurrentItem == null || (!player.CurrentItem.Name.Contains("Bomb") && !player.CurrentItem.Name.Contains("Staircase"));
         if (obj == null)
             return false;
 
-        if (obj.DisplayName.Contains("Stone") && obj.HasContextTag("item_type_litter"))
+        if (ModEntry.ItemExtensionsAPI != null)
         {
-            if (config.PickaxeForStoneAndOres && (player.CurrentItem == null || !player.CurrentItem.Name.Contains("Bomb") && !player.CurrentItem.Name.Contains("Staircase")))
-                ModEntry.SetTool(player, typeof(Pickaxe));
-            return true;
+            bool isClump = ModEntry.ItemExtensionsAPI.IsClump(obj.ItemId);
+            string tool;
+            var foundTool = ModEntry.ItemExtensionsAPI.GetBreakingTool(obj.ItemId, isClump, out tool);
+
+            if (foundTool)
+            {
+                if (tool == "Pickaxe")
+                {
+                    if (config.PickaxeForStoneAndOres && (isNotItemForEscape))
+                        ModEntry.SetTool(player, typeof(Pickaxe));
+                    return true;
+                }
+                if (tool == "Axe")
+                {
+                    if (config.AxeForTwigs)
+                        ModEntry.SetTool(player, typeof(Axe));
+                    return true;
+                }
+            }
+
         }
-        if (obj.DisplayName.Contains("Stump") && obj.HasContextTag("item_type_litter"))
-        {
-            if (config.AxeForTwigs)
-                ModEntry.SetTool(player, typeof(Axe));
-            return true;
-        }
+
         // Checks for characteristics of the object, and swaps items accordlingly
         switch (obj)
         {
@@ -57,7 +70,7 @@ public class Check
 
             case var _ when obj.IsBreakableStone():
 
-                if (config.PickaxeForStoneAndOres && (player.CurrentItem == null || !player.CurrentItem.Name.Contains("Bomb") && !player.CurrentItem.Name.Contains("Staircase")))
+                if (config.PickaxeForStoneAndOres && (isNotItemForEscape))
                     ModEntry.SetTool(player, typeof(Pickaxe));
                 return true;
 
@@ -313,6 +326,34 @@ public class Check
         {
             if (resourceClump.occupiesTile((int)tilePosition.X, (int)tilePosition.Y))
             {
+                // Modded clumps
+                if (ModEntry.ItemExtensionsAPI != null)
+                {
+                    string tool;
+                    string itemId;
+                    try { itemId = resourceClump.modDataForSerialization.FirstOrDefault().Values.First(); }
+                    catch { itemId = ""; }
+                    bool isClump = ModEntry.ItemExtensionsAPI.IsClump(itemId);
+                    var foundTool = ModEntry.ItemExtensionsAPI.GetBreakingTool(itemId, isClump, out tool);
+
+                    if (foundTool)
+                    {
+                        if (tool == "Pickaxe")
+                        {
+                            if (config.PickaxeForBoulders)
+                                ModEntry.SetTool(player, typeof(Pickaxe));
+                            return true;
+                        }
+                        if (tool == "Axe")
+                        {
+                            if (config.AxeForStumpsAndLogs)
+                                ModEntry.SetTool(player, typeof(Axe));
+                            return true;
+                        }
+                    }
+
+                }
+
                 if (config.AxeForGiantCrops && resourceClump is GiantCrop)
                 {
                     if (player.CurrentItem.Name != "Tapper")
@@ -357,6 +398,9 @@ public class Check
                         return true;
                     }
                 }
+
+                if ((location is Farm || location is SlimeHutch) && config.IgnoreSlimesOnFarm && character is GreenSlime)
+                    return true;
 
                 // If player is holding a bomb or staircase, don't swaps to weapon because they are used as escapes
                 if (player.CurrentItem == null || !player.CurrentItem.Name.Contains("Bomb") && !player.CurrentItem.Name.Contains("Staircase"))
@@ -464,15 +508,24 @@ public class Check
         bool isNotScythe = player.CurrentItem?.category.Value == -98;
         bool isDiggable = location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Diggable", "Back") != null;
         bool isInFightingLocations = location is Mine or MineShaft or VolcanoDungeon;
+        bool isPlacebleItem = player.CurrentItem != null && player.CurrentItem.isPlaceable();
 
-        if (!config.HoeForDiggableSoil || !isDiggable || isInFightingLocations || location.isPath(tile))
+        if (!config.HoeForDiggableSoil || !isDiggable || isInFightingLocations)
             return false;
         if (player.CurrentItem is MeleeWeapon && isNotScythe && Game1.spawnMonstersAtNight)
             return false;
         if (player.CurrentItem is FishingRod or GenericTool or Wand)
             return false;
 
-        if (player.CurrentItem == null || !player.CurrentItem.canBePlacedHere(location, tile, CollisionMask.All, true))
+
+        if (location.isPath(tile))
+        {
+            if (config.PickaxeForFloorTile && player.CurrentItem is not Pickaxe && !isPlacebleItem)
+                ModEntry.SetTool(player, typeof(Pickaxe));
+            return true;
+        }
+
+        if (player.CurrentItem == null || !isPlacebleItem)
         {
             ModEntry.SetTool(player, typeof(Hoe));
             return true;
