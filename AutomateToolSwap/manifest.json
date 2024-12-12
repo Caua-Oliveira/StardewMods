@@ -1,10 +1,16 @@
 {
   "Name": "AutomateToolSwap",
   "Author": "Trapyy",
-  "Version": "1.4.4",
+  "Version": "1.4.5",
   "Description": "Selects the correct tool or item for you whenever you click something that requires it",
   "UniqueID": "Trapyy.AutomatetoolSwap",
   "EntryDll": "AutomateToolSwap.dll",
-  "MinimumApiVersion": "4.1.6",
+  "Dependencies": [
+    {
+      "UniqueID": "mistyspring.ItemExtensions",
+      "IsRequired": false
+    }
+  ],
+  "MinimumApiVersion": "4.1.9",
   "UpdateKeys": [ "Nexus:21050" ]
 }
