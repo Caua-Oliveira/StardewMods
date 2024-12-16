@@ -6,9 +6,12 @@
 ** NEW
 ***/
 
-  "config.SwapForOilMaker.name": "Échange pour la machine à huile",
-  "config.SwapForOilMaker.tooltip": "Échanger contre la truffe lors du clic sur la machine à huile.",
-  
+  "config.pickaxeForFloorTile.name": "Pioche pour les cases de plancher",
+  "config.pickaxeForFloorTile.tooltip": "Passer automatiquement à la pioche lors du clic sur une case de plancher.",
+
+  "config.IgnoreSlimesOnFarm.name": "Ignorer les limons sur la ferme",
+  "config.IgnoreSlimesOnFarm.tooltip": "Ce mod ne choisira pas d’arme lorsque du clic sur des limons (slimes) dans les fermes.",
+
 
   /***
 ** MAIN SETTINGS
@@ -209,6 +212,8 @@
   "config.SwapForDehydrator.name": "Échange pour le déshydrateur",
   "config.SwapForDehydrator.tooltip": "Échanger au premier fruit ou champignon lors du clic sur le déshydrateur.",
 
+  "config.SwapForOilMaker.name": "Échange pour la machine à huile",
+  "config.SwapForOilMaker.tooltip": "Échanger contre la truffe lors du clic sur la machine à huile.",
 
   /***
 ** Other Options
