@@ -15,8 +15,8 @@ namespace AutomteToolSwap
         bool TrySpawnClump(string itemId, Vector2 position, string locationName, out string error, bool avoidOverlap = false);
         bool TrySpawnClump(string itemId, Vector2 position, GameLocation location, out string error, bool avoidOverlap = false);
         List<string> GetCustomSeeds(string itemId, bool includeSource, bool parseConditions = true);
-        Dictionary<string, (double, int)> GetClumpDrops(ResourceClump clump, bool parseConditions = false);
-        Dictionary<string, (double, int)> GetObjectDrops(Object node, bool parseConditions = false);
+        void CheckClumpDrops(ResourceClump clump, bool remove = false);
+        void CheckObjectDrops(Object node, bool remove = false);
         bool GetResourceData(string id, bool isClump, out object data);
         bool GetBreakingTool(string id, bool isClump, out string tool);
     }
