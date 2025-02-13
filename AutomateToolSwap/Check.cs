@@ -356,7 +356,7 @@ public class Check
 
                 if (config.AxeForGiantCrops && resourceClump is GiantCrop)
                 {
-                    if (player.CurrentItem.Name != "Tapper")
+                    if (player.CurrentItem == null || player.CurrentItem.Name != "Tapper")
                         ModEntry.SetTool(player, typeof(Axe));
                     return true;
                 }
@@ -452,12 +452,14 @@ public class Check
         }
         if ((IsWaterSource(location, tile) || IsWater(location, tile, player)) && shouldUseWateringCan && config.WateringCanForWater)
         {
-            ModEntry.SetTool(player, typeof(WateringCan));
+            if (player.CurrentItem is not FishingRod)
+                ModEntry.SetTool(player, typeof(WateringCan));
             return true;
         }
         if (IsWater(location, tile, player) && config.FishingRodOnWater)
         {
-            ModEntry.SetTool(player, typeof(FishingRod));
+            if (player.CurrentItem is not WateringCan)
+                ModEntry.SetTool(player, typeof(FishingRod));
             return true;
         }
         return false;
