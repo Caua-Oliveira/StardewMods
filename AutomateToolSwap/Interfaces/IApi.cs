@@ -4,7 +4,7 @@ using StardewValley.TerrainFeatures;
 using Object = StardewValley.Object;
 using System.Collections.Generic;
 
-namespace AutomteToolSwap
+namespace AutomateToolSwap
 {
     public interface IApi
     {

@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using AutomteToolSwap;
+using AutomateToolSwap;
 using GenericModConfigMenu;
 using Microsoft.Xna.Framework;
 using Netcode;
