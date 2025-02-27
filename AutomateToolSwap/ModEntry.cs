@@ -20,7 +20,7 @@ namespace AutomateToolSwap
 {
     public class ModEntry : Mod
     {
-        internal static ModEntry Instance { get; set; } = null!;
+        internal static ModEntry Instance { get; private set; } = null!;
         internal static ModConfig Config { get; private set; } = null!;
         internal static Check tileHas { get; private set; } = null!;
         internal static ITranslationHelper i18n;
@@ -28,8 +28,8 @@ namespace AutomateToolSwap
         internal static bool isRangedToolsInstalled;
         internal static bool monsterNearby = false;
         internal static string modsPath;
-        internal static IApi ItemExtensionsAPI;
-        IndexSwitcher indexSwitcher = new IndexSwitcher(0);
+        internal static IApiItemExtensions ItemExtensionsAPI;
+        internal static IndexSwitcher indexSwitcher = new IndexSwitcher(0);
 
         public override void Entry(IModHelper helper)
         {
@@ -50,7 +50,7 @@ namespace AutomateToolSwap
             isRangedToolsInstalled = Helper.ModRegistry.IsLoaded("vgperson.RangedTools");
             ConfigSetup.SetupConfig(Helper, Instance);
             modsPath = Path.Combine(AppContext.BaseDirectory, "Mods");
-            ItemExtensionsAPI = Helper.ModRegistry.GetApi<IApi>("mistyspring.ItemExtensions");
+            ItemExtensionsAPI = Helper.ModRegistry.GetApi<IApiItemExtensions>("mistyspring.ItemExtensions");
             
         }
 
@@ -83,10 +83,10 @@ namespace AutomateToolSwap
                 return;
 
             if (Config.RequireClick)
-                startMod(player);
+                StartMod(player);
         }
 
-        public void startMod(Farmer player)
+        public void StartMod(Farmer player)
         {
             GameLocation currentLocation = player.currentLocation;
             ICursorPosition cursorPos = Helper.Input.GetCursorPosition();
@@ -185,7 +185,7 @@ namespace AutomateToolSwap
                 return;
 
             if (!Config.RequireClick && Game1.player.canMove)
-                startMod(Game1.player);
+                StartMod(Game1.player);
 
             //Alternative for the option "Weapon for Monsters"
             if (Config.AlternativeWeaponOnMonsters && Config.WeaponOnMonsters)
@@ -233,7 +233,7 @@ namespace AutomateToolSwap
 
 
         //Looks for the index of the tool necessary for the action
-        public void SetTool(Farmer player, Type toolType, string aux = "", bool anyTool = false)
+        public static void SetTool(Farmer player, Type toolType, string aux = "", bool anyTool = false)
         {
             indexSwitcher.canSwitch = Config.AutoReturnToLastTool;
             var items = player.Items;
@@ -296,7 +296,7 @@ namespace AutomateToolSwap
         }
 
         //Looks for the index of the item necessary for the action
-        public void SetItem(Farmer player, string categorie, string item = "", string crops = "Both", int aux = 0)
+        public static void SetItem(Farmer player, string categorie, string item = "", string crops = "Both", int aux = 0)
         {
 
             indexSwitcher.canSwitch = Config.AutoReturnToLastTool;

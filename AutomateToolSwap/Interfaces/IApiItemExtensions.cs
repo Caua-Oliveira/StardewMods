@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace AutomateToolSwap
 {
-    public interface IApi
+    public interface IApiItemExtensions
     {
         bool IsStone(string id);
         bool IsResource(string id, out int? health, out string itemDropped);
