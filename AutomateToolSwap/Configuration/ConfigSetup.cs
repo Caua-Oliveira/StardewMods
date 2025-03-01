@@ -1,13 +1,18 @@
-﻿using GenericModConfigMenu;
+﻿using AutomateToolSwap;
+using AutomateToolSwap.Integrations;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 
-namespace AutomateToolSwap
+namespace AutomateToolSwap.Configuration
 {
     internal static class ConfigSetup
     {
         internal static bool isTractorModInstalled;
+
+        /// <summary>
+        /// Creates the configuration menu for the mod.
+        /// </summary>
         public static void SetupConfig(IModHelper helper, Mod modInstance)
         {
 
@@ -64,7 +69,7 @@ namespace AutomateToolSwap
                     "Cursor ONLY",
                     "Player"
                 },
-                formatAllowedValue: (string val) =>
+                formatAllowedValue: (val) =>
                 {
                     //construct the game's translated display name for each entry
                     switch (val)
@@ -94,7 +99,7 @@ namespace AutomateToolSwap
                 getValue: () => Config.AutoReturnToLastTool,
                 setValue: isEnabled => Config.AutoReturnToLastTool = isEnabled
             );
-            configMenu.AddPage(ModManifest, String.Empty, () => i18n.Get("config.goBack"));
+            configMenu.AddPage(ModManifest, string.Empty, () => i18n.Get("config.goBack"));
 
             /****
             ** WEAPONS PAGE
@@ -141,7 +146,7 @@ namespace AutomateToolSwap
                 getValue: () => Config.IgnoreSlimesOnFarm,
                 setValue: isEnabled => Config.IgnoreSlimesOnFarm = isEnabled
             );
-            configMenu.AddPage(ModManifest, String.Empty, () => i18n.Get("config.goBack"));
+            configMenu.AddPage(ModManifest, string.Empty, () => i18n.Get("config.goBack"));
 
             /****
             ** PICKAXE PAGE
@@ -174,7 +179,7 @@ namespace AutomateToolSwap
                getValue: () => Config.PickaxeForFloorTile,
                setValue: isEnabled => Config.PickaxeForFloorTile = isEnabled
             );
-            configMenu.AddPage(ModManifest, String.Empty, () => i18n.Get("config.goBack"));
+            configMenu.AddPage(ModManifest, string.Empty, () => i18n.Get("config.goBack"));
 
             /****
             ** AXE PAGE
@@ -219,7 +224,7 @@ namespace AutomateToolSwap
                 getValue: () => Config.IgnoreGrowingTrees,
                 setValue: isEnabled => Config.IgnoreGrowingTrees = isEnabled
             );
-            configMenu.AddPage(ModManifest, String.Empty, () => i18n.Get("config.goBack"));
+            configMenu.AddPage(ModManifest, string.Empty, () => i18n.Get("config.goBack"));
 
             /****
             ** HOE PAGE
@@ -246,7 +251,7 @@ namespace AutomateToolSwap
                 getValue: () => Config.HoeForDiggableSoil,
                 setValue: isEnabled => Config.HoeForDiggableSoil = isEnabled
             );
-            configMenu.AddPage(ModManifest, String.Empty, () => i18n.Get("config.goBack"));
+            configMenu.AddPage(ModManifest, string.Empty, () => i18n.Get("config.goBack"));
 
             /****
             ** SCYTHE PAGE
@@ -292,7 +297,7 @@ namespace AutomateToolSwap
                 getValue: () => Config.ScytheForForage,
                 setValue: isEnabled => Config.ScytheForForage = isEnabled
             );
-            configMenu.AddPage(ModManifest, String.Empty, () => i18n.Get("config.goBack"));
+            configMenu.AddPage(ModManifest, string.Empty, () => i18n.Get("config.goBack"));
 
             /****
             ** WATERING CAN PAGE
@@ -325,7 +330,7 @@ namespace AutomateToolSwap
                 getValue: () => Config.WateringCanForWater,
                 setValue: isEnabled => Config.WateringCanForWater = isEnabled
             );
-            configMenu.AddPage(ModManifest, String.Empty, () => i18n.Get("config.goBack"));
+            configMenu.AddPage(ModManifest, string.Empty, () => i18n.Get("config.goBack"));
 
 
             /****
@@ -402,6 +407,35 @@ namespace AutomateToolSwap
                 getValue: () => Config.TruffleForOilMaker,
                 setValue: isEnabled => Config.TruffleForOilMaker = isEnabled
             );
+
+            configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.SwapForGeodeCrusher.name"),
+                tooltip: () => i18n.Get("config.SwapForGeodeCrusher.tooltip"),
+                getValue: () => Config.GeodeForCrusher,
+                setValue: isEnabled => Config.GeodeForCrusher = isEnabled
+            );
+
+            configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.SwapForCharcoalKiln.name"),
+                tooltip: () => i18n.Get("config.SwapForCharcoalKiln.tooltip"),
+                getValue: () => Config.WoodForCharcoalKiln,
+                setValue: isEnabled => Config.WoodForCharcoalKiln = isEnabled
+            );
+
+            configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.SwapForCask.name"),
+                tooltip: () => i18n.Get("config.SwapForCask.tooltip"),
+                getValue: () => Config.GoodsForCask,
+                setValue: isEnabled => Config.GoodsForCask = isEnabled
+            );
+
+            configMenu.AddBoolOption(ModManifest,
+                name: () => i18n.Get("config.HardwoodForChipper.name"),
+                tooltip: () => i18n.Get("config.HardwoodForChipper.tooltip"),
+                getValue: () => Config.HardwoodForChipper,
+                setValue: isEnabled => Config.HardwoodForChipper = isEnabled
+            );
+
             configMenu.AddTextOption(ModManifest,
                 name: () => i18n.Get("config.SwapForKegs.name"),
                 tooltip: () => i18n.Get("config.SwapForKegs.tooltip"),
@@ -411,7 +445,7 @@ namespace AutomateToolSwap
                     "Vegetable",
                     "Both"
                 },
-                formatAllowedValue: (string val) =>
+                formatAllowedValue: (val) =>
                 {
                     //construct the game's translated display name for each entry
                     switch (val)
@@ -440,7 +474,7 @@ namespace AutomateToolSwap
                     "Vegetable",
                     "Both"
                 },
-                formatAllowedValue: (string val) =>
+                formatAllowedValue: (val) =>
                 {
                     //construct the game's translated display name for each entry
                     switch (val)
@@ -469,7 +503,7 @@ namespace AutomateToolSwap
                     "Mushroom",
                     "Both"
                 },
-                formatAllowedValue: (string val) =>
+                formatAllowedValue: (val) =>
                 {
                     //construct the game's translated display name for each entry
                     switch (val)
@@ -489,7 +523,7 @@ namespace AutomateToolSwap
                 getValue: () => Config.SwapForDehydrator,
                 setValue: type => Config.SwapForDehydrator = type
             );
-            configMenu.AddPage(ModManifest, String.Empty, () => i18n.Get("config.goBack"));
+            configMenu.AddPage(ModManifest, string.Empty, () => i18n.Get("config.goBack"));
 
             /****
             ** Other Options

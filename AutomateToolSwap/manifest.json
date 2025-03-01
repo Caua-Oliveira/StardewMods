@@ -1,13 +1,17 @@
 {
   "Name": "AutomateToolSwap",
   "Author": "Trapyy",
-  "Version": "1.4.5",
+  "Version": "1.4.7",
   "Description": "Selects the correct tool or item for you whenever you click something that requires it",
   "UniqueID": "Trapyy.AutomatetoolSwap",
   "EntryDll": "AutomateToolSwap.dll",
   "Dependencies": [
     {
       "UniqueID": "mistyspring.ItemExtensions",
+      "IsRequired": false
+    },
+    {
+      "UniqueID": "vgperson.RangedTools",
       "IsRequired": false
     }
   ],

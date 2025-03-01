@@ -1,39 +1,25 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AutomateToolSwap;
+using AutomateToolSwap.Core;
 using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 
-namespace AutomateToolSwap.SwitchRules
+namespace AutomateToolSwap.InteractionRules
 {
     /// <summary>
-    /// Implements the switch rule for resource clumps (stumps, logs, boulders, giant crops).
+    /// Implements the swap rules for monsters.
     /// </summary>
-    public class ResourceClumpSwapRule : ISwapRule
+    public class ResourceClumpsInteractionRules
     {
-        ModConfig config = ModEntry.Config;
-
-        private bool IsStumpOrLog(ResourceClump resourceClump)
-        {
-            return new List<int> { 602, 600 }.Contains(resourceClump.parentSheetIndex.Value);
-        }
-
-        private bool IsBoulder(ResourceClump resourceClump)
-        {
-            return new List<int> { 758, 756, 754, 752, 672, 622, 148 }.Contains(resourceClump.parentSheetIndex.Value);
-        }
 
         /// <summary>
-        /// Checks resource clumps at the specified tile and switches tools accordingly.
+        /// Checks Resource Clumps conditions and tries to swap to the correct tool/item appropriately.
         /// </summary>
-        /// <param name="location">The game location.</param>
+        /// <param name="location">The current game location.</param>
         /// <param name="tile">The tile being checked.</param>
-        /// <param name="player">The player.</param>
-        /// <returns>True if a switch occurred; otherwise, false.</returns>
-        public bool TrySwap(GameLocation location, Vector2 tile, Farmer player)
+        /// <param name="player">The current player.</param>
+        /// <returns>True if a swap was performed; otherwise, false.</returns>
+        public static bool TrySwap(GameLocation location, Vector2 tile, Farmer player)
         {
             bool currentItemIsNull = player.CurrentItem == null;
             string currentItemName = player.CurrentItem?.Name ?? "";
@@ -47,7 +33,6 @@ namespace AutomateToolSwap.SwitchRules
                     // Modded clumps
                     if (ModEntry.ItemExtensionsAPI != null)
                     {
-                        string tool;
                         string itemId;
                         try
                         {
@@ -56,43 +41,53 @@ namespace AutomateToolSwap.SwitchRules
                         catch { itemId = ""; }
 
                         bool isClump = ModEntry.ItemExtensionsAPI.IsClump(itemId);
-                        bool foundTool = ModEntry.ItemExtensionsAPI.GetBreakingTool(itemId, isClump, out tool);
-                        if (foundTool)
+                        bool foundToolRequired = ModEntry.ItemExtensionsAPI.GetBreakingTool(itemId, isClump, out string tool);
+                        if (foundToolRequired)
                         {
                             if (tool == "Pickaxe")
                             {
-                                if (config.PickaxeForBoulders && currentItemIsNotForMine)
-                                    ModEntry.SetTool(player, typeof(Pickaxe));
+                                if (ModEntry.Config.PickaxeForBoulders && currentItemIsNotForMine)
+                                    InventoryHandler.SetTool(player, typeof(Pickaxe));
                                 return true;
                             }
                             if (tool == "Axe")
                             {
-                                if (config.AxeForStumpsAndLogs)
-                                    ModEntry.SetTool(player, typeof(Axe));
+                                if (ModEntry.Config.AxeForStumpsAndLogs)
+                                    InventoryHandler.SetTool(player, typeof(Axe));
                                 return true;
                             }
                         }
                     }
 
-                    if (config.AxeForGiantCrops && resourceClump is GiantCrop)
+                    if (ModEntry.Config.AxeForGiantCrops && resourceClump is GiantCrop)
                     {
                         if (currentItemIsNull || currentItemName != "Tapper")
-                            ModEntry.SetTool(player, typeof(Axe));
+                            InventoryHandler.SetTool(player, typeof(Axe));
                         return true;
                     }
-                    if (config.AxeForStumpsAndLogs && IsStumpOrLog(resourceClump))
+                    if (ModEntry.Config.AxeForStumpsAndLogs && IsStumpOrLog(resourceClump))
                     {
-                        ModEntry.SetTool(player, typeof(Axe));
+                        InventoryHandler.SetTool(player, typeof(Axe));
                         return true;
                     }
-                    if (config.PickaxeForBoulders && IsBoulder(resourceClump))
+                    if (ModEntry.Config.PickaxeForBoulders && IsBoulder(resourceClump))
                     {
-                        ModEntry.SetTool(player, typeof(Pickaxe));
+                        InventoryHandler.SetTool(player, typeof(Pickaxe));
                         return true;
                     }
                 }
             }
             return false;
+        }
+
+        private static bool IsStumpOrLog(ResourceClump resourceClump)
+        {
+            return new List<int> { 602, 600 }.Contains(resourceClump.parentSheetIndex.Value);
+        }
+
+        private static bool IsBoulder(ResourceClump resourceClump)
+        {
+            return new List<int> { 758, 756, 754, 752, 672, 622, 148 }.Contains(resourceClump.parentSheetIndex.Value);
         }
     }
 }
