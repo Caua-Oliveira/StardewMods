@@ -6,12 +6,17 @@
 ** NEW
 ***/
 
-  "config.pickaxeForFloorTile.name": "Pickaxe For Floor Tile",
-  "config.pickaxeForFloorTile.tooltip": "Swaps to pickaxe when clicking in a floor tile",
+  "config.SwapForGeodeCrusher.name": "Swap for Geode Crusher",
+  "config.SwapForGeodeCrusher.tooltip": "Swaps to first geode in your inventory on Geode Crusher",
 
-  "config.IgnoreSlimesOnFarm.name": "Ignore Slimes On Farm",
-  "config.IgnoreSlimesOnFarm.tooltip": "The mod will not choose a weapon when clicking on slime on farms.",
+  "config.SwapForCharcoalKiln.name": "Swap for Charcoal Kiln",
+  "config.SwapForCharcoalKiln.tooltip": "Swaps to wood on Charcoal Kiln",
 
+  "config.SwapForCask.name": "Swap for Cask",
+  "config.SwapForCask.tooltip": "Swaps to first wine or cheese in your inventory on Cask",
+
+  "config.HardwoodForChipper.name": "Hardwood for Chipper",
+  "config.HardwoodForChipper.tooltip": "Swaps to Hardwood on Wood Chipper",
 
   /***
 ** MAIN SETTINGS
@@ -65,6 +70,8 @@
   "config.IgnoreCrabs.name": "Ignore Crabs",
   "config.IgnoreCrabs.tooltip": "The mod will not choose a weapon neither a pickaxe when clicking on crabs.",
 
+  "config.IgnoreSlimesOnFarm.name": "Ignore Slimes On Farm",
+  "config.IgnoreSlimesOnFarm.tooltip": "The mod will not choose a weapon when clicking on slime on farms.",
 
   /***
 ** PICKAXE PAGE
@@ -81,6 +88,8 @@
   "config.pickaxeOverWateringCan.name": "Pickaxe Over Watering Can",
   "config.pickaxeOverWateringCan.tooltip": "Prioritize using the pickaxe if you have it in your hand instead of switching to the watering can on unwatered crops.",
 
+  "config.pickaxeForFloorTile.name": "Pickaxe For Floor Tile",
+  "config.pickaxeForFloorTile.tooltip": "Swaps to pickaxe when clicking in a floor tile",
 
   /***
 ** AXE PAGE

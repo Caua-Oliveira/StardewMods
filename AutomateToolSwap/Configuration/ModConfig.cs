@@ -1,5 +1,6 @@
 ﻿using StardewModdingAPI.Utilities;
-namespace AutomateToolSwap
+
+namespace AutomateToolSwap.Configuration
 {
     internal class ModConfig
     {
@@ -89,6 +90,11 @@ namespace AutomateToolSwap
         public string SwapForKegs { get; set; } = "None";
         public string SwapForPreservesJar { get; set; } = "None";
         public string SwapForDehydrator { get; set; } = "None";
+        public bool GeodeForCrusher { get; set; } = true;
+        public bool WoodForCharcoalKiln { get; set; } = true;
+        public bool GoodsForCask { get; set; } = true;
+        public bool HardwoodForChipper { get; set; } = true;
+
 
 
         /****

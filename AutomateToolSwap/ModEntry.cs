@@ -1,42 +1,32 @@
 ﻿
-using System;
-using System.IO;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
-using AutomateToolSwap;
-using GenericModConfigMenu;
+using AutomateToolSwap.Core;
 using Microsoft.Xna.Framework;
 using Netcode;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using StardewValley.Locations;
-using StardewValley.Monsters;
-using StardewValley.Tools;
-using xTile.Tiles;
 
 
 namespace AutomateToolSwap
 {
     public class ModEntry : Mod
     {
-        internal static ModEntry Instance { get; set; } = null!;
-        internal static ModConfig Config { get; private set; } = null!;
-        internal static Check tileHas { get; private set; } = null!;
-        internal static ITranslationHelper i18n;
+        internal static Integrations.IItemExtensionsApi ItemExtensionsAPI;
+        internal static ModEntry Instance { get; private set; } = null!;
+        internal static Configuration.ModConfig Config { get; private set; } = null!;
+        internal static IventoryIndexMemory inventoryIndexMemory = new();
+        internal static ITranslationHelper? i18n;
         internal static bool isTractorModInstalled;
-        internal static bool isRangedToolsInstalled;
-        internal static bool monsterNearby = false;
-        internal static string modsPath;
-        internal static IApi ItemExtensionsAPI;
-        IndexSwitcher indexSwitcher = new IndexSwitcher(0);
+        internal static string? modsPath;
+        
 
         public override void Entry(IModHelper helper)
         {
+            
             Instance = this;
             i18n = Helper.Translation;
-            Config = Helper.ReadConfig<ModConfig>();
-            tileHas = new Check(Instance);
+            Config = Helper.ReadConfig<Configuration.ModConfig>();
 
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             helper.Events.Input.ButtonPressed += OnButtonPressed;
@@ -46,16 +36,13 @@ namespace AutomateToolSwap
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
+            Configuration.ConfigSetup.SetupConfig(Helper, Instance);
             isTractorModInstalled = Helper.ModRegistry.IsLoaded("Pathoschild.TractorMod");
-            isRangedToolsInstalled = Helper.ModRegistry.IsLoaded("vgperson.RangedTools");
-            ConfigSetup.SetupConfig(Helper, Instance);
+            isTractorModInstalled = Helper.ModRegistry.IsLoaded("Pathoschild.TractorMod");
             modsPath = Path.Combine(AppContext.BaseDirectory, "Mods");
-            ItemExtensionsAPI = Helper.ModRegistry.GetApi<IApi>("mistyspring.ItemExtensions");
+            ItemExtensionsAPI = Helper.ModRegistry.GetApi<Integrations.IItemExtensionsApi>("mistyspring.ItemExtensions");
             
         }
-
-
-
 
         [EventPriority(EventPriority.High)]
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
@@ -65,6 +52,8 @@ namespace AutomateToolSwap
 
             Farmer player = Game1.player;
 
+
+            //Toggles the mod on and off
             if (Config.ToggleKey.JustPressed())
             {
                 Config.Enabled = !Config.Enabled;
@@ -74,109 +63,80 @@ namespace AutomateToolSwap
                     Game1.addHUDMessage(new HUDMessage("AutomateToolSwap " + i18n.Get("mod.Disabled"), 2));
             }
 
-            // swaps to the last used item
-            if (Config.LastToolKey.JustPressed() && player.canMove)
-                indexSwitcher.GoToLastIndex(player);
+            // Swaps to the last used item
+            if (Config.LastToolKey.JustPressed() && player.canMove && Config.Enabled)
+                inventoryIndexMemory.GoToLastIndex(player);
 
-
-            if (!ButtonMatched(e) || !Config.Enabled || !(player.canMove))
+            if (!SwapButtonPressed(e) || !Config.Enabled || !(player.canMove))
                 return;
 
             if (Config.RequireClick)
-                startMod(player);
+                StartMod(player);
         }
 
-        public void startMod(Farmer player)
+        public void StartMod(Farmer player)
         {
             GameLocation currentLocation = player.currentLocation;
             ICursorPosition cursorPos = Helper.Input.GetCursorPosition();
-            Vector2 frontOfPlayerTile = new Vector2((int)player.GetToolLocation().X / Game1.tileSize, (int)player.GetToolLocation().Y / Game1.tileSize);
+            Vector2 frontOfPlayerTile = new(
+                (int)(player.GetToolLocation().X / Game1.tileSize),
+                (int)(player.GetToolLocation().Y / Game1.tileSize)
+            );
 
-            // compatibility with RangedTools
-            string folderPath = Path.Combine(modsPath, "RangedTools");
-            string configFilePath = Path.Combine(folderPath, "config.json");
+            #region RangedTools Compatibility
+            string folderPath;
+            string configFilePath;
+            string jsonString;
             int toolRange = 1;
-            if (File.Exists(configFilePath))
+
+            IModInfo? rangedToolsMod = Helper.ModRegistry.Get("vgperson.RangedTools");
+            if (rangedToolsMod != null)
             {
-                string jsonString = File.ReadAllText(configFilePath);
-                using (JsonDocument doc = JsonDocument.Parse(jsonString))
+                folderPath = Path.Combine(modsPath, "RangedTools");
+                configFilePath = Path.Combine(folderPath, "config.json");
+                jsonString = File.ReadAllText(configFilePath);
+                using JsonDocument doc = JsonDocument.Parse(jsonString);
+                JsonElement root = doc.RootElement;
+                if (root.TryGetProperty("AxeRange", out JsonElement toolRangeElement))
                 {
-                    JsonElement root = doc.RootElement;
-                    if (root.TryGetProperty("AxeRange", out JsonElement toolRangeElement))
-                    {
-                        toolRange = toolRangeElement.GetInt32();
-                    }
+                    toolRange = toolRangeElement.GetInt32();
                 }
             }
+            #endregion
 
-            //different methods for detecting tiles
-            if (Config.DetectionMethod == "Cursor")
+
+            switch (Config.DetectionMethod)
             {
-                if (isRangedToolsInstalled)
-                {
-                    // Calculate Chebyshev distance
-                    double distance = Math.Max(Math.Abs(player.Tile.X - cursorPos.Tile.X), Math.Abs(player.Tile.Y - cursorPos.Tile.Y));
-                    if (toolRange == -1 || distance <= toolRange)
+                case "Cursor": // Checked tile will be under the cursor if the tile is in range of tool, otherwise it will be the tile in fornt of the player
+                    if (rangedToolsMod != null)
                     {
-                        CheckTile(currentLocation, cursorPos.Tile, player);
+                        // Calculate Chebyshev distance
+                        double distance = Math.Max(Math.Abs(player.Tile.X - cursorPos.Tile.X), Math.Abs(player.Tile.Y - cursorPos.Tile.Y));
+                        if (toolRange == -1 || distance <= toolRange)
+                        {
+                            ItemSwapCoordinator.TrySwapAll(currentLocation, cursorPos.Tile, player);
+                        }
+                        else
+                        {
+                            ItemSwapCoordinator.TrySwapAll(currentLocation, cursorPos.GrabTile, player);
+                        }
                     }
                     else
                     {
-                        CheckTile(currentLocation, cursorPos.GrabTile, player);
+                        ItemSwapCoordinator.TrySwapAll(currentLocation, cursorPos.GrabTile, player);
                     }
-                }
-                else
-                {
-                    CheckTile(currentLocation, cursorPos.GrabTile, player);
-                }
-            }
-            else if (Config.DetectionMethod == "Player")
-            {
-                CheckTile(currentLocation, frontOfPlayerTile, player);
-            }
-            else if (Config.DetectionMethod == "Cursor ONLY")
-            {
-                CheckTile(currentLocation, cursorPos.Tile, player);
+                    break;
+
+                case "Player": // Checked tile will be the tile in front of the player
+                    ItemSwapCoordinator.TrySwapAll(currentLocation, frontOfPlayerTile, player);
+                    break;
+
+                case "Cursor ONLY": // Checked tile will be under the cursor no matter what
+                    ItemSwapCoordinator.TrySwapAll(currentLocation, cursorPos.Tile, player);
+                    break;
             }
 
         }
-
-        // detects what is in the tile that the player is trying to interact 
-        private void CheckTile(GameLocation location, Vector2 tile, Farmer player)
-        {
-            // code at OnUpdateTicked()
-            if (Config.AlternativeWeaponOnMonsters && player.CurrentItem is MeleeWeapon && !player.CurrentItem.Name.Contains("Scythe") && monsterNearby)
-                return;
-
-            // if the player is using slingshot, it will not be swapped because it is a long range weapon
-            if (player.CurrentItem is Slingshot)
-                return;
-
-            // code at Check.cs
-            if (tileHas.Objects(location, tile, player))
-                return;
-
-            if (tileHas.ResourceClumps(location, tile, player))
-                return;
-
-            if (tileHas.TerrainFeatures(location, tile, player))
-                return;
-
-            if (Config.WeaponOnMonsters && !Config.AlternativeWeaponOnMonsters)
-                if (tileHas.Monsters(location, tile, player))
-                    return;
-
-            if (tileHas.Water(location, tile, player))
-                return;
-
-            if (tileHas.Animals(location, tile, player))
-                return;
-
-            if (tileHas.DiggableSoil(location, tile, player))
-                return;
-
-        }
-
 
         //Called when the game updates the tick (60 times per second)
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
@@ -184,30 +144,14 @@ namespace AutomateToolSwap
             if (!Context.IsWorldReady || Game1.activeClickableMenu != null || !Config.Enabled)
                 return;
 
+            //Alternative option for the entire mod, which does not require click
             if (!Config.RequireClick && Game1.player.canMove)
-                startMod(Game1.player);
+                StartMod(Game1.player);
 
-            //Alternative for the option "Weapon for Monsters"
+            //Alternative option for "Weapon for Monsters that does not require click"
             if (Config.AlternativeWeaponOnMonsters && Config.WeaponOnMonsters)
             {
-                monsterNearby = true;
-                Vector2 tile = Game1.player.Tile;
-                foreach (var monster in Game1.currentLocation.characters)
-                {
-                    if (monster is RockCrab)
-                        break;
-
-                    Vector2 monsterTile = monster.Tile;
-                    float distance = Vector2.Distance(tile, monsterTile);
-
-                    if (monster.IsMonster && distance < Config.MonsterRangeDetection && Game1.player.canMove)
-                    {
-                        if (tileHas.Monsters(Game1.currentLocation, tile, Game1.player))
-                            return;
-                    }
-
-                }
-                monsterNearby = false;
+                InteractionRules.MonstersInteractionRules.AlternativeWeaponForMonsters();
             }
 
             //Tractor mod compatibility
@@ -223,208 +167,16 @@ namespace AutomateToolSwap
                 Vector2 toolLocation = new Vector2((int)Game1.player.GetToolLocation().X / Game1.tileSize, (int)Game1.player.GetToolLocation().Y / Game1.tileSize);
 
                 if (Config.DetectionMethod == "Cursor")
-                    CheckTile(currentLocation, cursorTile, player);
+                    ItemSwapCoordinator.TrySwapAll(currentLocation, cursorTile, player);
 
                 else if (Config.DetectionMethod == "Player")
-                    CheckTile(currentLocation, toolLocation, player);
+                    ItemSwapCoordinator.TrySwapAll(currentLocation, toolLocation, player);
 
             }
         }
 
-
-        //Looks for the index of the tool necessary for the action
-        public void SetTool(Farmer player, Type toolType, string aux = "", bool anyTool = false)
-        {
-            indexSwitcher.canSwitch = Config.AutoReturnToLastTool;
-            var items = player.Items;
-
-
-            if (player.Items[indexSwitcher.currentIndex] != null && player.Items[indexSwitcher.currentIndex].GetType() == toolType && !Config.RequireClick)
-                return;
-
-            //Melee Weapons (swords and scythes) \/
-            if (toolType == typeof(MeleeWeapon))
-            {
-                if (aux == "Scythe" || aux == "ScytheOnly")
-                {
-                    for (int i = 0; i < player.maxItems.Value; i++)
-                    {
-                        if (items[i] != null && items[i].GetType() == toolType && items[i].Name.Contains("Scythe"))
-                        {
-                            if (player.CurrentToolIndex != i)
-                            {
-                                indexSwitcher.SwitchIndex(i, player);
-                            }
-                            return;
-                        }
-                    }
-                    if (aux == "ScytheOnly")
-                        return;
-                }
-
-                for (int i = 0; i < player.maxItems.Value; i++)
-                {
-                    if (items[i] != null && items[i].GetType() == toolType && !(items[i].Name.Contains("Scythe")))
-                    {
-                        if (player.CurrentToolIndex != i)
-                        {
-                            indexSwitcher.SwitchIndex(i, player);
-                        }
-                        return;
-                    }
-                }
-                return;
-            }
-
-            //Any other tool \/
-            for (int i = 0; i < player.maxItems.Value; i++)
-            {
-
-                if ((items[i] != null && items[i].GetType() == toolType) || (anyTool && items[i] is Axe or Pickaxe or Hoe))
-                {
-                    if (player.CurrentToolIndex != i)
-                    {
-                        indexSwitcher.SwitchIndex(i, player);
-
-                    }
-
-                    return;
-                }
-
-            }
-
-        }
-
-        //Looks for the index of the item necessary for the action
-        public void SetItem(Farmer player, string categorie, string item = "", string crops = "Both", int aux = 0)
-        {
-
-            indexSwitcher.canSwitch = Config.AutoReturnToLastTool;
-            var items = player.Items;
-
-            //Handles trash
-            if (categorie == "Trash" || categorie == "Fertilizer")
-            {
-                for (int i = 0; i < player.maxItems.Value; i++)
-                {
-
-                    if (items[i] != null && items[i].category.Value == aux && !(items[i].Name.Contains(item)))
-                    {
-                        if (player.CurrentToolIndex != i)
-                        {
-                            indexSwitcher.SwitchIndex(i, player);
-                        }
-                        return;
-                    }
-                }
-                return;
-            }
-
-            //Handles resources
-            if (categorie == "Resource")
-            {
-                for (int i = 0; i < player.maxItems.Value; i++)
-                {
-                    if (items[i] != null && items[i].category.Value == -15 && items[i].Name.Contains(item) && items[i].Stack >= 5)
-                    {
-                        if (player.CurrentToolIndex != i)
-                            indexSwitcher.SwitchIndex(i, player);
-
-                        return;
-                    }
-                }
-                return;
-            }
-
-            //Handles Seeds
-            if (categorie == "Seed")
-            {
-                for (int i = 0; i < player.maxItems.Value; i++)
-                {
-
-                    if (items[i] != null && items[i].category.Value == -74 && !items[i].HasContextTag("tree_seed_item"))
-                    {
-                        if (player.CurrentToolIndex != i)
-                            indexSwitcher.SwitchIndex(i, player);
-
-                        return;
-                    }
-                }
-                return;
-            }
-
-            //Handles Crops
-            if (categorie == "Crops")
-            {
-                bool canFruit = crops == "Both" || crops == "Fruit";
-                bool canVegetable = crops == "Both" || crops == "Vegetable";
-
-                for (int i = 0; i < player.maxItems.Value; i++)
-                {
-                    bool isFruit(Item Item) { return Item != null && Item.category.Value == -79; }
-
-                    bool isVegetable(Item Item) { return Item != null && Item.category.Value == -75; }
-
-                    if (items[i] != null && (canFruit && isFruit(items[i]) || canVegetable && isVegetable(items[i])))
-                    {
-                        if (isFruit(player.CurrentItem) || isVegetable(player.CurrentItem))
-                            return;
-
-                        if (player.CurrentToolIndex != i)
-                            indexSwitcher.SwitchIndex(i, player);
-
-                        return;
-                    }
-                }
-                return;
-            }
-
-            //Handles Crops
-            if (categorie == "Dehydratable")
-            {
-                bool canFruit = crops == "Both" || crops == "Fruit";
-                bool canMushroom = crops == "Both" || crops == "Mushroom";
-
-                for (int i = 0; i < player.maxItems.Value; i++)
-                {
-                    bool isFruit(Item Item) { return Item != null && Item.category.Value == -79; }
-
-                    bool isMushroom(Item Item) { return Item != null && Item.category.Value == -81 && Item.Name != "Red Mushroom"; }
-
-                    if (items[i] != null && (canFruit && isFruit(items[i]) || canMushroom && isMushroom(items[i])))
-                    {
-                        if (isFruit(player.CurrentItem) || isMushroom(player.CurrentItem))
-                            return;
-
-                        if (player.CurrentToolIndex != i)
-                            indexSwitcher.SwitchIndex(i, player);
-
-                        return;
-                    }
-                }
-                return;
-            }
-
-
-            //Handles any other item
-            for (int i = 0; i < player.maxItems.Value; i++)
-            {
-                if (items[i] != null && items[i].category.Value == aux && items[i].Name.Contains(item))
-                {
-                    if (player.CurrentItem != null && player.CurrentItem.category.ToString() == categorie)
-                        return;
-
-                    if (player.CurrentToolIndex != i)
-                        indexSwitcher.SwitchIndex(i, player);
-
-                    return;
-                }
-            }
-            return;
-        }
-
-        //Checks if the button pressed matches the config
-        public bool ButtonMatched(ButtonPressedEventArgs e)
+        //Checks if the swap button is pressed
+        public static bool SwapButtonPressed(ButtonPressedEventArgs e)
         {
             if (Config.UseDifferentSwapKey)
             {

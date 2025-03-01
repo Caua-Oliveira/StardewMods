@@ -136,6 +136,14 @@
   "config.KegsAndJar.fruit": "Fruta",
   "config.KegsAndJar.mushroom": "Cogumelo",
   "config.KegsAndJar.none": "Nenhum",
+  "config.SwapForGeodeCrusher.name": "Trocar para Esmagador de Geodos",
+  "config.SwapForGeodeCrusher.tooltip": "Troca para Geodos no Esmagador de Geodos.",
+  "config.SwapForCharcoalKiln.name": "Trocar para Carvoaria",
+  "config.SwapForCharcoalKiln.tooltip": "Troca para Madeira na Carvoaria",
+  "config.SwapForCask.name": "Trocar para Barril de Madeira",
+  "config.SwapForCask.tooltip": "Troca para o primeiro vinho ou queijo do seu inventario no Barril de Madeira",
+  "config.HardwoodForChipper.name": "Trocar para Triturador de Madeira",
+  "config.HardwoodForChipper.tooltip": "Troca para Madeira De Lei no Triturador de Madeira",
   "mod.Enabled": "Ativado",
   "mod.Disabled": "Desativado"
 }
