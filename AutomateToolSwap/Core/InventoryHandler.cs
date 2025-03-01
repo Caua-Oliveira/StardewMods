@@ -18,6 +18,7 @@ namespace AutomateToolSwap.Core
             ModEntry.inventoryIndexMemory.canSwitch = ModEntry.Config.AutoReturnToLastTool;
             var items = player.Items;
 
+            // Each category has different rules for swapping, such as requiring a specific item or excluding one.
             switch (category)
             {
                 case "Trash":
@@ -163,6 +164,8 @@ namespace AutomateToolSwap.Core
                 !ModEntry.Config.RequireClick)
                 return;
 
+
+            //MeleeWeapon is a special case, as it can be a damage weapon or a scythe, also the player might need any of them or only one.
             switch (toolType)
             {
                 case Type t when t == typeof(MeleeWeapon):

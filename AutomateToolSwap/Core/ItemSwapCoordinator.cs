@@ -13,7 +13,7 @@ namespace AutomateToolSwap.Core
     {
         public delegate bool InteractionRule(GameLocation location, Vector2 tile, Farmer player);
 
-        /// <summary> List of registered switch rules. </summary>
+        /// <summary> List of registered switch rules. (Order is important) </summary>
         private static readonly List<InteractionRule> interactionRules = new()
         {
             ObjectsInteractionRules.TrySwap,

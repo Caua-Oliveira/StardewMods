@@ -52,6 +52,8 @@ namespace AutomateToolSwap
 
             Farmer player = Game1.player;
 
+
+            //Toggles the mod on and off
             if (Config.ToggleKey.JustPressed())
             {
                 Config.Enabled = !Config.Enabled;
@@ -61,7 +63,7 @@ namespace AutomateToolSwap
                     Game1.addHUDMessage(new HUDMessage("AutomateToolSwap " + i18n.Get("mod.Disabled"), 2));
             }
 
-            // swaps to the last used item
+            // Swaps to the last used item
             if (Config.LastToolKey.JustPressed() && player.canMove && Config.Enabled)
                 inventoryIndexMemory.GoToLastIndex(player);
 
@@ -142,6 +144,7 @@ namespace AutomateToolSwap
             if (!Context.IsWorldReady || Game1.activeClickableMenu != null || !Config.Enabled)
                 return;
 
+            //Alternative option for the entire mod, which does not require click
             if (!Config.RequireClick && Game1.player.canMove)
                 StartMod(Game1.player);
 
@@ -172,7 +175,7 @@ namespace AutomateToolSwap
             }
         }
 
-        //Checks if the button pressed matches the config
+        //Checks if the swap button is pressed
         public static bool SwapButtonPressed(ButtonPressedEventArgs e)
         {
             if (Config.UseDifferentSwapKey)
