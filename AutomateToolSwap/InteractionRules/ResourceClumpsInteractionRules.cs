@@ -1,93 +1,93 @@
-using AutomateToolSwap.Core;
+using AutomateToolSwap;
+using Core;
 using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 
-namespace AutomateToolSwap.InteractionRules
+namespace InteractionRules;
+
+/// <summary>
+/// Implements the swap rules for monsters.
+/// </summary>
+public sealed class ResourceClumpsInteractionRules
 {
+
     /// <summary>
-    /// Implements the swap rules for monsters.
+    /// Checks Resource Clumps conditions and tries to swap to the correct tool/item appropriately.
     /// </summary>
-    public class ResourceClumpsInteractionRules
+    /// <param name="location">The current game location.</param>
+    /// <param name="tile">The tile being checked.</param>
+    /// <param name="player">The current player.</param>
+    /// <returns>True if a swap was performed; otherwise, false.</returns>
+    public static bool TrySwap(GameLocation location, Vector2 tile, Farmer player)
     {
+        bool currentItemIsNull = player.CurrentItem == null;
+        string currentItemName = player.CurrentItem?.Name ?? "";
+        bool currentItemIsNotForMine = currentItemIsNull ||
+                                  !currentItemName.Contains("Bomb") && !currentItemName.Contains("Staircase");
 
-        /// <summary>
-        /// Checks Resource Clumps conditions and tries to swap to the correct tool/item appropriately.
-        /// </summary>
-        /// <param name="location">The current game location.</param>
-        /// <param name="tile">The tile being checked.</param>
-        /// <param name="player">The current player.</param>
-        /// <returns>True if a swap was performed; otherwise, false.</returns>
-        public static bool TrySwap(GameLocation location, Vector2 tile, Farmer player)
+        foreach (var resourceClump in location.resourceClumps)
         {
-            bool currentItemIsNull = player.CurrentItem == null;
-            string currentItemName = player.CurrentItem?.Name ?? "";
-            bool currentItemIsNotForMine = currentItemIsNull ||
-                                      (!currentItemName.Contains("Bomb") && !currentItemName.Contains("Staircase"));
-
-            foreach (var resourceClump in location.resourceClumps)
+            if (resourceClump.occupiesTile((int)tile.X, (int)tile.Y))
             {
-                if (resourceClump.occupiesTile((int)tile.X, (int)tile.Y))
+                // Modded clumps
+                if (ModEntry.ItemExtensionsAPI != null)
                 {
-                    // Modded clumps
-                    if (ModEntry.ItemExtensionsAPI != null)
-                    {
-                        string itemId;
-                        try
-                        {
-                            itemId = resourceClump.modDataForSerialization.FirstOrDefault().Values.First();
-                        }
-                        catch { itemId = ""; }
+                    string itemId;
+                    itemId = resourceClump.modDataForSerialization
+                      .FirstOrDefault()
+                      .Values
+                      .FirstOrDefault()
+                      ?? "";
 
-                        bool isClump = ModEntry.ItemExtensionsAPI.IsClump(itemId);
-                        bool foundToolRequired = ModEntry.ItemExtensionsAPI.GetBreakingTool(itemId, isClump, out string tool);
-                        if (foundToolRequired)
+                    bool isClump = ModEntry.ItemExtensionsAPI.IsClump(itemId);
+                    bool foundToolRequired = ModEntry.ItemExtensionsAPI.GetBreakingTool(itemId, isClump, out string tool);
+                    if (foundToolRequired)
+                    {
+                        if (tool == "Pickaxe")
                         {
-                            if (tool == "Pickaxe")
-                            {
-                                if (ModEntry.Config.PickaxeForBoulders && currentItemIsNotForMine)
-                                    InventoryHandler.SetTool(player, typeof(Pickaxe));
-                                return true;
-                            }
-                            if (tool == "Axe")
-                            {
-                                if (ModEntry.Config.AxeForStumpsAndLogs)
-                                    InventoryHandler.SetTool(player, typeof(Axe));
-                                return true;
-                            }
+                            if (ModEntry.Config.PickaxeForBoulders && currentItemIsNotForMine)
+                                InventoryHandler.SetTool(player, typeof(Pickaxe));
+                            return true;
                         }
-                    }
-
-                    if (ModEntry.Config.AxeForGiantCrops && resourceClump is GiantCrop)
-                    {
-                        if (currentItemIsNull || currentItemName != "Tapper")
-                            InventoryHandler.SetTool(player, typeof(Axe));
-                        return true;
-                    }
-                    if (ModEntry.Config.AxeForStumpsAndLogs && IsStumpOrLog(resourceClump))
-                    {
-                        InventoryHandler.SetTool(player, typeof(Axe));
-                        return true;
-                    }
-                    if (ModEntry.Config.PickaxeForBoulders && IsBoulder(resourceClump))
-                    {
-                        InventoryHandler.SetTool(player, typeof(Pickaxe));
-                        return true;
+                        if (tool == "Axe")
+                        {
+                            if (ModEntry.Config.AxeForStumpsAndLogs)
+                                InventoryHandler.SetTool(player, typeof(Axe));
+                            return true;
+                        }
                     }
                 }
+
+                if (ModEntry.Config.AxeForGiantCrops && resourceClump is GiantCrop)
+                {
+                    if (currentItemIsNull || currentItemName != "Tapper")
+                        InventoryHandler.SetTool(player, typeof(Axe));
+                    return true;
+                }
+                if (ModEntry.Config.AxeForStumpsAndLogs && IsStumpOrLog(resourceClump))
+                {
+                    InventoryHandler.SetTool(player, typeof(Axe));
+                    return true;
+                }
+                if (ModEntry.Config.PickaxeForBoulders && IsBoulder(resourceClump))
+                {
+                    InventoryHandler.SetTool(player, typeof(Pickaxe));
+                    return true;
+                }
             }
-            return false;
         }
+        return false;
+    }
 
-        private static bool IsStumpOrLog(ResourceClump resourceClump)
-        {
-            return new List<int> { 602, 600 }.Contains(resourceClump.parentSheetIndex.Value);
-        }
+    private static bool IsStumpOrLog(ResourceClump resourceClump)
+    {
+        return new List<int> { 602, 600 }.Contains(resourceClump.parentSheetIndex.Value);
+    }
 
-        private static bool IsBoulder(ResourceClump resourceClump)
-        {
-            return new List<int> { 758, 756, 754, 752, 672, 622, 148 }.Contains(resourceClump.parentSheetIndex.Value);
-        }
+    private static bool IsBoulder(ResourceClump resourceClump)
+    {
+        return new List<int> { 758, 756, 754, 752, 672, 622, 148 }.Contains(resourceClump.parentSheetIndex.Value);
     }
 }
