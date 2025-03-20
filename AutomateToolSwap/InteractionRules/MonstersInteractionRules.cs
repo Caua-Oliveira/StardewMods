@@ -22,6 +22,8 @@ public sealed class MonstersInteractionRules
     /// <returns>True if a swap was performed; otherwise, false.</returns>
     public static bool TrySwap(GameLocation location, Vector2 tile, Farmer player)
     {
+        if (!ModEntry.Config.WeaponOnMonsters)
+            return false;
         bool currentItemIsNull = player.CurrentItem == null;
         string currentItemName = player.CurrentItem?.Name ?? "";
 
@@ -68,6 +70,7 @@ public sealed class MonstersInteractionRules
         Vector2 tile = Game1.player.Tile;
         foreach (var monster in Game1.currentLocation.characters)
         {
+
             if (monster is RockCrab)
                 break;
 
