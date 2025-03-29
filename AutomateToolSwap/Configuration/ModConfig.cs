@@ -1,7 +1,7 @@
 ﻿using StardewModdingAPI.Utilities;
 
 namespace Configuration;
-internal sealed class ModConfig
+internal class ModConfig
 {
     /****
     ** Main Page Options

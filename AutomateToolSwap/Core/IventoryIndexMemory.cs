@@ -4,7 +4,7 @@ using StardewValley;
 
 namespace Core;
 
-public sealed class IventoryIndexMemory
+public class IventoryIndexMemory
 {
     public int currentIndex;
     public int lastIndex;

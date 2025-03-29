@@ -4,7 +4,7 @@ using StardewValley.Tools;
 
 namespace Core;
 
-internal sealed class InventoryHandler
+internal class InventoryHandler
 {
     /// <summary>
     /// Finds the index of the item necessary for the action and tries to swap to it.

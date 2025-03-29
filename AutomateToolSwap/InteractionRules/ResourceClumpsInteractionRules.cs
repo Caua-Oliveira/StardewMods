@@ -10,7 +10,7 @@ namespace InteractionRules;
 /// <summary>
 /// Implements the swap rules for monsters.
 /// </summary>
-public sealed class ResourceClumpsInteractionRules
+public class ResourceClumpsInteractionRules
 {
 
     /// <summary>

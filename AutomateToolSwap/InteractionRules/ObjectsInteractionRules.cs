@@ -11,7 +11,7 @@ namespace InteractionRules;
 /// <summary>
 /// Implements the swap rules for monsters.
 /// </summary>
-public sealed class ObjectsInteractionRules
+public class ObjectsInteractionRules
 {
     /// <summary>
     /// Checks object-related conditions and tries to swap to the correct tool/item appropriately.

@@ -10,7 +10,7 @@ using StardewValley;
 
 namespace AutomateToolSwap;
 
-public sealed class ModEntry : Mod
+public class ModEntry : Mod
 {
     internal static Integrations.IItemExtensionsApi? ItemExtensionsAPI;
     internal static ModEntry Instance { get; private set; } = null!;

@@ -5,7 +5,7 @@ using StardewModdingAPI;
 
 namespace Configuration;
 
-internal sealed class ConfigSetup
+internal class ConfigSetup
 {
     internal static bool isTractorModInstalled;
 

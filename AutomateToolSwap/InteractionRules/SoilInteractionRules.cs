@@ -10,7 +10,7 @@ namespace InteractionRules;
 /// <summary>
 /// Implements the swap rules for monsters.
 /// </summary>
-public sealed class SoilInteractionRules
+public class SoilInteractionRules
 {
     /// <summary>
     /// Checks Soil-related conditions and tries to swap to the correct tool/item appropriately.

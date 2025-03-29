@@ -8,7 +8,7 @@ namespace Core;
 /// Aggregates all switch rules and invokes them sequentially.
 /// Only the first rule that applies will trigger a tool/item switch.
 /// </summary>
-public sealed class ItemSwapCoordinator
+public class ItemSwapCoordinator
 {
     public delegate bool InteractionRule(GameLocation location, Vector2 tile, Farmer player);
 

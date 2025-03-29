@@ -10,7 +10,7 @@ namespace InteractionRules;
 /// <summary>
 /// Implements the switch rule for terrain features (trees, bushes, grass, and tilled dirt).
 /// </summary>
-public sealed class TerrainFeaturesInteractionRules
+public class TerrainFeaturesInteractionRules
 {
     /// <summary>
     /// Checks the terrain features at the given tile and swaps tools if necessary.

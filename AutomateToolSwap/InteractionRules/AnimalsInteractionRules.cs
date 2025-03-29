@@ -11,7 +11,7 @@ namespace InteractionRules;
 /// <summary>
 /// Implements the swap rules for animals.
 /// </summary>
-public sealed class AnimalsInteractionRules
+public class AnimalsInteractionRules
 {
 
     private static readonly string[] animalsThatCanBeMilked = { "Goat", "Cow" };

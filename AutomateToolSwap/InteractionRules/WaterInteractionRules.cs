@@ -12,7 +12,7 @@ namespace InteractionRules;
 /// Depending on whether the tile represents water, a water source, or a panning spot,
 /// the appropriate tool (watering can, pan, or fishing rod) is selected.
 /// </summary>
-public sealed class WaterInteractionRules
+public class WaterInteractionRules
 {
     /// <summary>
     /// Checks water-related properties at the tile and switches tools accordingly.
