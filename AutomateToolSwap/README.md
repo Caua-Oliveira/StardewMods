@@ -36,7 +36,6 @@ For example, clicking on a tree will automatically select your Axe, clicking on 
 * **Accessing Configuration:**
     * **With GMCM:** Click the gear icon on the title screen or find the settings button in the in-game options menu.
     * **Without GMCM:** Edit the `config.json` file located in `Stardew Valley/Mods/AutomateToolSwap` (close the game before editing; recommended for advanced users only).
-* **Using Return Functionality:** Press the key assigned in the configuration (`ReturnToPreviousItemKey`) to manually switch back after an auto-swap.
 
 ## Configuration Settings
 
