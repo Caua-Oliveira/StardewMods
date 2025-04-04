@@ -1,5 +1,12 @@
 Entry point is ModEntry.cs <br> 
 
+### YOU CAN GET THE MOD AT [NEXUS MODS](https://www.nexusmods.com/stardewvalley/mods/21050) OR AT [CURSE FORGE](https://www.curseforge.com/stardewvalley/mods/automate-tool-swap) <br>
+‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎‎  ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ Nexus‎ ‎ ‎‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎‎ ‎ ‎  ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎  ‎ ‎ ‎ ‎ ‎‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎  ‎  ‎ ‎ ‎ ‎ CurseForge<br>
+![image](https://github.com/user-attachments/assets/f30932f9-ca73-49f8-9244-d770a74f2130)
+![image](https://github.com/user-attachments/assets/a3d16fd7-9a33-4691-bd4e-638d35740362)
+
+
+
 # AutomateToolSwap
 
 ## Overview
@@ -66,50 +73,37 @@ Understanding how the mod detects your target can help you choose the best setti
 
 * **`Player` Method:**
     * **How it works:** *Always* uses the game tile directly in front of the player (based on their facing direction) as the target. The mouse cursor position is ignored for determining the target.
-    * **Best for:** Controller users, or keyboard/mouse players who prefer to aim using player movement and facing direction rather than the mouse cursor.
+    * **Best for:** Controller users, otherwise, the interactions may not function properly.
 
 ## Mod Compatibility
 
 * **Generic Mod Config Menu (GMCM):** Fully supported for easy in-game configuration.
-* **Tractor Mod:** Compatible. AutomateToolSwap will attempt to select the appropriate tool for actions initiated by the tractor (e.g., harvesting, clearing debris, planting).
-* **Item Extension Mods:** Generally compatible. The mod recognizes standard item contexts (like `ore_item`, `seed_item`). If items from other mods use these tags correctly, AutomateToolSwap should select them for relevant tasks (e.g., custom ores for furnaces).
+* **Tractor Mod:** The mod will behave the exact same way as it already does, and that means that any interactions the Tractor Mod has with tools, that are not in the vanilla game, it will do nothing. the only difference being that, when you are in a Tractor, the tools will insta swap whenever it detects something, so no need to click.
+﻿Also it wont swap to Hoe, because otherwise you would be tilling all the soil whenever you move, so you have to switch manually if you want to do it.
+* **Item Extension Mods:** The mod recognizes the new nodes ores and clumps and swaps tools accordingly.
+* **Ranged Tools:** The mod will check only your axe range and use it as a default for the interaction range of anything.
 
-*If you encounter incompatibilities, please report them!*
-
-## Known Issues (Optional)
-
-* None currently known. Please report any bugs you find on the GitHub Issues page or the mod page comments!
-
-## Planned Features (Optional)
-
-* [List any future ideas here, e.g., More specific customization options, support for specific modded machines]
-* Suggestions are welcome! Feel free to propose ideas on the GitHub Issues page.
-
-## Credits
-
-* Developed by [Your Name/Handle]
-* Built using the SMAPI framework.
-* Thanks to ConcernedApe for the amazing game, Stardew Valley!
-* [Add any other credits - e.g., testers, specific code snippets, inspirations]
 
 ## Support
 
-* **Bug Reports & Suggestions:** Please report any issues, bugs, or feature requests on the [GitHub Issues page]([Link to Your GitHub Issues Page]) for this mod.
-* **Questions:** You can ask questions on the [Mod Page Link - e.g., Nexus Mods Posts Tab].
+* **Bug Reports** Please report any issues and bugs on my [Nexus Mods Bugs Tab](https://www.nexusmods.com/stardewvalley/mods/21050?tab=bugs).
+* **Questions & Suggestions:** You can ask questions or feature requests on the [Nexus Mods Posts Tab](https://www.nexusmods.com/stardewvalley/mods/21050?tab=posts).
 
 When reporting bugs, please include:
 1.  A clear description of the problem.
 2.  Steps to reproduce the issue.
 3.  Your SMAPI log ([How to find your SMAPI log](https://smapi.io/log)).
 
+
+## Credits
+
+* Developed by Trapyy (me)
+* Built using the SMAPI framework.
+* Stardew Valley mod community, for helping me getting started with modding on C#
+* The mod users, for reporting bugs and suggesting new features, it only reached this scope because of you all
+
+
 ---
 
-
-
-### YOU CAN GET THE MOD AT [NEXUS MODS](https://www.nexusmods.com/stardewvalley/mods/21050) OR AT [CURSE FORGE](https://www.curseforge.com/stardewvalley/mods/automate-tool-swap)
-
-![image](https://github.com/user-attachments/assets/27228da0-56e0-46fd-926c-3226569478fe)
-
-![image](https://github.com/user-attachments/assets/39704f1b-5ea3-464d-bce8-88086bc3765e)
 
 
