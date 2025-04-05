@@ -92,7 +92,6 @@ When reporting bugs, please include:
 1.  A clear description of the problem.
 2.  Steps to reproduce the issue.
 3.  Your SMAPI log ([How to find your SMAPI log](https://smapi.io/log)).
-4.  
 ---
 
 
