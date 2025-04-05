@@ -92,16 +92,7 @@ When reporting bugs, please include:
 1.  A clear description of the problem.
 2.  Steps to reproduce the issue.
 3.  Your SMAPI log ([How to find your SMAPI log](https://smapi.io/log)).
-
-
-## Credits
-
-* Developed by Trapyy (me)
-* Built using the SMAPI framework.
-* Stardew Valley mod community, for helping me getting started with modding on C#
-* The mod users, for reporting bugs and suggesting new features, it only reached this scope because of you all
-
-
+4.  
 ---
 
 
