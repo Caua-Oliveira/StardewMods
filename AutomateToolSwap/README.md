@@ -77,8 +77,7 @@ Understanding how the mod detects your target can help you choose the best setti
 ## Mod Compatibility
 
 * **Generic Mod Config Menu (GMCM):** Fully supported for easy in-game configuration.
-* **Tractor Mod:** The mod will behave the exact same way as it already does, and that means that any interactions the Tractor Mod has with tools, that are not in the vanilla game, it will do nothing. the only difference being that, when you are in a Tractor, the tools will insta swap whenever it detects something, so no need to click.
-﻿Also it wont swap to Hoe, because otherwise you would be tilling all the soil whenever you move, so you have to switch manually if you want to do it.
+* **Tractor Mod:** The mod will behave exactly the same way as it already does, and that means that any interactions the Tractor Mod has with tools that are not in the vanilla game will do nothing. The only difference being that when you are in a Tractor, the tools will insta-swap whenever it detects something, so there's no need to click. Also, it won't swap to the Hoe because otherwise you would be tilling all the soil whenever you move, so you have to switch manually if you want to do it.
 * **Item Extension Mods:** The mod recognizes the new nodes ores and clumps and swaps tools accordingly.
 * **Ranged Tools:** The mod will check only your axe range and use it as a default for the interaction range of anything.
 
