@@ -1,9 +1,9 @@
 Entry point is ModEntry.cs <br> 
 
-### YOU CAN GET THE MOD AT [NEXUS MODS](https://www.nexusmods.com/stardewvalley/mods/21050) OR AT [CURSE FORGE](https://www.curseforge.com/stardewvalley/mods/automate-tool-swap) <br>
-‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎‎  ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ Nexus‎ ‎ ‎‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎‎ ‎ ‎  ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎  ‎ ‎ ‎ ‎ ‎‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎  ‎  ‎ ‎ ‎ ‎ CurseForge<br>
-![image](https://github.com/user-attachments/assets/f30932f9-ca73-49f8-9244-d770a74f2130)
-![image](https://github.com/user-attachments/assets/a3d16fd7-9a33-4691-bd4e-638d35740362)
+## Downloads
+[![Nexus Mods](https://img.shields.io/badge/Nexus%20Mods-⬇%20105k-blue?logo=nexusmods&logoColor=white&style=for-the-badge)](https://www.nexusmods.com/stardewvalley/mods/21050)
+[![CurseForge](https://img.shields.io/badge/CurseForge-⬇%2015k-blue?logo=curseforge&logoColor=white&style=for-the-badge)](https://www.curseforge.com/stardewvalley/mods/automate-tool-swap)
+<br>
 
 
 
