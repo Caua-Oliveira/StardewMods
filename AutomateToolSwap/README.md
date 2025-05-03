@@ -1,7 +1,7 @@
 Entry point is ModEntry.cs <br> 
 
 ## Downloads
-[![Nexus Mods](https://img.shields.io/badge/Nexus%20Mods-⬇%20105k-blue?logo=nexusmods&logoColor=white&style=for-the-badge)](https://www.nexusmods.com/stardewvalley/mods/21050)
+[![Nexus Mods](https://img.shields.io/badge/Nexus%20Mods-⬇%20110k-blue?logo=nexusmods&logoColor=white&style=for-the-badge)](https://www.nexusmods.com/stardewvalley/mods/21050)
 [![CurseForge](https://img.shields.io/badge/CurseForge-⬇%2015k-blue?logo=curseforge&logoColor=white&style=for-the-badge)](https://www.curseforge.com/stardewvalley/mods/automate-tool-swap)
 <br>
 
