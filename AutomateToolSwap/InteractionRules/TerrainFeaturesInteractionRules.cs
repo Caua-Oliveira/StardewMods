@@ -94,12 +94,9 @@ public class TerrainFeaturesInteractionRules
                 InventoryHandler.SetTool(player, typeof(MeleeWeapon), "ScytheOnly");
                 return true;
             }
-            if (dirtHasCrop && !dirt.HasFertilizer() && dirt.CanApplyFertilizer("(O)369") && ModEntry.Config.FertilizerForCrops)
+            if (dirtHasCrop && dirt.crop.whichForageCrop.Value == "2" && ModEntry.Config.HoeForGingerCrop)
             {
-                if (!ModEntry.Config.PickaxeOverWateringCan && player.CurrentTool is not Pickaxe && currentItemCategory != -19)
-                {
-                    InventoryHandler.SetItem(player, "Fertilizer", "Tree", aux: -19);
-                }
+                InventoryHandler.SetTool(player, typeof(Hoe));
                 return true;
             }
             if (dirtHasCrop && !dirt.isWatered() && !dirt.readyForHarvest() && ModEntry.Config.WateringCanForUnwateredCrop &&
@@ -111,11 +108,15 @@ public class TerrainFeaturesInteractionRules
                 }
                 return true;
             }
-            if (dirtHasCrop && dirt.crop.whichForageCrop.Value == "2" && ModEntry.Config.HoeForGingerCrop)
+            if (dirtHasCrop && !dirt.HasFertilizer() && dirt.CanApplyFertilizer("(O)369") && ModEntry.Config.FertilizerForCrops)
             {
-                InventoryHandler.SetTool(player, typeof(Hoe));
+                if (!ModEntry.Config.PickaxeOverWateringCan && player.CurrentTool is not Pickaxe && currentItemCategory != -19)
+                {
+                    InventoryHandler.SetItem(player, "Fertilizer", "Tree", aux: -19);
+                }
                 return true;
             }
+
             return true;
         }
         return false;

@@ -34,13 +34,14 @@ public class ResourceClumpsInteractionRules
                 // Modded clumps
                 if (ModEntry.ItemExtensionsAPI != null)
                 {
-                    string itemId;
-                    itemId = resourceClump.modDataForSerialization
-                      .FirstOrDefault()
-                      .Values
-                      .FirstOrDefault()
-                      ?? "";
-
+                    string itemId = "";
+                    foreach (var pair in resourceClump.modDataForSerialization.Pairs)
+                    {
+                        if (pair.Key.ToLower().Contains("clumpid"))
+                        {
+                            itemId = pair.Value;
+                        }
+                    }
                     bool isClump = ModEntry.ItemExtensionsAPI.IsClump(itemId);
                     bool foundToolRequired = ModEntry.ItemExtensionsAPI.GetBreakingTool(itemId, isClump, out string tool);
                     if (foundToolRequired)
