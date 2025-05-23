@@ -6,12 +6,17 @@
 ** NEW
 ***/
 
-  "config.pickaxeForFloorTile.name": "Pioche pour les cases de plancher",
-  "config.pickaxeForFloorTile.tooltip": "Passer automatiquement à la pioche lors du clic sur une case de plancher.",
+  "config.SwapForGeodeCrusher.name": "Échange pour le broyeur de géode",
+  "config.SwapForGeodeCrusher.tooltip": "Équiper automatiquement le premier géode dans votre inventaire lorsque vous utilisez un broyeur de géode.",
 
-  "config.IgnoreSlimesOnFarm.name": "Ignorer les limons sur la ferme",
-  "config.IgnoreSlimesOnFarm.tooltip": "Ce mod ne choisira pas d’arme lorsque du clic sur des limons (slimes) dans les fermes.",
+  "config.SwapForCharcoalKiln.name": "Échange pour le four à charbon",
+  "config.SwapForCharcoalKiln.tooltip": "Équiper automatiquement le bois dans votre inventaire lorsque vous utilisez un four à bois.",
 
+  "config.SwapForCask.name": "Échange pour le fût",
+  "config.SwapForCask.tooltip": "Équiper automatiquement le premier vin ou fromage dans votre inventaire lorsque vous utilisez un fût.",
+
+  "config.HardwoodForChipper.name": "Échange pour le broyeur",
+  "config.HardwoodForChipper.tooltip": "Équiper automatiquement le bois dur dans votre inventaire lorsque vous utilisez un broyeur.",
 
   /***
 ** MAIN SETTINGS
@@ -65,6 +70,8 @@
   "config.IgnoreCrabs.name": "Ignorer les crabes",
   "config.IgnoreCrabs.tooltip": "Le mod ne choisira ni une arme ni une pioche lors du clic sur les crabes.",
 
+  "config.IgnoreSlimesOnFarm.name": "Ignorer les limons sur la ferme",
+  "config.IgnoreSlimesOnFarm.tooltip": "Ce mod ne choisira pas d’arme lorsque du clic sur des limons (slimes) dans les fermes.",
 
   /***
 ** PICKAXE PAGE
@@ -81,6 +88,8 @@
   "config.pickaxeOverWateringCan.name": "Pioche plutôt qu’arrosoir",
   "config.pickaxeOverWateringCan.tooltip": "Prioriser l'utilisation de la pioche si vous l'avez en main plutôt que de passer à l'arrosoir sur les cultures non arrosées.",
 
+  "config.pickaxeForFloorTile.name": "Pioche pour les cases de plancher",
+  "config.pickaxeForFloorTile.tooltip": "Passer automatiquement à la pioche lors du clic sur une case de plancher.",
 
   /***
 ** AXE PAGE
