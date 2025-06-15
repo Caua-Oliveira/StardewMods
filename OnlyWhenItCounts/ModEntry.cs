@@ -12,9 +12,10 @@ namespace OnlyWhenItCounts
         private bool wasUsingTool;
         private float savedStamina;
         private ModConfig Config; // Add this line
-
+        internal static IItemExtensionsApi? ItemExtensionsAPI;
         public override void Entry(IModHelper helper)
         {
+
             DidWork.SetMonitor(this.Monitor);
             this.Config = this.Helper.ReadConfig<ModConfig>(); // Add this line
             helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
@@ -24,6 +25,7 @@ namespace OnlyWhenItCounts
         // Add this method
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
+            ItemExtensionsAPI = Helper.ModRegistry.GetApi<IItemExtensionsApi>("mistyspring.ItemExtensions");
             // get Generic Mod Config Menu's API (if it's installed)
             var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (configMenu is null)

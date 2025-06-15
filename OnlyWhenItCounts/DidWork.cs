@@ -58,6 +58,18 @@ public class DidWork
             return true;
         }
 
+        if (Detects.ModdedObjectRequiresTool(tile, "Pickaxe"))
+        {
+            Monitor.Log("Detected Modded Object with Pickaxe", LogLevel.Trace);
+            return true;
+        }
+
+        if (Detects.ModdedResourceClumpRequiresTool(tile, "Pickaxe"))
+        {
+            Monitor.Log("Detected Modded Resource Clump with Pickaxe", LogLevel.Trace);
+            return true;
+        }
+
         if (Detects.HoeDirt(tile))
         {
             Monitor.Log("Detected HoeDirt with Pickaxe", LogLevel.Trace);
@@ -120,6 +132,18 @@ public class DidWork
         if (Detects.Objects(tile, "Axe"))
         {
             Monitor.Log("Detected Object with Axe", LogLevel.Trace);
+            return true;
+        }
+
+        if (Detects.ModdedObjectRequiresTool(tile, "Axe"))
+        {
+            Monitor.Log("Detected Modded Object with Axe", LogLevel.Trace);
+            return true;
+        }
+
+        if (Detects.ModdedResourceClumpRequiresTool(tile, "Axe"))
+        {
+            Monitor.Log("Detected Modded Resource Clump with Axe", LogLevel.Trace);
             return true;
         }
 

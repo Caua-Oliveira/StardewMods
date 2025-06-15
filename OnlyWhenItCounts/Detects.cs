@@ -230,4 +230,85 @@ public class Detects
 
         return false;
     }
+
+    // --- START: New methods for Item Extensions ---
+    public static bool ModdedObjectRequiresTool(Vector2 tile, string requiredToolName)
+    {
+        if (ModEntry.ItemExtensionsAPI == null)
+        {
+            return false;
+        }
+
+        var obj = Game1.currentLocation.getObjectAtTile((int)tile.X, (int)tile.Y);
+        if (obj != null)
+        {
+            // For standard SObject instances, ItemId is usually the way to go.
+            // isClump is false for regular objects.
+            bool foundTool = ModEntry.ItemExtensionsAPI.GetBreakingTool(obj.ItemId, false, out string toolNameFromApi);
+            if (foundTool && toolNameFromApi == requiredToolName)
+            {
+                // ModEntry.Monitor?.Log($"ModdedObjectRequiresTool: Found modded object '{obj.Name}' at {tile} requiring '{toolNameFromApi}'. Current tool check: '{requiredToolName}'. Match.", LogLevel.Trace);
+                return true; // ItemExtensions API confirms this tool is needed
+            }
+            // ModEntry.Monitor?.Log($"ModdedObjectRequiresTool: Modded object '{obj.Name}' at {tile}. API tool: '{toolNameFromApi}', required: '{requiredToolName}'. No match or no tool found.", LogLevel.Trace);
+        }
+        return false;
+    }
+
+    public static bool ModdedResourceClumpRequiresTool(Vector2 tile, string requiredToolName)
+    {
+        if (ModEntry.ItemExtensionsAPI == null)
+        {
+            return false;
+        }
+
+        foreach (var resourceClump in Game1.currentLocation.resourceClumps)
+        {
+            if (resourceClump.occupiesTile((int)tile.X, (int)tile.Y))
+            {
+                string clumpSpecificItemId = "";
+                // Attempt to get the specific Item ID for the modded clump.
+                // This logic is based on your example and might need adjustment
+                // depending on how ItemExtensions expects to identify custom clumps.
+                if (resourceClump.modDataForSerialization != null)
+                {
+                    foreach (var pair in resourceClump.modDataForSerialization.Pairs)
+                    {
+                        if (pair.Key.ToLower().Contains("clumpid")) // Key from your example
+                        {
+                            clumpSpecificItemId = pair.Value;
+                            break;
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(clumpSpecificItemId))
+                {
+                    // First, verify if the API considers this item ID a clump.
+                    bool isActualClump = ModEntry.ItemExtensionsAPI.IsClump(clumpSpecificItemId);
+                    if (isActualClump)
+                    {
+                        // Now, get the breaking tool for this clump.
+                        bool foundTool = ModEntry.ItemExtensionsAPI.GetBreakingTool(clumpSpecificItemId, true, out string toolNameFromApi);
+                        if (foundTool && toolNameFromApi == requiredToolName)
+                        {
+                            // ModEntry.Monitor?.Log($"ModdedResourceClumpRequiresTool: Found modded clump (ID: '{clumpSpecificItemId}') at {tile} requiring '{toolNameFromApi}'. Current tool check: '{requiredToolName}'. Match.", LogLevel.Trace);
+                            return true; // ItemExtensions API confirms this tool is needed for this clump
+                        }
+                        // ModEntry.Monitor?.Log($"ModdedResourceClumpRequiresTool: Modded clump (ID: '{clumpSpecificItemId}') at {tile}. API tool: '{toolNameFromApi}', required: '{requiredToolName}'. No match or no tool found.", LogLevel.Trace);
+                    }
+                    // else
+                    // {
+                    // ModEntry.Monitor?.Log($"ModdedResourceClumpRequiresTool: Item ID '{clumpSpecificItemId}' at {tile} is not considered a clump by ItemExtensions API.", LogLevel.Trace);
+                    // }
+                }
+                // else
+                // {
+                // ModEntry.Monitor?.Log($"ModdedResourceClumpRequiresTool: Could not find 'clumpid' for resourceClump at {tile}.", LogLevel.Trace);
+                // }
+            }
+        }
+        return false;
+    }
+    // --- END: New methods for Item Extensions ---
 }
