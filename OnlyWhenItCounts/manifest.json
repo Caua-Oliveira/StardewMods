@@ -2,7 +2,7 @@
   "Name": "OnlyWhenItCounts",
   "Author": "Trapyy",
   "Version": "1.0.0",
-  "Description": "Restores the stamina you lose when a tool does nothing",
+  "Description": "Stop wasting stamina! This mod ensures stamina is only used when your tools actually work.",
   "UniqueID": "Trapyy.OnlyWhenItCounts",
   "EntryDll": "OnlyWhenItCounts.dll",
   "MinimumApiVersion": "4.1.9",
@@ -10,6 +10,10 @@
   "Dependencies": [
     {
       "UniqueID": "spacechase0.GenericModConfigMenu",
+      "IsRequired": false
+    },
+    {
+      "UniqueID": "mistyspring.ItemExtensions",
       "IsRequired": false
     }
   ]
