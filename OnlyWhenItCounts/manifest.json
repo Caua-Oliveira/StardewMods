@@ -6,5 +6,11 @@
   "UniqueID": "Trapyy.OnlyWhenItCounts",
   "EntryDll": "OnlyWhenItCounts.dll",
   "MinimumApiVersion": "4.1.9",
-  "UpdateKeys": [ "Nexus:21050" ]
+  "UpdateKeys": [ "Nexus:21050" ],
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.GenericModConfigMenu",
+      "IsRequired": false
+    }
+  ]
 }
