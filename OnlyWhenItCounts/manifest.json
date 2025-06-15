@@ -1,0 +1,10 @@
+﻿{
+  "Name": "OnlyWhenItCounts",
+  "Author": "Trapyy",
+  "Version": "1.0.0",
+  "Description": "Restores the stamina you lose when a tool does nothing",
+  "UniqueID": "Trapyy.OnlyWhenItCounts",
+  "EntryDll": "OnlyWhenItCounts.dll",
+  "MinimumApiVersion": "4.1.9",
+  "UpdateKeys": [ "Nexus:21050" ]
+}
