@@ -46,9 +46,9 @@ public class DidWork
             return true;
         }
 
-        if (Detects.Trees(tile))
+        if (Detects.MossOrGrowingTree(tile))
         {
-            Monitor.Log("Detected Trees with Pickaxe", LogLevel.Trace);
+            Monitor.Log("Detected Moss Or Growing Tree with Pickaxe", LogLevel.Trace);
             return true;
         }
 
@@ -56,6 +56,12 @@ public class DidWork
         {
             Monitor.Log("Detected Object with Pickaxe", LogLevel.Trace);
             return true;
+        }
+
+        if (Detects.Trees(tile))
+        {
+            Monitor.Log("Detected Tree with Pickaxe", LogLevel.Trace);
+            return false;
         }
 
         if (Detects.ModdedObjectRequiresTool(tile, "Pickaxe"))
@@ -123,9 +129,15 @@ public class DidWork
             return true;
         }
 
-        if (Detects.Trees(tile, "Axe"))
+        if (Detects.MossOrGrowingTree(tile))
         {
-            Monitor.Log("Detected Trees with Axe", LogLevel.Trace);
+            Monitor.Log("Detected Moss Or Growing Tree with Axe", LogLevel.Trace);
+            return true;
+        }
+
+        if (Detects.Trees(tile))
+        {
+            Monitor.Log("Detected Tree with Axe", LogLevel.Trace);
             return true;
         }
 
@@ -187,11 +199,22 @@ public class DidWork
             Monitor.Log("Detected Grass with Hoe", LogLevel.Trace);
             return false;
         }
+        
+        if (Detects.GiantCrops(tile))
+        {
+            Monitor.Log("Detected GiantCrop with Hoe", LogLevel.Trace);
+            return false;
+        }
+        if (Detects.MossOrGrowingTree(tile))
+        {
+            Monitor.Log("Detected Moss Or Growing Tree with Hoe", LogLevel.Trace);
+            return true;
+        }
 
         if (Detects.Trees(tile))
         {
-            Monitor.Log("Detected Trees with Hoe", LogLevel.Trace);
-            return true;
+            Monitor.Log("Detected Tree with Hoe", LogLevel.Trace);
+            return false;
         }
 
         if (Game1.currentLocation.isPath(tile))
@@ -200,16 +223,16 @@ public class DidWork
             return false;
         }
 
-        if (isDiggable)
-        {
-            Monitor.Log("Detected Diggable Tile with Hoe", LogLevel.Trace);
-            return true;
-        }
-
         if (Detects.Objects(tile, "Hoe"))
         {
             Monitor.Log("Detected Object with Hoe", LogLevel.Trace);
             return false;
+        }
+
+        if (isDiggable)
+        {
+            Monitor.Log("Detected Diggable Tile with Hoe", LogLevel.Trace);
+            return true;
         }
 
         if (Detects.HoeDirt(tile))
