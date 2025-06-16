@@ -1,7 +1,7 @@
 # AutomateToolSwap
 
-[![Nexus Mods](https://img.shields.io/badge/Nexus%20Mods-⬇%20110k-blue?logo=nexusmods&logoColor=white&style=for-the-badge)](https://www.nexusmods.com/stardewvalley/mods/21050)
-[![CurseForge](https://img.shields.io/badge/CurseForge-⬇%2015k-blue?logo=curseforge&logoColor=white&style=for-the-badge)](https://www.curseforge.com/stardewvalley/mods/automate-tool-swap)
+[![Nexus Mods](https://img.shields.io/badge/Nexus%20Mods-⬇%20116k-blue?logo=nexusmods&logoColor=white&style=for-the-badge)](https://www.nexusmods.com/stardewvalley/mods/21050)
+[![CurseForge](https://img.shields.io/badge/CurseForge-⬇%2019k-blue?logo=curseforge&logoColor=white&style=for-the-badge)](https://www.curseforge.com/stardewvalley/mods/automate-tool-swap)
 [![Ko-Fi](https://img.shields.io/badge/Ko--fi-Support%20Me-ff7700?style=for-the-badge&logo=ko-fi&logoColor=white)](http://ko-fi.com/trapyy)
 
 > **Automatically select the best tool or item for any interaction in Stardew Valley.**  
