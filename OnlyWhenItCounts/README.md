@@ -46,13 +46,6 @@ For example, if you swing your axe but miss the tree, or water an already watere
 -   **Manual Edit:**  
     Edit the `config.json` file located in `Stardew Valley/Mods/OnlyWhenItCounts` after running the game once with the mod *(not recommended for most users)*.
 
-### Key Settings
-
--   **Tile Detection Method:**  
-    Choose how the mod determines the target tile for its checks:
-    -   `Cursor Position` (Default): Checks the tile under your mouse if in range, else player-facing.
-    -   `Player Direction`: Always uses the tile the player is facing.
-
 ---
 
 ## Tile Detection Methods
