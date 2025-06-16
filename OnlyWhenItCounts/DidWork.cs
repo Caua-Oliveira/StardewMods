@@ -52,6 +52,12 @@ public class DidWork
             return true;
         }
 
+        if (Detects.Weeds(tile))
+        {
+            Monitor.Log("Detected Weed with Pickaxe", LogLevel.Trace);
+            return true;
+        }
+
         if (Detects.Objects(tile, "Pickaxe"))
         {
             Monitor.Log("Detected Object with Pickaxe", LogLevel.Trace);
@@ -141,6 +147,11 @@ public class DidWork
             return true;
         }
 
+        if (Detects.Weeds(tile))
+        {
+            Monitor.Log("Detected Weed with Axe", LogLevel.Trace);
+            return true;
+        }
         if (Detects.Objects(tile, "Axe"))
         {
             Monitor.Log("Detected Object with Axe", LogLevel.Trace);
@@ -222,7 +233,11 @@ public class DidWork
             Monitor.Log("Detected Path with Hoe", LogLevel.Trace);
             return false;
         }
-
+        if (Detects.Weeds(tile))
+        {
+            Monitor.Log("Detected Weed with Hoe", LogLevel.Trace);
+            return true;
+        }
         if (Detects.Objects(tile, "Hoe"))
         {
             Monitor.Log("Detected Object with Hoe", LogLevel.Trace);

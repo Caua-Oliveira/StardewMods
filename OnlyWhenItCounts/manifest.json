@@ -1,12 +1,12 @@
 ﻿{
   "Name": "OnlyWhenItCounts",
   "Author": "Trapyy",
-  "Version": "1.0.0",
+  "Version": "1.0.1",
   "Description": "Stop wasting stamina! This mod ensures stamina is only used when your tools actually work.",
   "UniqueID": "Trapyy.OnlyWhenItCounts",
   "EntryDll": "OnlyWhenItCounts.dll",
   "MinimumApiVersion": "4.1.9",
-  "UpdateKeys": [ "Nexus:21050" ],
+  "UpdateKeys": [ "Nexus:34886" ],
   "Dependencies": [
     {
       "UniqueID": "spacechase0.GenericModConfigMenu",

@@ -20,6 +20,11 @@ public class Detects
     {
         return new List<int> { 758, 756, 754, 752, 672, 622, 148 }.Contains(resourceClump.parentSheetIndex.Value);
     }
+
+    private static bool IsGreenRainBush(ResourceClump resourceClump)
+    {
+        return new List<int> { 44, 46 }.Contains(resourceClump.parentSheetIndex.Value);
+    }
     public static bool Monster(Vector2 tile)
     {
         Rectangle targetTileRectangle = new Rectangle((int)tile.X * Game1.tileSize, (int)tile.Y * Game1.tileSize, Game1.tileSize, Game1.tileSize);
@@ -161,7 +166,23 @@ public class Detects
         }
         return false;
     }
+    public static bool Weeds(Vector2 tile)
+    {
+        var obj = Game1.currentLocation.getObjectAtTile((int)tile.X, (int)tile.Y);
+        if (obj != null)
+            if (obj.IsWeeds())
+                return true;
 
+        foreach (var resourceClump in Game1.currentLocation.resourceClumps)
+        {
+            if (resourceClump.occupiesTile((int)tile.X, (int)tile.Y))
+            {
+                if (IsGreenRainBush(resourceClump))
+                    return true;
+            }
+        }
+        return false;
+    }
     public static bool Objects(Vector2 tile, string aux)
     {
         var obj = Game1.currentLocation.getObjectAtTile((int)tile.X, (int)tile.Y);
@@ -170,8 +191,6 @@ public class Detects
             if (obj.IsBreakableStone() && aux == "Pickaxe")
                 return true;
             if (obj.IsTwig() && aux == "Axe")
-                return true;
-            if (obj.IsWeeds())
                 return true;
             if (obj.Name == "Mushroom Box" && aux != "Hoe")
                 return false;
@@ -199,6 +218,7 @@ public class Detects
         }
         return false;
     }
+
     public static bool WateredSoil(Vector2 tile)
     {
         if (Game1.currentLocation.terrainFeatures.ContainsKey(tile))

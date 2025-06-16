@@ -38,20 +38,20 @@ namespace OnlyWhenItCounts
                 save: () => this.Helper.WriteConfig(this.Config)
             );
 
-            // add option for tile detection method
-            configMenu.AddTextOption(
+            //add option to toggle mod
+            configMenu.AddBoolOption(
                 mod: this.ModManifest,
-                name: () => "Tile Detection Method",
-                tooltip: () => "Choose how the mod detects which tile to check.",
-                getValue: () => this.Config.DetectionMethod.ToString(),
-                setValue: value => this.Config.DetectionMethod = (ModConfig.TileDetectionMethod)System.Enum.Parse(typeof(ModConfig.TileDetectionMethod), value),
-                allowedValues: System.Enum.GetNames(typeof(ModConfig.TileDetectionMethod))
+                name: () => "Enable Mod",
+                tooltip: () => "Enable or disable the mod.",
+                getValue: () => this.Config.Enabled,
+                setValue: value => this.Config.Enabled = value
             );
+
         }
 
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (!Context.IsWorldReady)
+            if (!Context.IsWorldReady || !Config.Enabled)
                 return;
 
             var player = Game1.player;
@@ -67,18 +67,14 @@ namespace OnlyWhenItCounts
                 bool didWork = false;
 
                 Vector2 targetTile;
+                
+                targetTile = new Vector2(
+                    (int)(player.GetToolLocation().X / Game1.tileSize),
+                    (int)(player.GetToolLocation().Y / Game1.tileSize)
+                );
 
-                if (this.Config.DetectionMethod == ModConfig.TileDetectionMethod.CursorPosition)
-                {
-                    targetTile = Helper.Input.GetCursorPosition().GrabTile;
-                }
-                else // PlayerDirection
-                {
-                    targetTile = new Vector2(
-                        (int)(player.GetToolLocation().X / Game1.tileSize),
-                        (int)(player.GetToolLocation().Y / Game1.tileSize)
-                    );
-                }
+                Monitor.Log(targetTile.ToString(), LogLevel.Trace);
+
 
                 switch (player.CurrentTool)
                 {
