@@ -1,0 +1,16 @@
+{
+  "Name": "MachinesDropsItems",
+  "Author": "Trapyy",
+  "Version": "1.0.0",
+  "Description": "Machines Drops Items",
+  "UniqueID": "Trapyy.MachinesDropsItems",
+  "EntryDll": "MachinesDropsItems.dll",
+  "MinimumApiVersion": "4.1.9",
+  "UpdateKeys": [],
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.GenericModConfigMenu",
+      "IsRequired": false
+    },
+  ]
+}
