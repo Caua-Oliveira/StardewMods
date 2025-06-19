@@ -89,9 +89,13 @@ npm-debug.log*
 
 /AutomateToolSwap/.vs
 /AutomateToolSwap/obj
+/AutomateToolSwap/bin
+
 /AutomatedTractorMod/obj
 /AutomatedTractorMod/.vs
 /OnlyWhenItCounts/.vs
+/OnlyWhenItCounts/.bin
 /OnlyWhenItCounts/obj
 /MachinesDropsItems/.vs
 /MachinesDropsitems/obj
+/MachinesDropsitems/bin
