@@ -96,6 +96,6 @@ npm-debug.log*
 /OnlyWhenItCounts/.vs
 /OnlyWhenItCounts/.bin
 /OnlyWhenItCounts/obj
-/MachinesDropsItems/.vs
-/MachinesDropsitems/obj
-/MachinesDropsitems/bin
+/MachinesDropItems/.vs
+/MachinesDropitems/obj
+/MachinesDropitems/bin
