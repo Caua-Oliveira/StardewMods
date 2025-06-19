@@ -238,9 +238,20 @@ public class DidWork
             Monitor.Log("Detected Weed with Hoe", LogLevel.Trace);
             return true;
         }
-        if (Detects.Objects(tile, "Hoe"))
+        if(Detects.HoeSpots(tile))
         {
-            Monitor.Log("Detected Object with Hoe", LogLevel.Trace);
+            Monitor.Log("Detected HoeSpot with Hoe", LogLevel.Trace);
+            return true;
+        }
+        if (Detects.BigCraftables(tile))
+        {
+            Monitor.Log("Detected BigCraftables with Hoe", LogLevel.Trace);
+            return true;
+        }
+
+        if(Detects.Objects(tile, ""))
+        {
+            Monitor.Log("Detected objects with Hoe", LogLevel.Trace);
             return false;
         }
 
@@ -256,6 +267,7 @@ public class DidWork
             return false;
         }
 
+        Monitor.Log("Detected nothing with Hoe", LogLevel.Trace);
         return false;
     }
 

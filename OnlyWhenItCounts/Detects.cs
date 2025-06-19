@@ -4,6 +4,7 @@ using StardewValley;
 using StardewValley.Monsters;
 using StardewValley.TerrainFeatures;
 using System.Runtime.Intrinsics.X86;
+using xTile.Dimensions;
 using xTile.Tiles;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
@@ -153,6 +154,19 @@ public class Detects
         }
         return false;
     }
+
+    public static bool HoeSpots(Vector2 tile)
+    {
+        var obj = Game1.currentLocation.getObjectAtTile((int)tile.X, (int)tile.Y);
+        if (obj == null)
+            return false;
+        if (obj.Name == "Seed Spot" ||
+            obj.Name == "Artifact Spot")
+        {
+            return true;
+        }
+        return false;
+    }
     public static bool HoeDirt(Vector2 tile)
     {
         if (Game1.currentLocation.terrainFeatures.ContainsKey(tile))
@@ -181,6 +195,20 @@ public class Detects
                     return true;
             }
         }
+        return false;
+    }
+    public static bool BigCraftables(Vector2 tile)
+    {
+        var obj = Game1.currentLocation.getObjectAtTile((int)tile.X, (int)tile.Y);
+        TerrainFeature feature = null;
+        try { feature = Game1.currentLocation.terrainFeatures[tile]; }
+        catch { }
+        if (obj != null)
+            if (obj.HasContextTag("category_big_craftable"))
+                if (feature == null)
+                    return true;
+                else if (feature is StardewValley.TerrainFeatures.HoeDirt)
+                    return false;
         return false;
     }
     public static bool Objects(Vector2 tile, string aux)
@@ -214,7 +242,7 @@ public class Detects
             if (aux == "Hoe")
                 return true;
 
-            return false;
+            return true;
         }
         return false;
     }
