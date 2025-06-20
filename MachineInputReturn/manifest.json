@@ -1,0 +1,16 @@
+{
+  "Name": "MachineInputReturn",
+  "Author": "Trapyy",
+  "Version": "1.0.0",
+  "Description": "Machine Input Return",
+  "UniqueID": "Trapyy.MachineInputReturn",
+  "EntryDll": "MachineInputReturn.dll",
+  "MinimumApiVersion": "4.1.9",
+  "UpdateKeys": [ "Nexus:35012" ],
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.GenericModConfigMenu",
+      "IsRequired": false
+    }
+  ]
+}

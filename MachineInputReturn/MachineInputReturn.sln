@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35825.156 d17.13
+VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MachinesDropsItems", "MachinesDropsItems.csproj", "{DF1EA260-1FA6-4D70-A0A9-02A8CCB2CECD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MachineInputReturn", "MachineInputReturn.csproj", "{DF1EA260-1FA6-4D70-A0A9-02A8CCB2CECD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

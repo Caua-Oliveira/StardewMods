@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GamePath>C:\Games\Stardew Valley</GamePath>
-		<AssemblyName>MachinesDropsItems</AssemblyName>
+		<AssemblyName>MachineInputReturn</AssemblyName>
 		<OutputType>Library</OutputType>
 	</PropertyGroup>
 	<Target Name="AfterBuild" AfterTargets="Build">
