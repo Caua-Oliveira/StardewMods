@@ -2,11 +2,11 @@
   "Name": "MachineInputReturn",
   "Author": "Trapyy",
   "Version": "1.0.0",
-  "Description": "Machine Input Return",
+  "Description": "Allows you to cancel a machine's production and retrieve the item you put inside. (By right clicking, or breaking the machine)",
   "UniqueID": "Trapyy.MachineInputReturn",
   "EntryDll": "MachineInputReturn.dll",
   "MinimumApiVersion": "4.1.9",
-  "UpdateKeys": [ "Nexus:35012" ],
+  "UpdateKeys": [ "Nexus:35013" ],
   "Dependencies": [
     {
       "UniqueID": "spacechase0.GenericModConfigMenu",
