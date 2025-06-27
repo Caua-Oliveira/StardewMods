@@ -5,18 +5,8 @@
   /***
 ** NEW
 ***/
-
-  "config.SwapForGeodeCrusher.name": "Swap for Geode Crusher",
-  "config.SwapForGeodeCrusher.tooltip": "Swaps to first geode in your inventory on Geode Crusher",
-
-  "config.SwapForCharcoalKiln.name": "Swap for Charcoal Kiln",
-  "config.SwapForCharcoalKiln.tooltip": "Swaps to wood on Charcoal Kiln",
-
-  "config.SwapForCask.name": "Swap for Cask",
-  "config.SwapForCask.tooltip": "Swaps to first wine or cheese in your inventory on Cask",
-
-  "config.HardwoodForChipper.name": "Hardwood for Chipper",
-  "config.HardwoodForChipper.tooltip": "Swaps to Hardwood on Wood Chipper",
+  "config.pickaxeForTilledSoil.name": "Pickaxe for tilled soil",
+  "config.pickaxeForTilledSoil.tooltip": "Automatically switch to Pickaxe when clicking on tilled soil (without a seed in hand).",
 
   /***
 ** MAIN SETTINGS
@@ -223,6 +213,18 @@
 
   "config.SwapForOilMaker.name": "Swap for Oil Maker",
   "config.SwapForOilMaker.tooltip": "Swaps to truffle when clicking on Oil Maker",
+
+  "config.SwapForGeodeCrusher.name": "Swap for Geode Crusher",
+  "config.SwapForGeodeCrusher.tooltip": "Swaps to first geode in your inventory on Geode Crusher",
+
+  "config.SwapForCharcoalKiln.name": "Swap for Charcoal Kiln",
+  "config.SwapForCharcoalKiln.tooltip": "Swaps to wood on Charcoal Kiln",
+
+  "config.SwapForCask.name": "Swap for Cask",
+  "config.SwapForCask.tooltip": "Swaps to first wine or cheese in your inventory on Cask",
+
+  "config.HardwoodForChipper.name": "Hardwood for Chipper",
+  "config.HardwoodForChipper.tooltip": "Swaps to Hardwood on Wood Chipper",
 
   /***
 ** Other Options

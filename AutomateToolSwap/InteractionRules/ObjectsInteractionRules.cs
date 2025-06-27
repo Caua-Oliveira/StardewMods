@@ -38,7 +38,6 @@ public class ObjectsInteractionRules
         // Check if the player's current item is not a bomb or staircase. (So they can use it in the mines without problem)
         bool currentItemIsNotForMine = currentItemIsNull ||
                                   !currentItemName.Contains("Bomb") && !currentItemName.Contains("Staircase");
-
         // If the ItemExtensions API is available, try to get the breaking tool for modded objects.
         if (ModEntry.ItemExtensionsAPI != null)
         {
@@ -253,6 +252,13 @@ public class ObjectsInteractionRules
                     (currentItemIsNull || !currentItemName.Contains("Hardwood")))
                 {
                     InventoryHandler.SetItem(player, "Wood", "Hardwood", aux: -16);
+                }
+                return true;
+            //AnimalNeedsWater MOD
+            case "Water Bowl":
+                if (currentItemCantBreak && ModEntry.Config.WateringCanForPetBowl)
+                {
+                    InventoryHandler.SetTool(player, typeof(WateringCan));
                 }
                 return true;
             default:

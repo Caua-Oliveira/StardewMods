@@ -32,6 +32,7 @@ internal class ModConfig
     ****/
     public bool PickaxeForStoneAndOres { get; set; } = true;
     public bool PickaxeForBoulders { get; set; } = true;
+    public bool PickaxeForTilledSoil { get; set; } = true;
     public bool PickaxeOverWateringCan { get; set; } = false;
     public bool PickaxeForFloorTile { get; set; } = false;
 

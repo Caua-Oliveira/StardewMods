@@ -77,6 +77,10 @@ public class ResourceClumpsInteractionRules
                     InventoryHandler.SetTool(player, typeof(Pickaxe));
                     return true;
                 }
+                if (ModEntry.Config.ScytheForBushes && IsGreenRainBush(resourceClump))
+                {
+                    InventoryHandler.SetTool(player, typeof(MeleeWeapon), aux: "Scythe");
+                } 
             }
         }
         return false;
@@ -90,5 +94,10 @@ public class ResourceClumpsInteractionRules
     private static bool IsBoulder(ResourceClump resourceClump)
     {
         return new List<int> { 758, 756, 754, 752, 672, 622, 148 }.Contains(resourceClump.parentSheetIndex.Value);
+    }
+
+    private static bool IsGreenRainBush(ResourceClump resourceClump)
+    {
+        return new List<int> { 44, 46 }.Contains(resourceClump.parentSheetIndex.Value);
     }
 }

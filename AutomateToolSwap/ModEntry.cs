@@ -2,10 +2,14 @@
 using System.Text.Json;
 using Configuration;
 using Core;
+using Integrations;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.TerrainFeatures;
+using xTile.Dimensions;
+using xTile.Tiles;
 
 
 namespace AutomateToolSwap;
@@ -19,7 +23,7 @@ public class ModEntry : Mod
     internal static ITranslationHelper? i18n;
     internal static bool isTractorModInstalled;
     internal static string? modsPath;
-
+    internal static Integrations.IAnimalsNeedWaterAPI? AnimalsNeedWaterAPI;
 
     public override void Entry(IModHelper helper)
     {
@@ -32,15 +36,17 @@ public class ModEntry : Mod
         helper.Events.Input.ButtonPressed += OnButtonPressed;
         helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
 
+
     }
 
     private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
     {
         Configuration.ConfigSetup.SetupConfig(Helper, Instance);
         isTractorModInstalled = Helper.ModRegistry.IsLoaded("Pathoschild.TractorMod");
-        isTractorModInstalled = Helper.ModRegistry.IsLoaded("Pathoschild.TractorMod");
         modsPath = Path.Combine(AppContext.BaseDirectory, "Mods");
         ItemExtensionsAPI = Helper.ModRegistry.GetApi<Integrations.IItemExtensionsApi>("mistyspring.ItemExtensions");
+        AnimalsNeedWaterAPI = null; //Helper.ModRegistry.GetApi<Integrations.IAnimalsNeedWaterAPI>("GZhynko.AnimalsNeedWater");
+        
 
     }
 
@@ -51,7 +57,6 @@ public class ModEntry : Mod
             return;
 
         Farmer player = Game1.player;
-
 
         //Toggles the mod on and off
         if (Config.ToggleKey.JustPressed())

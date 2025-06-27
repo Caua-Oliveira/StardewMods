@@ -79,14 +79,42 @@ public class TerrainFeaturesInteractionRules
             bool dirtHasCrop = dirt.crop != null;
             if (!dirtHasCrop && ModEntry.Config.SeedForTilledDirt)
             {
+                bool has_seeds = false;
+
                 if (!(ModEntry.Config.PickaxeOverWateringCan && player.CurrentTool is Pickaxe))
                 {
                     if (currentItemIsNull || currentItemCategory != -74 ||
                         player.CurrentItem.HasContextTag("tree_seed_item"))
                     {
+                        foreach (var x in player.Items)
+                        {
+                            if (x != null && x.HasContextTag("category_seeds") && !x.HasContextTag("tree_seed_item"))
+                            {
+                                has_seeds = true;
+                            }
+                        }
                         InventoryHandler.SetItem(player, "Seed");
+                        if (has_seeds)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            if(ModEntry.Config.PickaxeForTilledSoil && !(player.CurrentTool is Pickaxe) && !(player.isRidingHorse()))
+                            {
+                                InventoryHandler.SetTool(player, typeof(Pickaxe));
+                                return true;
+                            }
+
+                        }
+
                     }
-                }
+
+                }           
+            }
+            if (!dirtHasCrop && ModEntry.Config.PickaxeForTilledSoil && (currentItemIsNull || !player.CurrentItem.HasContextTag("category_seeds")) && !(player.isRidingHorse()))
+            {
+                InventoryHandler.SetTool(player, typeof(Pickaxe));
                 return true;
             }
             if (dirtHasCrop && (dirt.readyForHarvest() || dirt.crop.dead.Value) && ModEntry.Config.ScytheForCrops)

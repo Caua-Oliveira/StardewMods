@@ -2,8 +2,13 @@ using AutomateToolSwap;
 using Core;
 using Microsoft.Xna.Framework;
 using StardewValley;
+using StardewValley.Buildings;
+using StardewValley.Extensions;
+using StardewValley.GameData;
 using StardewValley.Locations;
 using StardewValley.Tools;
+using System.Runtime.Remoting;
+using xTile.Tiles;
 
 namespace InteractionRules;
 
@@ -23,11 +28,21 @@ public class WaterInteractionRules
     /// <returns>True if a switch was performed; otherwise, false.</returns>
     public static bool TrySwap(GameLocation location, Vector2 tile, Farmer player)
     {
+        bool IsWaterTrough(GameLocation loc, Vector2 t)
+        {
+            if (ModEntry.AnimalsNeedWaterAPI != null)
+            {
+                return ModEntry.AnimalsNeedWaterAPI.IsTileWaterTrough((int)t.X, (int)t.Y);
+            }
+
+            return false;
+
+        }
         bool IsPetBowlOrStable(GameLocation loc, Vector2 t)
         {
             var building = loc.getBuildingAt(t);
-            return building != null && (building.GetType() == typeof(StardewValley.Buildings.PetBowl) ||
-                                        building.GetType() == typeof(StardewValley.Buildings.Stable));
+            return building != null && (building.GetType() == typeof(PetBowl) ||
+                                        building.GetType() == typeof(Stable));
         }
         bool IsPanSpot(GameLocation loc, Vector2 t, Farmer p)
         {
@@ -47,7 +62,11 @@ public class WaterInteractionRules
         bool shouldUseWateringCan = location is Farm || location is VolcanoDungeon ||
                                     location.InIslandContext() || location.isGreenhouse.Value;
 
-
+        if (IsWaterTrough(location, tile) && ModEntry.Config.WateringCanForPetBowl)
+        {
+            InventoryHandler.SetTool(player, typeof(WateringCan));
+            return true;
+        }
         if (IsPetBowlOrStable(location, tile) && ModEntry.Config.WateringCanForPetBowl)
         {
             InventoryHandler.SetTool(player, typeof(WateringCan));

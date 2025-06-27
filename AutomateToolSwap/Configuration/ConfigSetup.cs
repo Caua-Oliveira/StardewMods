@@ -161,6 +161,12 @@ internal class ConfigSetup
             setValue: isEnabled => Config.PickaxeForBoulders = isEnabled
         );
         configMenu.AddBoolOption(ModManifest,
+            name: () => i18n.Get("config.PickaxeForTilledSoil.name"),
+            tooltip: () => i18n.Get("config.PickaxeForTilledSoil.tooltip"),
+            getValue: () => Config.PickaxeForTilledSoil,
+            setValue: isEnabled => Config.PickaxeForTilledSoil = isEnabled
+        );
+        configMenu.AddBoolOption(ModManifest,
            name: () => i18n.Get("config.PickaxeOverWateringCan.name"),
            tooltip: () => i18n.Get("config.PickaxeOverWateringCan.tooltip"),
            getValue: () => Config.PickaxeOverWateringCan,
