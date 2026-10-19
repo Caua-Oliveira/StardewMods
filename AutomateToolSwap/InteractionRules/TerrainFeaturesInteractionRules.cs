@@ -49,7 +49,8 @@ public class TerrainFeaturesInteractionRules
         if (feature is Tree tree)
         {
             // If the tree has moss and the config enables scythe for moss, switch tool.
-            if (tree.hasMoss.Value && tree.growthStage.Value >= Tree.stageForMossGrowth && ModEntry.Config.ScytheForMossOnTrees)
+            // Trees can have moss while still growing in the code, but not actually in-game, so we check for growth stage as well to prevent early switch to scythe
+            if (tree.hasMoss.Value && tree.growthStage.Value >= 5 && ModEntry.Config.ScytheForMossOnTrees) 
             {
                 InventoryHandler.SetTool(player, typeof(MeleeWeapon), "Scythe");
                 return true;
