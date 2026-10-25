@@ -1,0 +1,476 @@
+{
+  "Format": "2.7.0",
+  "ConfigSchema": {
+    "HideUnusedFrameworkItems": {
+      "AllowValues": "true, false",
+      "Default": "true",
+      "Description": "Hides framework items not used by Books and Notes. Set to false if you install another mod that uses Si's Extra Crafting Materials."
+    }
+  },
+  "Changes": [
+    {
+      "LogName": "Individual book and note icons",
+      "Action": "Load",
+      "Target": "Mods/Trapyy.BooksAndNotes/default_book, Mods/Trapyy.BooksAndNotes/default_note, Mods/Trapyy.BooksAndNotes/spring_book, Mods/Trapyy.BooksAndNotes/summer_book, Mods/Trapyy.BooksAndNotes/fall_book, Mods/Trapyy.BooksAndNotes/winter_book",
+      "FromFile": "assets/{{TargetWithoutPath}}.png"
+    },
+    {
+      "LogName": "Custom small-book artwork",
+      "Action": "Load",
+      "Target": "Mods/Trapyy.BooksAndNotes/smallBook",
+      "FromFile": "assets/parchment/smallBook.png"
+    },
+    {
+      "LogName": "Parchment reader button artwork",
+      "Action": "Load",
+      "Target": "Mods/Trapyy.BooksAndNotes/button",
+      "FromFile": "assets/parchment/button.png"
+    },
+    {
+      "LogName": "Colored Parchment bookmark ribbons",
+      "Action": "Load",
+      "Target": "Mods/Trapyy.BooksAndNotes/bookmark",
+      "FromFile": "assets/parchment/bookmark.png"
+    },
+    {
+      "LogName": "Original folded note and ruling",
+      "Action": "Load",
+      "Target": "Mods/Trapyy.BooksAndNotes/note, Mods/Trapyy.BooksAndNotes/note-frame, Mods/Trapyy.BooksAndNotes/rule, Mods/Trapyy.BooksAndNotes/margin",
+      "FromFile": "assets/ui/{{TargetWithoutPath}}.png"
+    },
+    {
+      "LogName": "Writable books and note objects",
+      "Action": "EditData",
+      "Target": "Data/Objects",
+      "Entries": {
+        "Trapyy.BooksAndNotes_Book": {
+          "Name": "Trapyy.BooksAndNotes_Book",
+          "DisplayName": "{{i18n: item.book.name}}",
+          "Description": "{{i18n: item.book.description}}",
+          "Type": "Basic",
+          "Category": 0,
+          "Price": 0,
+          "Edibility": -300,
+          "Texture": "Mods/Trapyy.BooksAndNotes/default_book",
+          "SpriteIndex": 0,
+          "CanBeGivenAsGift": false,
+          "CanBeTrashed": true,
+          "ExcludeFromFishingCollection": true,
+          "ExcludeFromShippingCollection": true,
+          "ExcludeFromRandomSale": true
+        },
+        "Trapyy.BooksAndNotes_SpringBook": {
+          "Name": "Trapyy.BooksAndNotes_SpringBook",
+          "DisplayName": "{{i18n: item.book.spring.name}}",
+          "Description": "{{i18n: item.book.description}}",
+          "Type": "Basic",
+          "Category": 0,
+          "Price": 0,
+          "Edibility": -300,
+          "Texture": "Mods/Trapyy.BooksAndNotes/spring_book",
+          "SpriteIndex": 0,
+          "CanBeGivenAsGift": false,
+          "CanBeTrashed": true,
+          "ExcludeFromFishingCollection": true,
+          "ExcludeFromShippingCollection": true,
+          "ExcludeFromRandomSale": true
+        },
+        "Trapyy.BooksAndNotes_SummerBook": {
+          "Name": "Trapyy.BooksAndNotes_SummerBook",
+          "DisplayName": "{{i18n: item.book.summer.name}}",
+          "Description": "{{i18n: item.book.description}}",
+          "Type": "Basic",
+          "Category": 0,
+          "Price": 0,
+          "Edibility": -300,
+          "Texture": "Mods/Trapyy.BooksAndNotes/summer_book",
+          "SpriteIndex": 0,
+          "CanBeGivenAsGift": false,
+          "CanBeTrashed": true,
+          "ExcludeFromFishingCollection": true,
+          "ExcludeFromShippingCollection": true,
+          "ExcludeFromRandomSale": true
+        },
+        "Trapyy.BooksAndNotes_FallBook": {
+          "Name": "Trapyy.BooksAndNotes_FallBook",
+          "DisplayName": "{{i18n: item.book.fall.name}}",
+          "Description": "{{i18n: item.book.description}}",
+          "Type": "Basic",
+          "Category": 0,
+          "Price": 0,
+          "Edibility": -300,
+          "Texture": "Mods/Trapyy.BooksAndNotes/fall_book",
+          "SpriteIndex": 0,
+          "CanBeGivenAsGift": false,
+          "CanBeTrashed": true,
+          "ExcludeFromFishingCollection": true,
+          "ExcludeFromShippingCollection": true,
+          "ExcludeFromRandomSale": true
+        },
+        "Trapyy.BooksAndNotes_WinterBook": {
+          "Name": "Trapyy.BooksAndNotes_WinterBook",
+          "DisplayName": "{{i18n: item.book.winter.name}}",
+          "Description": "{{i18n: item.book.description}}",
+          "Type": "Basic",
+          "Category": 0,
+          "Price": 0,
+          "Edibility": -300,
+          "Texture": "Mods/Trapyy.BooksAndNotes/winter_book",
+          "SpriteIndex": 0,
+          "CanBeGivenAsGift": false,
+          "CanBeTrashed": true,
+          "ExcludeFromFishingCollection": true,
+          "ExcludeFromShippingCollection": true,
+          "ExcludeFromRandomSale": true
+        },
+        "Trapyy.BooksAndNotes_Note": {
+          "Name": "Trapyy.BooksAndNotes_Note",
+          "DisplayName": "{{i18n: item.note.name}}",
+          "Description": "{{i18n: item.note.description}}",
+          "Type": "Basic",
+          "Category": 0,
+          "Price": 0,
+          "Edibility": -300,
+          "Texture": "Mods/Trapyy.BooksAndNotes/default_note",
+          "SpriteIndex": 0,
+          "CanBeGivenAsGift": false,
+          "CanBeTrashed": true,
+          "ExcludeFromFishingCollection": true,
+          "ExcludeFromShippingCollection": true,
+          "ExcludeFromRandomSale": true
+        }
+      }
+    },
+    {
+      "LogName": "Crafting recipes",
+      "Action": "EditData",
+      "Target": "Data/CraftingRecipes",
+      "Entries": {
+        "Trapyy.BooksAndNotes_Book": "(O)Si.ECM_paper 50 (O)Si.ECM_leather 2 (O)Si.ECM_glue 1 (O)Si.ECM_string 1/Home/(O)Trapyy.BooksAndNotes_Book 1/false/default/{{i18n: item.book.name}}",
+        "Trapyy.BooksAndNotes_SpringBook": "(O)Si.ECM_paper 50 (O)Si.ECM_leather 2 (O)Si.ECM_glue 1 (O)Si.ECM_string 1 (O)591 1/Home/(O)Trapyy.BooksAndNotes_SpringBook 1/false/null/{{i18n: item.book.spring.name}}",
+        "Trapyy.BooksAndNotes_SummerBook": "(O)Si.ECM_paper 50 (O)Si.ECM_leather 2 (O)Si.ECM_glue 1 (O)Si.ECM_string 1 (O)421 1/Home/(O)Trapyy.BooksAndNotes_SummerBook 1/false/null/{{i18n: item.book.summer.name}}",
+        "Trapyy.BooksAndNotes_FallBook": "(O)Si.ECM_paper 50 (O)Si.ECM_leather 2 (O)Si.ECM_glue 1 (O)Si.ECM_string 1 (O)281 1/Home/(O)Trapyy.BooksAndNotes_FallBook 1/false/null/{{i18n: item.book.fall.name}}",
+        "Trapyy.BooksAndNotes_WinterBook": "(O)Si.ECM_paper 50 (O)Si.ECM_leather 2 (O)Si.ECM_glue 1 (O)Si.ECM_string 1 (O)416 1/Home/(O)Trapyy.BooksAndNotes_WinterBook 1/false/null/{{i18n: item.book.winter.name}}",
+        "Trapyy.BooksAndNotes_Note": "(O)Si.ECM_paper 1/Home/(O)Trapyy.BooksAndNotes_Note 1/false/default/{{i18n: item.note.name}}"
+      }
+    },
+    {
+      "LogName": "Spring book at the Egg Festival",
+      "Action": "EditData",
+      "Target": "Data/Shops",
+      "TargetField": [ "Festival_EggFestival_Pierre", "Items" ],
+      "Entries": {
+        "Trapyy.BooksAndNotes_SpringBook": {
+          "Id": "Trapyy.BooksAndNotes_SpringBook",
+          "ItemId": "(O)Trapyy.BooksAndNotes_SpringBook",
+          "Price": 2000,
+          "IsRecipe": false,
+          "ActionsOnPurchase": [ "MarkCraftingRecipeKnown Current Trapyy.BooksAndNotes_SpringBook true" ]
+        }
+      }
+    },
+    {
+      "LogName": "Spring book at the Flower Dance",
+      "Action": "EditData",
+      "Target": "Data/Shops",
+      "TargetField": [ "Festival_FlowerDance_Pierre", "Items" ],
+      "Entries": {
+        "Trapyy.BooksAndNotes_SpringBook": {
+          "Id": "Trapyy.BooksAndNotes_SpringBook",
+          "ItemId": "(O)Trapyy.BooksAndNotes_SpringBook",
+          "Price": 2000,
+          "IsRecipe": false,
+          "ActionsOnPurchase": [ "MarkCraftingRecipeKnown Current Trapyy.BooksAndNotes_SpringBook true" ]
+        }
+      }
+    },
+    {
+      "LogName": "Summer book at the Luau",
+      "Action": "EditData",
+      "Target": "Data/Shops",
+      "TargetField": [ "Festival_Luau_Pierre", "Items" ],
+      "Entries": {
+        "Trapyy.BooksAndNotes_SummerBook": {
+          "Id": "Trapyy.BooksAndNotes_SummerBook",
+          "ItemId": "(O)Trapyy.BooksAndNotes_SummerBook",
+          "Price": 2000,
+          "IsRecipe": false,
+          "ActionsOnPurchase": [ "MarkCraftingRecipeKnown Current Trapyy.BooksAndNotes_SummerBook true" ]
+        }
+      }
+    },
+    {
+      "LogName": "Summer book at the Dance of the Moonlight Jellies",
+      "Action": "EditData",
+      "Target": "Data/Shops",
+      "TargetField": [ "Festival_DanceOfTheMoonlightJellies_Pierre", "Items" ],
+      "Entries": {
+        "Trapyy.BooksAndNotes_SummerBook": {
+          "Id": "Trapyy.BooksAndNotes_SummerBook",
+          "ItemId": "(O)Trapyy.BooksAndNotes_SummerBook",
+          "Price": 2000,
+          "IsRecipe": false,
+          "ActionsOnPurchase": [ "MarkCraftingRecipeKnown Current Trapyy.BooksAndNotes_SummerBook true" ]
+        }
+      }
+    },
+    {
+      "LogName": "Fall book at the Fair (Star Tokens)",
+      "Action": "EditData",
+      "Target": "Data/Shops",
+      "TargetField": [ "Festival_StardewValleyFair_StarTokens", "Items" ],
+      "Entries": {
+        "Trapyy.BooksAndNotes_FallBook": {
+          "Id": "Trapyy.BooksAndNotes_FallBook",
+          "ItemId": "(O)Trapyy.BooksAndNotes_FallBook",
+          "Price": 1000,
+          "IsRecipe": false,
+          "ActionsOnPurchase": [ "MarkCraftingRecipeKnown Current Trapyy.BooksAndNotes_FallBook true" ]
+        }
+      }
+    },
+    {
+      "LogName": "Fall book at Spirit's Eve",
+      "Action": "EditData",
+      "Target": "Data/Shops",
+      "TargetField": [ "Festival_SpiritsEve_Pierre", "Items" ],
+      "Entries": {
+        "Trapyy.BooksAndNotes_FallBook": {
+          "Id": "Trapyy.BooksAndNotes_FallBook",
+          "ItemId": "(O)Trapyy.BooksAndNotes_FallBook",
+          "Price": 2000,
+          "IsRecipe": false,
+          "ActionsOnPurchase": [ "MarkCraftingRecipeKnown Current Trapyy.BooksAndNotes_FallBook true" ]
+        }
+      }
+    },
+    {
+      "LogName": "Winter book at the Festival of Ice",
+      "Action": "EditData",
+      "Target": "Data/Shops",
+      "TargetField": [ "Festival_FestivalOfIce_TravelingMerchant", "Items" ],
+      "Entries": {
+        "Trapyy.BooksAndNotes_WinterBook": {
+          "Id": "Trapyy.BooksAndNotes_WinterBook",
+          "ItemId": "(O)Trapyy.BooksAndNotes_WinterBook",
+          "Price": 2000,
+          "IsRecipe": false,
+          "ActionsOnPurchase": [ "MarkCraftingRecipeKnown Current Trapyy.BooksAndNotes_WinterBook true" ]
+        }
+      }
+    },
+    {
+      "LogName": "Winter book at the Feast of the Winter Star",
+      "Action": "EditData",
+      "Target": "Data/Shops",
+      "TargetField": [ "Festival_FeastOfTheWinterStar_Pierre", "Items" ],
+      "Entries": {
+        "Trapyy.BooksAndNotes_WinterBook": {
+          "Id": "Trapyy.BooksAndNotes_WinterBook",
+          "ItemId": "(O)Trapyy.BooksAndNotes_WinterBook",
+          "Price": 2000,
+          "IsRecipe": false,
+          "ActionsOnPurchase": [ "MarkCraftingRecipeKnown Current Trapyy.BooksAndNotes_WinterBook true" ]
+        }
+      }
+    },
+    {
+      "LogName": "Teach default recipes to existing farmers",
+      "Action": "EditData",
+      "Target": "Data/TriggerActions",
+      "Entries": {
+        "Trapyy.BooksAndNotes_LearnRecipes": {
+          "Id": "Trapyy.BooksAndNotes_LearnRecipes",
+          "Trigger": "DayStarted",
+          "HostOnly": false,
+          "Actions": [
+            "MarkCraftingRecipeKnown Current Trapyy.BooksAndNotes_Book true",
+            "MarkCraftingRecipeKnown Current Trapyy.BooksAndNotes_Note true"
+          ]
+        }
+      }
+    },
+    {
+      "LogName": "Bulk Paper Machine Rule",
+      "Action": "EditData",
+      "Target": "Data/Machines",
+      "TargetField": [ "(BC)90", "OutputRules" ],
+      "Entries": {
+        "Trapyy.BooksAndNotes_BulkPaper": {
+          "Id": "Trapyy.BooksAndNotes_BulkPaper",
+          "Triggers": [
+            {
+              "Trigger": "ItemPlacedInMachine",
+              "RequiredItemId": "(O)388",
+              "RequiredCount": 10
+            }
+          ],
+          "OutputItem": [
+            {
+              "Id": "Default",
+              "ItemId": "(O)Si.ECM_paper",
+              "MinStack": 10,
+              "MaxStack": 10
+            }
+          ],
+          "MinutesUntilReady": 1440
+        }
+      },
+      "MoveEntries": [
+        {
+          "ID": "Trapyy.BooksAndNotes_BulkPaper",
+          "ToPosition": "Top"
+        }
+      ]
+    },
+    {
+      "LogName": "Faster Leather (Bug Meat) Machine Rule",
+      "Action": "EditData",
+      "Target": "Data/Machines",
+      "TargetField": [ "(BC)Dehydrator", "OutputRules" ],
+      "Entries": {
+        "Trapyy.BooksAndNotes_FasterLeather_BugMeat": {
+          "Id": "Trapyy.BooksAndNotes_FasterLeather_BugMeat",
+          "Triggers": [
+            {
+              "Trigger": "ItemPlacedInMachine",
+              "RequiredItemId": "(O)684",
+              "RequiredCount": 10
+            }
+          ],
+          "OutputItem": [
+            {
+              "Id": "Default",
+              "ItemId": "(O)Si.ECM_leather"
+            }
+          ],
+          "MinutesUntilReady": 2880
+        }
+      },
+      "MoveEntries": [
+        {
+          "ID": "Trapyy.BooksAndNotes_FasterLeather_BugMeat",
+          "ToPosition": "Top"
+        }
+      ]
+    },
+    {
+      "LogName": "Faster Leather (Drum) Machine Rule",
+      "Action": "EditData",
+      "Target": "Data/Machines",
+      "TargetField": [ "(BC)20", "OutputRules" ],
+      "Entries": {
+        "Trapyy.BooksAndNotes_FasterLeather_Drum": {
+          "Id": "Trapyy.BooksAndNotes_FasterLeather_Drum",
+          "Triggers": [
+            {
+              "Trigger": "ItemPlacedInMachine",
+              "RequiredItemId": "(O)123",
+              "RequiredCount": 1
+            }
+          ],
+          "OutputItem": [
+            {
+              "Id": "Default",
+              "ItemId": "(O)Si.ECM_leather"
+            }
+          ],
+          "MinutesUntilReady": 2880
+        }
+      },
+      "MoveEntries": [
+        {
+          "ID": "Trapyy.BooksAndNotes_FasterLeather_Drum",
+          "ToPosition": "Top"
+        }
+      ]
+    },
+    {
+      "LogName": "Remove unwanted ECM crafting recipes",
+      "Action": "EditData",
+      "Target": "Data/CraftingRecipes",
+      "Priority": "Late",
+      "Entries": {
+        "Si.ECM_tape": null,
+        "Si.ECM_fiberglass": null
+      },
+      "When": {
+        "HideUnusedFrameworkItems": "true"
+      }
+    },
+    {
+      "LogName": "Remove unwanted ECM recycling recipes",
+      "Action": "EditData",
+      "Target": "Data/Machines",
+      "TargetField": [ "(BC)20", "OutputRules" ],
+      "Priority": "Late",
+      "Entries": {
+        "Si.ECManchor_chain": null,
+        "Si.ECMshards_glass": null,
+        "Si.ECMgadget_mc": null
+      },
+      "When": {
+        "HideUnusedFrameworkItems": "true"
+      }
+    },
+    {
+      "LogName": "Remove unwanted ECM loom recipes",
+      "Action": "EditData",
+      "Target": "Data/Machines",
+      "TargetField": [ "(BC)17", "OutputRules" ],
+      "Priority": "Late",
+      "Entries": {
+        "Si.ECMiron_chain": null,
+        "Si.ECMhay_rope": null,
+        "Si.ECMstring_rope": null,
+        "Si.ECMjelly1_rope": null,
+        "Si.ECMjelly2_rope": null,
+        "Si.ECMjelly3_rope": null
+      },
+      "When": {
+        "HideUnusedFrameworkItems": "true"
+      }
+    },
+    {
+      "LogName": "Remove unwanted ECM furnace recipes",
+      "Action": "EditData",
+      "Target": "Data/Machines",
+      "TargetField": [ "(BC)13", "OutputRules" ],
+      "Priority": "Late",
+      "Entries": {
+        "Si.ECMglasses_glass": null,
+        "Si.ECMobsid_glass": null
+      },
+      "When": {
+        "HideUnusedFrameworkItems": "true"
+      }
+    },
+    {
+      "LogName": "Remove ECM glass-shard machine recipes",
+      "Action": "EditData",
+      "Target": "Data/Machines",
+      "TargetField": [ "(BC)90", "OutputRules" ],
+      "Priority": "Late",
+      "Entries": {
+        "Si.ECMquartz_glassshards": null,
+        "Si.ECMfirequartz_glassshards": null
+      },
+      "When": {
+        "HideUnusedFrameworkItems": "true"
+      }
+    },
+    {
+      "LogName": "Remove unwanted ECM sewing recipes",
+      "Action": "EditData",
+      "Target": "Data/TailoringRecipes",
+      "Priority": "Late",
+      "Entries": {
+        "Si.ECMsew_mc": null,
+        "Si.ECMsew_ducttape": null
+      },
+      "When": {
+        "HideUnusedFrameworkItems": "true"
+      }
+    }
+  ]
+}

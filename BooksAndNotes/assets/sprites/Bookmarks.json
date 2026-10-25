@@ -1,0 +1,6 @@
+{
+  "Texture": "Mods/Trapyy.BooksAndNotes/bookmark",
+  "Sprites": {
+    "Ribbon": { "SourceRect": "0, 3, 24, 14" }
+  }
+}

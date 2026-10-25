@@ -1,0 +1,16 @@
+{
+  "Name": "Books and Notes",
+  "Author": "Trapyy",
+  "Version": "1.0.0",
+  "Description": "Write, sign, and share personal books and notes with Parchment.",
+  "UniqueID": "Trapyy.BooksAndNotes",
+  "EntryDll": "BooksAndNotes.dll",
+  "MinimumApiVersion": "4.5.2",
+  "UpdateKeys": [],
+  "Dependencies": [
+    { "UniqueID": "Pathoschild.ContentPatcher", "MinimumVersion": "2.7.0", "IsRequired": true },
+    { "UniqueID": "PeacefulEnd.Parchment.Core", "MinimumVersion": "1.15.1", "IsRequired": true },
+    { "UniqueID": "focustense.StardewUI", "MinimumVersion": "0.6.1", "IsRequired": true },
+    { "UniqueID": "Trapyy.BooksAndNotes.Content", "MinimumVersion": "1.0.0", "IsRequired": true }
+  ]
+}

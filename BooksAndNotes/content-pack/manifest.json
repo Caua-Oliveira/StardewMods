@@ -1,0 +1,22 @@
+{
+  "Name": "Books and Notes - Content",
+  "Author": "Trapyy",
+  "Version": "1.0.0",
+  "Description": "Items, recipes, translations, and replaceable artwork for Books and Notes.",
+  "UniqueID": "Trapyy.BooksAndNotes.Content",
+  "ContentPackFor": {
+    "UniqueID": "Pathoschild.ContentPatcher",
+    "MinimumVersion": "2.7.0"
+  },
+  "Dependencies": [
+  {
+    "UniqueID": "Si.ECM",
+    "IsRequired": true
+  },
+   {
+	  "UniqueID": "spacechase0.GenericModConfigMenu",
+	  "IsRequired": false
+  }
+  ],
+  "UpdateKeys": []
+}
