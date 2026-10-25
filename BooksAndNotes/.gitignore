@@ -7,3 +7,5 @@ tests/obj/
 config.json
 data/
 *.user
+*.vs
+.vs
