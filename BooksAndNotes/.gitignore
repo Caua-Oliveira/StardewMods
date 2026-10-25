@@ -1,0 +1,9 @@
+bin/
+obj/
+release/
+releases/
+tests/bin/
+tests/obj/
+config.json
+data/
+*.user
