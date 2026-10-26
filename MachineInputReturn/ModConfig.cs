@@ -10,6 +10,7 @@
     public class ModConfig
     {
         public bool Enabled { get; set; } = true;
+        public bool EnableRightClickRetrieval { get; set; } = true;
         public RetrievalTimeOption RetrievalTime { get; set; } = RetrievalTimeOption.Anytime;
     }
 }

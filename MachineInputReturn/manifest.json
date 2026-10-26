@@ -1,7 +1,7 @@
 {
   "Name": "MachineInputReturn",
   "Author": "Trapyy",
-  "Version": "1.0.0",
+  "Version": "1.1.0",
   "Description": "Allows you to cancel a machine's production and retrieve the item you put inside. (By right clicking, or breaking the machine)",
   "UniqueID": "Trapyy.MachineInputReturn",
   "EntryDll": "MachineInputReturn.dll",

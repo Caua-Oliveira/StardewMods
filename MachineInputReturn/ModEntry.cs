@@ -29,7 +29,13 @@ public class ModEntry : Mod
 
         configMenu.Register(
             mod: ModManifest,
-            reset: () => _config = new ModConfig(),
+            reset: () =>
+            {
+                var defaults = new ModConfig();
+                _config.Enabled = defaults.Enabled;
+                _config.EnableRightClickRetrieval = defaults.EnableRightClickRetrieval;
+                _config.RetrievalTime = defaults.RetrievalTime;
+            },
             save: () => Helper.WriteConfig(_config)
         );
 
@@ -44,6 +50,14 @@ public class ModEntry : Mod
             tooltip: () => "If checked, this mod's features are enabled.",
             getValue: () => _config.Enabled,
             setValue: value => _config.Enabled = value
+        );
+
+        configMenu.AddBoolOption(
+            mod: ModManifest,
+            name: () => "Right-click retrieval",
+            tooltip: () => "Allow right-click or controller action to retrieve processing inputs. Disable to use Fairy Dust normally. Breaking a machine still returns its input.",
+            getValue: () => _config.EnableRightClickRetrieval,
+            setValue: value => _config.EnableRightClickRetrieval = value
         );
 
         configMenu.AddTextOption(
@@ -73,12 +87,14 @@ public class ModEntry : Mod
 
     private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
     {
-        if (!_config.Enabled || !Context.IsWorldReady || Game1.player == null)
+        if (!_config.Enabled || !_config.EnableRightClickRetrieval || !Context.IsWorldReady || !Context.IsPlayerFree || Game1.player == null)
             return;
 
         // Only react to right mouse button or controller equivalent for using tools
         if (e.Button != SButton.MouseRight && !e.Button.IsActionButton())
             return;
+
+        Game1.displayHUD = true;
 
         var player = Game1.player;
         Vector2? tile = null;
@@ -97,9 +113,11 @@ public class ModEntry : Mod
             );
         }
 
-        if (tile.HasValue)
+        if (tile.HasValue && _machineManager.TryRetrieveInputItemAtTile(tile.Value, Game1.currentLocation, player))
         {
-            _machineManager.TryRetrieveInputItemAtTile(tile.Value, Game1.currentLocation, player);
+            // Don't let this same press reload the machine with the returned/held item.
+            // SMAPI keeps it suppressed until release, so inserting requires a new press.
+            Helper.Input.Suppress(e.Button);
         }
     }
 }

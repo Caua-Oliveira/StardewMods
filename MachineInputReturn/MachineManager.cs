@@ -22,14 +22,16 @@ public class MachineManager
 
     public void OnObjectListChanged(ObjectListChangedEventArgs e)
     {
-        if (!_config.Enabled || e.Location == null || !Context.IsPlayerFree)
+        // Object changes are broadcast to all peers. Only the host may create refunds,
+        // even when the removed machine is in another player's cabin or a modded map.
+        if (!_config.Enabled || !Context.IsWorldReady || !Context.IsMainPlayer || e.Location == null)
             return;
 
         foreach (var obj in e.Removed)
         {
             if (obj.Value is StardewValley.Object machine)
             {
-                TryDropInputItem(machine, e.Location);
+                TryDropInputItem(machine, e.Location, obj.Key);
             }
         }
     }
@@ -38,11 +40,12 @@ public class MachineManager
     /// Tries to retrieve the input item from a machine at a given tile.
     /// Called when the player right-clicks (mouse or controller) on a machine.
     /// </summary>
-    public void TryRetrieveInputItemAtTile(Vector2 tile, GameLocation location, Farmer player)
+    /// <returns>Whether input was returned and the interaction should be consumed.</returns>
+    public bool TryRetrieveInputItemAtTile(Vector2 tile, GameLocation location, Farmer player)
     {
-        if (location == null) return;
-        if (!location.Objects.TryGetValue(tile, out var obj)) return;
-        if (obj is not StardewValley.Object machine) return;
+        if (location == null) return false;
+        if (!location.Objects.TryGetValue(tile, out var obj)) return false;
+        if (obj is not StardewValley.Object machine) return false;
 
         // Must be processing, have input, and have a held object (i.e., is processing)
         if (machine.MinutesUntilReady > 0 && machine.lastInputItem.Value != null && machine.heldObject.Value != null)
@@ -54,7 +57,7 @@ public class MachineManager
             if (machineData?.OutputRules == null)
             {
                 _monitor.Log($"No machine data or output rules found for '{machine.Name}'.", LogLevel.Trace);
-                return;
+                return false;
             }
 
             int itemsToReturn = 0;
@@ -95,14 +98,14 @@ public class MachineManager
                                     if (percentRemaining < 0.5)
                                     {
                                         _monitor.Log($"Machine '{machine.Name}' is past the retrieval point (below 50%). Cannot retrieve item.", LogLevel.Info);
-                                        return;
+                                        return false;
                                     }
                                     break;
                                 case RetrievalTimeOption.Below30Percent:
                                     if (percentRemaining < 0.3)
                                     {
                                         _monitor.Log($"Machine '{machine.Name}' is past the retrieval point (below 30%). Cannot retrieve item.", LogLevel.Info);
-                                        return;
+                                        return false;
                                     }
                                     break;
                             }
@@ -125,7 +128,7 @@ public class MachineManager
 
                     if (!player.addItemToInventoryBool(itemToGive))
                     {
-                        Game1.createObjectDebris(lastInput.ItemId, (int)tile.X, (int)tile.Y, itemQuality: itemQuality);
+                        Game1.createItemDebris(itemToGive, (tile + new Vector2(0.5f)) * Game1.tileSize, -1, location);
                     }
                     else
                     {
@@ -134,6 +137,7 @@ public class MachineManager
                 }
                 // Stop machine processing
                 machine.heldObject.Value = null;
+                machine.lastInputItem.Value = null;
                 machine.MinutesUntilReady = 0;
                 machine.readyForHarvest.Value = false;
                 machine.showNextIndex.Value = false;
@@ -141,18 +145,21 @@ public class MachineManager
 
 
                 _monitor.Log($"Returned {itemsGiven} of {lastInput.Name} (Quality: {itemQuality}) to player from '{machine.Name}'.", LogLevel.Trace);
+                return true;
             }
             else
             {
                 _monitor.Log($"No matching output rule found for {lastInput.Name} in '{machine.Name}'.", LogLevel.Trace);
             }
         }
+
+        return false;
     }
 
     /// <summary>
     /// Drops the input item when the machine is removed, as before.
     /// </summary>
-    private void TryDropInputItem(StardewValley.Object machine, GameLocation location)
+    private void TryDropInputItem(StardewValley.Object machine, GameLocation location, Vector2 tile)
     {
         if (machine.MinutesUntilReady > 0 && machine.lastInputItem.Value != null && machine.heldObject.Value != null)
         {
@@ -226,8 +233,17 @@ public class MachineManager
             {
                 for (int i = 0; i < itemsToReturn; i++)
                 {
-                    Game1.createObjectDebris(lastInput.ItemId, ((int)machine.TileLocation.X), ((int)machine.TileLocation.Y), itemQuality: itemQuality);
+                    var itemToDrop = lastInput.getOne();
+                    itemToDrop.Quality = itemQuality;
+                    Game1.createItemDebris(itemToDrop, (tile + new Vector2(0.5f)) * Game1.tileSize, -1, location);
                 }
+                // Consume the processing state so the same machine can't be refunded twice.
+                machine.lastInputItem.Value = null;
+                machine.heldObject.Value = null;
+                machine.MinutesUntilReady = 0;
+                machine.readyForHarvest.Value = false;
+                machine.showNextIndex.Value = false;
+                machine.ResetParentSheetIndex();
                 _monitor.Log($"Dropped {itemsToReturn} of {lastInput.Name} (Quality: {itemQuality}) from '{machine.Name}'.", LogLevel.Trace);
             }
             else
