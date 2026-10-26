@@ -1,0 +1,20 @@
+{
+  "Name": "InstantShipping",
+  "Author": "Trapyy",
+  "Version": "1.0.1",
+  "Description": "No more running to the shipping bin every time. This mod lets you instantly send items from your inventory to the shipping bin with a single button press",
+  "UniqueID": "Trapyy.InstantShipping",
+  "EntryDll": "InstantShipping.dll",
+  "MinimumApiVersion": "4.1.9",
+  "UpdateKeys": [ "Nexus:36442" ],
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.GenericModConfigMenu",
+      "IsRequired": false
+    },
+    {
+      "UniqueID": "mistyspring.ItemExtensions",
+      "IsRequired": false
+    }
+  ]
+}

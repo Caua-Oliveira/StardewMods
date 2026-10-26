@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36301.6 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstantShipping", "InstantShipping.csproj", "{07AA1B86-CB9A-4E4D-B486-5997635100AC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{07AA1B86-CB9A-4E4D-B486-5997635100AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07AA1B86-CB9A-4E4D-B486-5997635100AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07AA1B86-CB9A-4E4D-B486-5997635100AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07AA1B86-CB9A-4E4D-B486-5997635100AC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DF8FD741-31DB-4EFF-B766-353AEC067673}
+	EndGlobalSection
+EndGlobal
