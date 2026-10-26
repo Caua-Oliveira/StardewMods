@@ -7,12 +7,13 @@
 		<GamePath>C:\Games\Stardew Valley</GamePath>
 		<AssemblyName>OnlyWhenItCounts</AssemblyName>
 		<OutputType>Library</OutputType>
+		<EnableHarmony>true</EnableHarmony>
+		<DefaultItemExcludes>$(DefaultItemExcludes);tests/**</DefaultItemExcludes>
 	</PropertyGroup>
-	<Target Name="AfterBuild" AfterTargets="Build">
-		<Exec Command="C:\Games\Stardew Valley\StardewModdingAPI.exe" />
+	<Target Name="LaunchGameAfterBuild" AfterTargets="Build" Condition="'$(RunGameAfterBuild)' == 'true'">
+		<Exec Command="&quot;$(GamePath)\StardewModdingAPI.exe&quot;" />
 	</Target>
 	<ItemGroup>
-		<PackageReference Include="Lib.Harmony" Version="2.3.6" />
 		<PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.1.1" />
 	</ItemGroup>
 
