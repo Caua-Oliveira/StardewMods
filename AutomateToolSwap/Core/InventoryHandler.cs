@@ -184,7 +184,7 @@ internal class InventoryHandler
         var items = player.Items;
 
         // If the current tool already matches and RequireClick is disabled, do nothing.
-        if (items[ModEntry.inventoryIndexMemory.currentIndex] is { } currentItem &&
+        if (player.CurrentItem is { } currentItem &&
             currentItem.GetType() == toolType &&
             !ModEntry.Config.RequireClick)
             return;

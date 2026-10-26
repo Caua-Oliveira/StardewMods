@@ -65,10 +65,13 @@ public class MonstersInteractionRules
         return false;
     }
 
-    public static void AlternativeWeaponForMonsters()
+    public static void AlternativeWeaponForMonsters(Farmer player)
     {
-        Vector2 tile = Game1.player.Tile;
-        foreach (var monster in Game1.currentLocation.characters)
+        if (player?.currentLocation is not { } location || !player.canMove)
+            return;
+
+        Vector2 tile = player.Tile;
+        foreach (var monster in location.characters)
         {
 
             if (monster is RockCrab)
@@ -77,9 +80,9 @@ public class MonstersInteractionRules
             Vector2 monsterTile = monster.Tile;
             float distance = Vector2.Distance(tile, monsterTile);
 
-            if (monster.IsMonster && distance < ModEntry.Config.MonsterRangeDetection && Game1.player.canMove)
+            if (monster.IsMonster && distance < ModEntry.Config.MonsterRangeDetection)
             {
-                if (TrySwap(Game1.currentLocation, tile, Game1.player))
+                if (TrySwap(location, tile, player))
                     return;
             }
 

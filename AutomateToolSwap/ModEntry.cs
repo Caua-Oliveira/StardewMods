@@ -6,6 +6,7 @@ using Integrations;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.TerrainFeatures;
 using xTile.Dimensions;
@@ -19,7 +20,8 @@ public class ModEntry : Mod
     internal static Integrations.IItemExtensionsApi? ItemExtensionsAPI;
     internal static ModEntry Instance { get; private set; } = null!;
     internal static ModConfig Config { get; private set; } = null!;
-    internal static IventoryIndexMemory inventoryIndexMemory = new();
+    private static readonly PerScreen<IventoryIndexMemory> inventoryIndexMemories = new(() => new IventoryIndexMemory());
+    internal static IventoryIndexMemory inventoryIndexMemory => inventoryIndexMemories.Value;
     internal static ITranslationHelper? i18n;
     internal static bool isTractorModInstalled;
     internal static string? modsPath;
@@ -35,6 +37,7 @@ public class ModEntry : Mod
         helper.Events.GameLoop.GameLaunched += OnGameLaunched;
         helper.Events.Input.ButtonPressed += OnButtonPressed;
         helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
+        helper.Events.GameLoop.ReturnedToTitle += (_, _) => inventoryIndexMemories.ResetAllScreens();
 
 
     }
@@ -57,6 +60,9 @@ public class ModEntry : Mod
             return;
 
         Farmer player = Game1.player;
+        if (player?.currentLocation == null)
+            return;
+
         //Toggles the mod on and off
         if (Config.ToggleKey.JustPressed())
         {
@@ -116,7 +122,9 @@ public class ModEntry : Mod
 
     public void StartMod(Farmer player)
     {
-        GameLocation currentLocation = player.currentLocation;
+        if (player?.currentLocation is not { } currentLocation)
+            return;
+
         ICursorPosition cursorPos = Helper.Input.GetCursorPosition();
         Vector2 frontOfPlayerTile = new(
             (int)(player.GetToolLocation().X / Game1.tileSize),
@@ -184,24 +192,26 @@ public class ModEntry : Mod
         if (!Context.IsWorldReady || Game1.activeClickableMenu != null || !Config.Enabled)
             return;
 
+        Farmer player = Game1.player;
+        if (player?.currentLocation is not { } currentLocation)
+            return;
+
         //Alternative option for the entire mod, which does not require click
-        if (!Config.RequireClick && Game1.player.canMove)
-            StartMod(Game1.player);
+        if (!Config.RequireClick && player.canMove)
+            StartMod(player);
 
         //Alternative option for "Weapon for Monsters that does not require click"
         if (Config.AlternativeWeaponOnMonsters && Config.WeaponOnMonsters)
         {
-            InteractionRules.MonstersInteractionRules.AlternativeWeaponForMonsters();
+            InteractionRules.MonstersInteractionRules.AlternativeWeaponForMonsters(player);
         }
 
         //Tractor mod compatibility
         if (!isTractorModInstalled || Config.DisableTractorSwap || (!Config.Enabled && !Config.DisableTractorSwap))
             return;
 
-        if (Game1.player.isRidingHorse() && Game1.player.mount.Name.ToLower().Contains("tractor"))
+        if (player.isRidingHorse() && player.mount?.Name?.ToLower().Contains("tractor") == true)
         {
-            Farmer player = Game1.player;
-            GameLocation currentLocation = Game1.currentLocation;
             ICursorPosition cursorPos = this.Helper.Input.GetCursorPosition();
             Vector2 cursorTile = cursorPos.GrabTile;
             Vector2 toolLocation = new((int)Game1.player.GetToolLocation().X / Game1.tileSize, (int)Game1.player.GetToolLocation().Y / Game1.tileSize);
