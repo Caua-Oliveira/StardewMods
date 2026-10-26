@@ -149,9 +149,23 @@
         "Trapyy.BooksAndNotes_Book": "(O)Si.ECM_paper 50 (O)Si.ECM_leather 2 (O)Si.ECM_glue 1 (O)Si.ECM_string 1/Home/(O)Trapyy.BooksAndNotes_Book 1/false/default/{{i18n: item.book.name}}",
         "Trapyy.BooksAndNotes_SpringBook": "(O)Si.ECM_paper 50 (O)Si.ECM_leather 2 (O)Si.ECM_glue 1 (O)Si.ECM_string 1 (O)591 1/Home/(O)Trapyy.BooksAndNotes_SpringBook 1/false/null/{{i18n: item.book.spring.name}}",
         "Trapyy.BooksAndNotes_SummerBook": "(O)Si.ECM_paper 50 (O)Si.ECM_leather 2 (O)Si.ECM_glue 1 (O)Si.ECM_string 1 (O)421 1/Home/(O)Trapyy.BooksAndNotes_SummerBook 1/false/null/{{i18n: item.book.summer.name}}",
-        "Trapyy.BooksAndNotes_FallBook": "(O)Si.ECM_paper 50 (O)Si.ECM_leather 2 (O)Si.ECM_glue 1 (O)Si.ECM_string 1 (O)281 1/Home/(O)Trapyy.BooksAndNotes_FallBook 1/false/null/{{i18n: item.book.fall.name}}",
+        "Trapyy.BooksAndNotes_FallBook": "(O)Si.ECM_paper 50 (O)Si.ECM_leather 2 (O)Si.ECM_glue 1 (O)Si.ECM_string 1 (O)280 1/Home/(O)Trapyy.BooksAndNotes_FallBook 1/false/null/{{i18n: item.book.fall.name}}",
         "Trapyy.BooksAndNotes_WinterBook": "(O)Si.ECM_paper 50 (O)Si.ECM_leather 2 (O)Si.ECM_glue 1 (O)Si.ECM_string 1 (O)416 1/Home/(O)Trapyy.BooksAndNotes_WinterBook 1/false/null/{{i18n: item.book.winter.name}}",
         "Trapyy.BooksAndNotes_Note": "(O)Si.ECM_paper 1/Home/(O)Trapyy.BooksAndNotes_Note 1/false/default/{{i18n: item.note.name}}"
+      }
+    },
+    {
+      "LogName": "Default writable book at Pierre's General Store",
+      "Action": "EditData",
+      "Target": "Data/Shops",
+      "TargetField": [ "SeedShop", "Items" ],
+      "Entries": {
+        "Trapyy.BooksAndNotes_Book": {
+          "Id": "Trapyy.BooksAndNotes_Book",
+          "ItemId": "(O)Trapyy.BooksAndNotes_Book",
+          "Price": 1000,
+          "IsRecipe": false
+        }
       }
     },
     {
