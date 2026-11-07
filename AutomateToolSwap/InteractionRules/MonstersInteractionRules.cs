@@ -1,92 +1,46 @@
-using AutomateToolSwap;
 using Core;
-using Microsoft.Xna.Framework;
-using Netcode;
 using StardewValley;
 using StardewValley.Monsters;
 using StardewValley.Tools;
 
 namespace InteractionRules;
 
-/// <summary>s
-/// Implements the swap rules for monsters.
-/// </summary>
-public class MonstersInteractionRules
+internal static class MonstersInteractionRules
 {
-    /// <summary>
-    /// Checks monster-related conditions and tries to swap to the correct tool/item appropriately.
-    /// </summary>
-    /// <param name="location">The current game location.</param>
-    /// <param name="tile">The tile being checked.</param>
-    /// <param name="player">The current player.</param>
-    /// <returns>True if a swap was performed; otherwise, false.</returns>
-    public static bool TrySwap(GameLocation location, Vector2 tile, Farmer player)
+    public static SwapDecision Evaluate(SwapContext context) => Evaluate(context, context.Player?.CurrentItem);
+
+    internal static SwapDecision Evaluate(SwapContext context, Item? heldItem)
     {
-        if (!ModEntry.Config.WeaponOnMonsters)
-            return false;
-        bool currentItemIsNull = player.CurrentItem == null;
-        string currentItemName = player.CurrentItem?.Name ?? "";
+        if (!context.Config.WeaponOnMonsters)
+            return SwapDecision.None;
 
-        // Check if the player's current item is not a bomb or staircase. (So they can use it in the mines without problem)
-        bool currentItemIsNotForMine = currentItemIsNull ||
-                                  !currentItemName.Contains("Bomb") && !currentItemName.Contains("Staircase");
-
-        foreach (var character in location.characters)
+        Monster? nearest = null;
+        float nearestDistance = float.MaxValue;
+        foreach (var character in context.Location.characters)
         {
-            if (character.IsMonster && Vector2.Distance(tile, character.Tile) < ModEntry.Config.MonsterRangeDetection)
+            if (character is not Monster monster || monster.Health <= 0)
+                continue;
+            if (monster is RockCrab && context.Config.IgnoreCrabs)
+                continue;
+            if (monster is GreenSlime && context.Config.IgnoreSlimesOnFarm && context.Location is Farm or SlimeHutch)
+                continue;
+            float distance = Microsoft.Xna.Framework.Vector2.Distance(context.Tile, monster.Tile);
+            if (distance < Math.Max(0, context.Config.MonsterRangeDetection) && distance < nearestDistance)
             {
-                // Special case: RockCrab handling.
-                if (character is RockCrab crab)
-                {
-                    if (ModEntry.Config.IgnoreCrabs)
-                        return true;
-                    var isShellLess = ModEntry.Instance.Helper.Reflection.GetField<NetBool>(crab, "shellGone").GetValue();
-                    if (!isShellLess.Value && !crab.isMoving())
-                    {
-                        InventoryHandler.SetTool(player, typeof(Pickaxe));
-                        return true;
-                    }
-                }
-
-                // Ignore slimes on farm if configured.
-                if ((location is Farm || location is SlimeHutch) &&
-                    ModEntry.Config.IgnoreSlimesOnFarm && character is GreenSlime)
-                    return true;
-
-                // Switch to weapon if not holding Bombs or Stairs.
-                if (currentItemIsNull || currentItemIsNotForMine)
-                {
-                    InventoryHandler.SetTool(player, typeof(MeleeWeapon), "Weapon");
-                    return true;
-                }
-                return true;
+                nearest = monster;
+                nearestDistance = distance;
             }
         }
-        return false;
-    }
 
-    public static void AlternativeWeaponForMonsters(Farmer player)
-    {
-        if (player?.currentLocation is not { } location || !player.canMove)
-            return;
+        if (nearest == null)
+            return SwapDecision.None;
+        // Alternate mode protects the player's chosen combat weapon only while an
+        // eligible threat is in range. Scythes still need to switch to a real weapon.
+        if (context.Config.AlternativeWeaponOnMonsters && heldItem is MeleeWeapon weapon && !weapon.isScythe())
+            return SwapDecision.Keep;
 
-        Vector2 tile = player.Tile;
-        foreach (var monster in location.characters)
-        {
-
-            if (monster is RockCrab)
-                break;
-
-            Vector2 monsterTile = monster.Tile;
-            float distance = Vector2.Distance(tile, monsterTile);
-
-            if (monster.IsMonster && distance < ModEntry.Config.MonsterRangeDetection)
-            {
-                if (TrySwap(location, tile, player))
-                    return;
-            }
-
-        }
-        return;
+        if (nearest is RockCrab crab && !crab.isStickBug.Value && !crab.shellGone.Value && !crab.isMoving())
+            return SwapDecision.Tool<Pickaxe>();
+        return SwapDecision.Weapon();
     }
 }

@@ -25,8 +25,8 @@ internal class ConfigSetup
             return;
 
         configMenu.Register(ModManifest,
-            reset: () => Config = new ModConfig(),
-            save: () => helper.WriteConfig(Config)
+            reset: () => { Config = new ModConfig(); ModEntry.SetConfig(Config); },
+            save: () => { ModEntry.SetConfig(Config); helper.WriteConfig(Config); }
         );
 
         /****

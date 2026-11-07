@@ -1,153 +1,77 @@
-using AutomateToolSwap;
 using Core;
 using Microsoft.Xna.Framework;
 using StardewValley;
+using StardewValley.GameData.Crops;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 
 namespace InteractionRules;
 
-/// <summary>
-/// Implements the switch rule for terrain features (trees, bushes, grass, and tilled dirt).
-/// </summary>
-public class TerrainFeaturesInteractionRules
+internal static class TerrainFeaturesInteractionRules
 {
-    /// <summary>
-    /// Checks the terrain features at the given tile and swaps tools if necessary.
-    /// </summary>
-    /// <param name="location">The current game location.</param>
-    /// <param name="tile">The tile being checked.</param>
-    /// <param name="player">The current player.</param>
-    /// <returns>True if a switch was performed; otherwise, false.</returns>
-    public static bool TrySwap(GameLocation location, Vector2 tile, Farmer player)
+    public static SwapDecision Evaluate(SwapContext context)
     {
-        bool currentItemIsNull = player.CurrentItem == null;
-        string currentItemName = player.CurrentItem?.Name ?? "";
-        int currentItemCategory = player.CurrentItem?.category.Value ?? 0;
-        // Check for large terrain features (e.g. bushes that occupies multiple tiles)
-        foreach (var terrainFeature in location.largeTerrainFeatures)
+        var config = context.Config;
+        var player = context.Player;
+        var held = player.CurrentItem;
+        foreach (var feature in context.Location.largeTerrainFeatures)
         {
-            if (terrainFeature is Bush bush && ModEntry.Config.ScytheForBushes)
+            if (feature is Bush bush && config.ScytheForBushes && bush.inBloom()
+                && bush.getBoundingBox().Contains((int)(context.Tile.X * Game1.tileSize), (int)(context.Tile.Y * Game1.tileSize)))
+                return SwapDecision.Weapon(WeaponKind.PreferScythe);
+        }
+        if (!context.Location.terrainFeatures.TryGetValue(context.Tile, out var terrain))
+            return SwapDecision.None;
+
+        if (terrain is Tree tree)
+        {
+            // Placement takes precedence over moss removal too.
+            if (held?.QualifiedItemId is "(BC)105" or "(BC)264" or "(O)805")
+                return SwapDecision.Keep;
+            if (tree.hasMoss.Value && tree.growthStage.Value >= Tree.treeStage && config.ScytheForMossOnTrees)
+                return SwapDecision.Weapon(WeaponKind.PreferScythe);
+            return config.AxeForTrees && !(config.IgnoreGrowingTrees && tree.growthStage.Value < Tree.treeStage)
+                ? SwapDecision.Tool<Axe>() : SwapDecision.Keep;
+        }
+        if (terrain is FruitTree)
+            return config.AxeForFruitTrees ? SwapDecision.Tool<Axe>() : SwapDecision.Keep;
+        if (terrain is Grass)
+            return config.ScytheForGrass && held is not (MilkPail or Shears)
+                ? SwapDecision.Weapon(WeaponKind.ScytheOnly) : SwapDecision.Keep;
+        if (terrain is not HoeDirt dirt)
+            return SwapDecision.None;
+
+        var crop = dirt.crop;
+        if (crop?.dead.Value == true && !config.ScytheForCrops)
+            return SwapDecision.Keep;
+        bool preservePickaxe = config.PickaxeOverWateringCan && held is Pickaxe;
+        if (crop == null)
+        {
+            if (held?.Category is -74 or -19)
+                return SwapDecision.Keep;
+            if (config.SeedForTilledDirt && !preservePickaxe)
             {
-                // Calculate bounding box of the bush and check if the clicked tile falls within it.
-                Rectangle bushBox = bush.getBoundingBox();
-                Vector2 tilePixel = new(tile.X * Game1.tileSize, tile.Y * Game1.tileSize);
-                if (bushBox.Contains((int)tilePixel.X, (int)tilePixel.Y) && bush.inBloom())
-                {
-                    InventoryHandler.SetTool(player, typeof(MeleeWeapon), "Scythe");
-                    return true;
-                }
+                var seeds = SwapDecision.Item(item => item.Category == -74 && !item.HasContextTag("tree_seed_item"));
+                if (InventorySelector.Find(player, seeds).HasValue)
+                    return seeds;
             }
+            return config.PickaxeForTilledSoil && !player.isRidingHorse() ? SwapDecision.Tool<Pickaxe>() : SwapDecision.Keep;
         }
 
-        // Check normal terrain features.
-        if (!location.terrainFeatures.ContainsKey(tile))
-            return false;
-
-        var feature = location.terrainFeatures[tile];
-
-        if (feature is Tree tree)
+        if (config.ScytheForCrops && (dirt.readyForHarvest() || crop.dead.Value))
         {
-            // If the tree has moss and the config enables scythe for moss, switch tool.
-            // Trees can have moss while still growing in the code, but not actually in-game, so we check for growth stage as well to prevent early switch to scythe
-            if (tree.hasMoss.Value && tree.growthStage.Value >= 5 && ModEntry.Config.ScytheForMossOnTrees) 
-            {
-                InventoryHandler.SetTool(player, typeof(MeleeWeapon), "Scythe");
-                return true;
-            }
-            // If the player is holding a tapper or fertilizer tool, do not change.
-            if (!ModEntry.Config.AxeForTrees || !currentItemIsNull &&
-               (currentItemName == "Tapper" || currentItemName == "Heavy Tapper" ||currentItemName == "Tree Fertilizer"))
-                return false;
-            // If the tree is grown (or config does not ignore growing trees), switch to axe.
-            if (!(tree.growthStage.Value < Tree.treeStage && ModEntry.Config.IgnoreGrowingTrees))
-            {
-                InventoryHandler.SetTool(player, typeof(Axe));
-                return true;
-            }
-            return false;
+            // Ordinary scythes cannot harvest hand-picked crops; the iridium scythe can.
+            return SwapDecision.Item(item => item is MeleeWeapon weapon && weapon.isScythe()
+                && (crop.dead.Value || crop.GetHarvestMethod() == HarvestMethod.Scythe || weapon.QualifiedItemId == "(W)66"));
         }
-
-        //Ignore swap to Scythe if player is holding Animal Tool so they dont accidentally cut the grass
-        if (feature is Grass && !(player.CurrentTool is MilkPail || player.CurrentTool is Shears) && ModEntry.Config.ScytheForGrass)
-        {
-            InventoryHandler.SetTool(player, typeof(MeleeWeapon), "ScytheOnly");
-            return true;
-        }
-
-        if (feature is HoeDirt dirt)
-        {
-            bool dirtHasCrop = dirt.crop != null;
-            if (!dirtHasCrop && ModEntry.Config.SeedForTilledDirt)
-            {
-                bool has_seeds = false;
-
-                if (!(ModEntry.Config.PickaxeOverWateringCan && player.CurrentTool is Pickaxe))
-                {
-                    if (currentItemIsNull || currentItemCategory != -74 ||
-                        player.CurrentItem.HasContextTag("tree_seed_item"))
-                    {
-                        foreach (var x in player.Items)
-                        {
-                            if (x != null && x.HasContextTag("category_seeds") && !x.HasContextTag("tree_seed_item"))
-                            {
-                                has_seeds = true;
-                            }
-                        }
-                        InventoryHandler.SetItem(player, "Seed");
-                        if (has_seeds)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            if(ModEntry.Config.PickaxeForTilledSoil && !(player.CurrentTool is Pickaxe) && !(player.isRidingHorse()))
-                            {
-                                InventoryHandler.SetTool(player, typeof(Pickaxe));
-                                return true;
-                            }
-
-                        }
-
-                    }
-
-                }           
-            }
-            if (!dirtHasCrop && ModEntry.Config.PickaxeForTilledSoil && (currentItemIsNull || !player.CurrentItem.HasContextTag("category_seeds")) && !(player.isRidingHorse()))
-            {
-                InventoryHandler.SetTool(player, typeof(Pickaxe));
-                return true;
-            }
-            if (dirtHasCrop && (dirt.readyForHarvest() || dirt.crop.dead.Value) && ModEntry.Config.ScytheForCrops)
-            {
-                InventoryHandler.SetTool(player, typeof(MeleeWeapon), "ScytheOnly");
-                return true;
-            }
-            if (dirtHasCrop && dirt.crop.whichForageCrop.Value == "2" && ModEntry.Config.HoeForGingerCrop)
-            {
-                InventoryHandler.SetTool(player, typeof(Hoe));
-                return true;
-            }
-            if (dirtHasCrop && !dirt.isWatered() && !dirt.readyForHarvest() && ModEntry.Config.WateringCanForUnwateredCrop &&
-                !(player.isRidingHorse() && player.mount.Name.ToLower().Contains("tractor") && player.CurrentTool is Hoe))
-            {
-                if (!(ModEntry.Config.PickaxeOverWateringCan && player.CurrentTool is Pickaxe))
-                {
-                    InventoryHandler.SetTool(player, typeof(WateringCan));
-                }
-                return true;
-            }
-            if (dirtHasCrop && !dirt.HasFertilizer() && dirt.CanApplyFertilizer("(O)369") && ModEntry.Config.FertilizerForCrops)
-            {
-                if (!ModEntry.Config.PickaxeOverWateringCan && player.CurrentTool is not Pickaxe && currentItemCategory != -19)
-                {
-                    InventoryHandler.SetItem(player, "Fertilizer", "Tree", aux: -19);
-                }
-                return true;
-            }
-
-            return true;
-        }
-        return false;
+        if (config.HoeForGingerCrop && crop.whichForageCrop.Value == "2")
+            return SwapDecision.Tool<Hoe>();
+        if (!dirt.isWatered() && !dirt.readyForHarvest() && config.WateringCanForUnwateredCrop)
+            return preservePickaxe || SwapPolicy.IsTractor(player) && held is Hoe
+                ? SwapDecision.Keep : SwapDecision.Tool<WateringCan>();
+        if (config.FertilizerForCrops && !dirt.HasFertilizer() && !preservePickaxe && dirt.CanApplyFertilizer("(O)369"))
+            return SwapDecision.Item(item => item.Category == -19 && item.QualifiedItemId != "(O)805"
+                && dirt.CanApplyFertilizer(item.QualifiedItemId));
+        return SwapDecision.Keep;
     }
 }

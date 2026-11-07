@@ -1,103 +1,36 @@
-using AutomateToolSwap;
 using Core;
-using Microsoft.Xna.Framework;
-using StardewValley;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 
 namespace InteractionRules;
 
-/// <summary>
-/// Implements the swap rules for monsters.
-/// </summary>
-public class ResourceClumpsInteractionRules
+internal static class ResourceClumpsInteractionRules
 {
-
-    /// <summary>
-    /// Checks Resource Clumps conditions and tries to swap to the correct tool/item appropriately.
-    /// </summary>
-    /// <param name="location">The current game location.</param>
-    /// <param name="tile">The tile being checked.</param>
-    /// <param name="player">The current player.</param>
-    /// <returns>True if a swap was performed; otherwise, false.</returns>
-    public static bool TrySwap(GameLocation location, Vector2 tile, Farmer player)
+    public static SwapDecision Evaluate(SwapContext context)
     {
-        bool currentItemIsNull = player.CurrentItem == null;
-        string currentItemName = player.CurrentItem?.Name ?? "";
-        bool currentItemIsNotForMine = currentItemIsNull ||
-                                  !currentItemName.Contains("Bomb") && !currentItemName.Contains("Staircase");
-
-        foreach (var resourceClump in location.resourceClumps)
+        foreach (var clump in context.Location.resourceClumps)
         {
-            if (resourceClump.occupiesTile((int)tile.X, (int)tile.Y))
+            if (!clump.occupiesTile((int)context.Tile.X, (int)context.Tile.Y))
+                continue;
+            var config = context.Config;
+            string? id = clump.modDataForSerialization.Pairs
+                .FirstOrDefault(pair => pair.Key.Contains("clumpid", StringComparison.OrdinalIgnoreCase)).Value;
+            string? tool = id == null ? null : context.Integrations.GetBreakingTool(id, true);
+            if (tool == "Pickaxe")
+                return config.PickaxeForBoulders ? SwapDecision.Tool<Pickaxe>() : SwapDecision.Keep;
+            if (tool == "Axe")
+                return config.AxeForStumpsAndLogs ? SwapDecision.Tool<Axe>() : SwapDecision.Keep;
+            if (clump is GiantCrop)
+                return config.AxeForGiantCrops && context.Player.CurrentItem?.QualifiedItemId is not ("(BC)105" or "(BC)264")
+                    ? SwapDecision.Tool<Axe>() : SwapDecision.Keep;
+            return clump.parentSheetIndex.Value switch
             {
-                // Modded clumps
-                if (ModEntry.ItemExtensionsAPI != null)
-                {
-                    string itemId = "";
-                    foreach (var pair in resourceClump.modDataForSerialization.Pairs)
-                    {
-                        if (pair.Key.ToLower().Contains("clumpid"))
-                        {
-                            itemId = pair.Value;
-                        }
-                    }
-                    bool isClump = ModEntry.ItemExtensionsAPI.IsClump(itemId);
-                    bool foundToolRequired = ModEntry.ItemExtensionsAPI.GetBreakingTool(itemId, isClump, out string tool);
-                    if (foundToolRequired)
-                    {
-                        if (tool == "Pickaxe")
-                        {
-                            if (ModEntry.Config.PickaxeForBoulders && currentItemIsNotForMine)
-                                InventoryHandler.SetTool(player, typeof(Pickaxe));
-                            return true;
-                        }
-                        if (tool == "Axe")
-                        {
-                            if (ModEntry.Config.AxeForStumpsAndLogs)
-                                InventoryHandler.SetTool(player, typeof(Axe));
-                            return true;
-                        }
-                    }
-                }
-
-                if (ModEntry.Config.AxeForGiantCrops && resourceClump is GiantCrop)
-                {
-                    if (currentItemIsNull || currentItemName != "Tapper")
-                        InventoryHandler.SetTool(player, typeof(Axe));
-                    return true;
-                }
-                if (ModEntry.Config.AxeForStumpsAndLogs && IsStumpOrLog(resourceClump))
-                {
-                    InventoryHandler.SetTool(player, typeof(Axe));
-                    return true;
-                }
-                if (ModEntry.Config.PickaxeForBoulders && IsBoulder(resourceClump))
-                {
-                    InventoryHandler.SetTool(player, typeof(Pickaxe));
-                    return true;
-                }
-                if (ModEntry.Config.ScytheForBushes && IsGreenRainBush(resourceClump))
-                {
-                    InventoryHandler.SetTool(player, typeof(MeleeWeapon), aux: "Scythe");
-                } 
-            }
+                600 or 602 when config.AxeForStumpsAndLogs => SwapDecision.Tool<Axe>(),
+                758 or 756 or 754 or 752 or 672 or 622 or 148 when config.PickaxeForBoulders => SwapDecision.Tool<Pickaxe>(),
+                44 or 46 when config.ScytheForBushes => SwapDecision.Weapon(WeaponKind.PreferScythe),
+                _ => SwapDecision.Keep
+            };
         }
-        return false;
-    }
-
-    private static bool IsStumpOrLog(ResourceClump resourceClump)
-    {
-        return new List<int> { 602, 600 }.Contains(resourceClump.parentSheetIndex.Value);
-    }
-
-    private static bool IsBoulder(ResourceClump resourceClump)
-    {
-        return new List<int> { 758, 756, 754, 752, 672, 622, 148 }.Contains(resourceClump.parentSheetIndex.Value);
-    }
-
-    private static bool IsGreenRainBush(ResourceClump resourceClump)
-    {
-        return new List<int> { 44, 46 }.Contains(resourceClump.parentSheetIndex.Value);
+        return SwapDecision.None;
     }
 }

@@ -6,12 +6,15 @@
 		<Nullable>enable</Nullable>
 		<GamePath>C:\Games\Stardew Valley</GamePath>
 		<AssemblyName>AutomateToolSwap</AssemblyName>
+		<Version>1.6.1</Version>
 		<OutputType>Library</OutputType>
 	</PropertyGroup>
-	<Target Name="AfterBuild" AfterTargets="Build">
-		<Exec Command="C:\Games\Stardew Valley\StardewModdingAPI.exe" />
+	<Target Name="LaunchGame" AfterTargets="Build" Condition="'$(LaunchGameAfterBuild)' == 'true'">
+		<Exec Command="&quot;$(GamePath)\StardewModdingAPI.exe&quot;" />
 	</Target>
 	<ItemGroup>
+		<Compile Remove="tests/**/*.cs" />
+		<None Remove="tests/bin/**;tests/obj/**;releases/**" />
 		<PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.1.1" />
 	</ItemGroup>
 

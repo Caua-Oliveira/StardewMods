@@ -1,261 +1,119 @@
-﻿
-using System.Text.Json;
 using Configuration;
 using Core;
 using Integrations;
-using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewValley;
-using StardewValley.TerrainFeatures;
-using xTile.Dimensions;
-using xTile.Tiles;
-
 
 namespace AutomateToolSwap;
 
 public class ModEntry : Mod
 {
-    internal static Integrations.IItemExtensionsApi? ItemExtensionsAPI;
-    internal static ModEntry Instance { get; private set; } = null!;
     internal static ModConfig Config { get; private set; } = null!;
-    private static readonly PerScreen<IventoryIndexMemory> inventoryIndexMemories = new(() => new IventoryIndexMemory());
-    internal static IventoryIndexMemory inventoryIndexMemory => inventoryIndexMemories.Value;
-    internal static ITranslationHelper? i18n;
-    internal static bool isTractorModInstalled;
-    internal static string? modsPath;
-    internal static Integrations.IAnimalsNeedWaterAPI? AnimalsNeedWaterAPI;
+    private readonly PerScreen<ScreenState> screens = new(() => new ScreenState());
+    private ModIntegrations integrations = null!;
+    private SwapController controller = null!;
 
     public override void Entry(IModHelper helper)
     {
-
-        Instance = this;
-        i18n = Helper.Translation;
-        Config = Helper.ReadConfig<ModConfig>();
-
+        SetConfig(helper.ReadConfig<ModConfig>());
+        integrations = new(helper, Monitor);
+        controller = new(helper, integrations);
         helper.Events.GameLoop.GameLaunched += OnGameLaunched;
         helper.Events.Input.ButtonPressed += OnButtonPressed;
+        helper.Events.Input.ButtonsChanged += OnButtonsChanged;
         helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
-        helper.Events.GameLoop.ReturnedToTitle += (_, _) => inventoryIndexMemories.ResetAllScreens();
-
-
+        helper.Events.GameLoop.ReturnedToTitle += (_, _) => screens.ResetAllScreens();
+        helper.Events.GameLoop.SaveLoaded += (_, _) => integrations.RefreshRanges();
+        helper.Events.GameLoop.DayStarted += (_, _) => integrations.RefreshRanges();
+        helper.Events.Display.MenuChanged += (_, e) =>
+        {
+            if (e.NewMenu == null)
+                integrations.RefreshRanges();
+        };
+        helper.Events.Player.Warped += (_, e) =>
+        {
+            if (ReferenceEquals(e.Player, Game1.player))
+                screens.Value = new();
+        };
     }
 
-    private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+    internal static void SetConfig(ModConfig config)
     {
-        Configuration.ConfigSetup.SetupConfig(Helper, Instance);
-        isTractorModInstalled = Helper.ModRegistry.IsLoaded("Pathoschild.TractorMod");
-        modsPath = Path.Combine(AppContext.BaseDirectory, "Mods");
-        ItemExtensionsAPI = Helper.ModRegistry.GetApi<Integrations.IItemExtensionsApi>("mistyspring.ItemExtensions");
-        AnimalsNeedWaterAPI = null; //Helper.ModRegistry.GetApi<Integrations.IAnimalsNeedWaterAPI>("GZhynko.AnimalsNeedWater");
-        
-
+        config.ItemBlacklist ??= new();
+        config.ToggleKey ??= KeybindList.Parse("CapsLock");
+        config.LastToolKey ??= KeybindList.Parse("MouseMiddle");
+        config.BlacklistKey ??= KeybindList.Parse("LeftControl + L");
+        config.SwapKey ??= KeybindList.Parse("MouseLeft");
+        config.MonsterRangeDetection = Math.Clamp(config.MonsterRangeDetection, 1, 10);
+        Config = config;
     }
 
-    [EventPriority(EventPriority.High)]
-    private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
+    private void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
     {
-        if (!Context.IsWorldReady || Game1.activeClickableMenu != null)
-            return;
+        integrations.Initialize();
+        ConfigSetup.SetupConfig(Helper, this);
+    }
 
-        Farmer player = Game1.player;
-        if (player?.currentLocation == null)
-            return;
+    private static bool TryGetPlayer(out Farmer player)
+    {
+        player = Game1.player;
+        return Context.IsWorldReady && player?.currentLocation != null;
+    }
 
-        //Toggles the mod on and off
+    private void OnButtonsChanged(object? sender, ButtonsChangedEventArgs e)
+    {
+        if (!TryGetPlayer(out var player) || Game1.activeClickableMenu != null)
+            return;
         if (Config.ToggleKey.JustPressed())
         {
             Config.Enabled = !Config.Enabled;
-            if (Config.Enabled)
-                Game1.addHUDMessage(new HUDMessage("AutomateToolSwap " + i18n.Get("mod.Enabled"), 2));
-            else
-                Game1.addHUDMessage(new HUDMessage("AutomateToolSwap " + i18n.Get("mod.Disabled"), 2));
+            screens.Value.History.CancelReturn();
+            Game1.addHUDMessage(new HUDMessage("AutomateToolSwap " + Helper.Translation.Get(Config.Enabled ? "mod.Enabled" : "mod.Disabled"), 2));
+            return;
         }
-
-
-        // Logic to Add/Remove items from the blacklist
         if (Config.BlacklistKey.JustPressed())
         {
-            Item? currentItem = player.CurrentItem;
-
-            if (currentItem != null)
+            screens.Value.History.CancelReturn();
+            if (player.CurrentItem is { } item)
             {
-                // Use QualifiedItemId to be precise
-                string itemId = currentItem.QualifiedItemId;
-
-                if (Config.ItemBlacklist.Contains(itemId))
-                {
-                    Config.ItemBlacklist.Remove(itemId);
-                    Game1.addHUDMessage(new HUDMessage($"Removed {currentItem.DisplayName} from blacklist", 2));
-                }
-                else
-                {
-                    Config.ItemBlacklist.Add(itemId);
-                    Game1.addHUDMessage(new HUDMessage($"Added {currentItem.DisplayName} to blacklist", 2));
-                }
-
+                bool removed = Config.ItemBlacklist.Remove(item.QualifiedItemId);
+                if (!removed)
+                    Config.ItemBlacklist.Add(item.QualifiedItemId);
+                Game1.addHUDMessage(new HUDMessage(removed ? $"Removed {item.DisplayName} from blacklist" : $"Added {item.DisplayName} to blacklist", 2));
                 Helper.WriteConfig(Config);
             }
             else
-            {
                 Game1.addHUDMessage(new HUDMessage("No item held to add/remove", 3));
-            }
-
-            return; 
+            return;
         }
-       
-
-        // Swaps to the last used item
-        if (Config.LastToolKey.JustPressed() && player.canMove && Config.Enabled)
-            inventoryIndexMemory.GoToLastIndex(player);
-
-        if (!SwapButtonPressed(e) || !Config.Enabled || !(player.canMove))
+        if (Config.LastToolKey.JustPressed())
+        {
+            controller.ReturnToPrevious(player, Config, screens.Value);
             return;
-
-        if (IsHoldingBlacklistItem(Game1.player))
-            return;
-
-        if (Config.RequireClick)
-            StartMod(player);
+        }
+        if (Config.RequireClick && Config.UseDifferentSwapKey && Config.SwapKey.JustPressed())
+            controller.OnAction(player, Config, screens.Value);
     }
 
-    public void StartMod(Farmer player)
+    [EventPriority(EventPriority.High)]
+    private void OnButtonPressed(object? sender, ButtonPressedEventArgs e)
     {
-        if (player?.currentLocation is not { } currentLocation)
+        if (!TryGetPlayer(out var player) || !Config.RequireClick || Config.UseDifferentSwapKey
+            || Config.ToggleKey.JustPressed() || Config.BlacklistKey.JustPressed() || Config.LastToolKey.JustPressed())
             return;
-
-        ICursorPosition cursorPos = Helper.Input.GetCursorPosition();
-        Vector2 frontOfPlayerTile = new(
-            (int)(player.GetToolLocation().X / Game1.tileSize),
-            (int)(player.GetToolLocation().Y / Game1.tileSize)
-        );
-
-        #region RangedTools Compatibility
-        string folderPath;
-        string configFilePath;
-        string jsonString;
-        int toolRange = 1;
-
-        IModInfo? rangedToolsMod = Helper.ModRegistry.Get("vgperson.RangedTools");
-        if (rangedToolsMod != null)
-        {
-            folderPath = Path.Combine(modsPath, "RangedTools");
-            configFilePath = Path.Combine(folderPath, "config.json");
-            jsonString = File.ReadAllText(configFilePath);
-            using JsonDocument doc = JsonDocument.Parse(jsonString);
-            JsonElement root = doc.RootElement;
-            if (root.TryGetProperty("AxeRange", out JsonElement toolRangeElement))
-            {
-                toolRange = toolRangeElement.GetInt32();
-            }
-        }
-        #endregion
-
-
-        switch (Config.DetectionMethod)
-        {
-            case "Cursor": // Checked tile will be under the cursor if the tile is in range of tool, otherwise it will be the tile in fornt of the player
-                if (rangedToolsMod != null)
-                {
-                    // Calculate Chebyshev distance
-                    double distance = Math.Max(Math.Abs(player.Tile.X - cursorPos.Tile.X), Math.Abs(player.Tile.Y - cursorPos.Tile.Y));
-                    if (toolRange == -1 || distance <= toolRange)
-                    {
-                        ItemSwapCoordinator.TrySwapAll(currentLocation, cursorPos.Tile, player);
-                    }
-                    else
-                    {
-                        ItemSwapCoordinator.TrySwapAll(currentLocation, cursorPos.GrabTile, player);
-                    }
-                }
-                else
-                {
-                    ItemSwapCoordinator.TrySwapAll(currentLocation, cursorPos.GrabTile, player);
-                }
-                break;
-
-            case "Player": // Checked tile will be the tile in front of the player
-                ItemSwapCoordinator.TrySwapAll(currentLocation, frontOfPlayerTile, player);
-                break;
-
-            case "Cursor ONLY": // Checked tile will be under the cursor no matter what
-                ItemSwapCoordinator.TrySwapAll(currentLocation, cursorPos.Tile, player);
-                break;
-        }
-
+        if (e.Button.IsUseToolButton())
+            controller.OnAction(player, Config, screens.Value);
     }
 
-    //Called when the game updates the tick (60 times per second)
-    private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+    private void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
     {
-        if (!Context.IsWorldReady || Game1.activeClickableMenu != null || !Config.Enabled)
+        if (!TryGetPlayer(out var player))
             return;
-
-        Farmer player = Game1.player;
-        if (player?.currentLocation is not { } currentLocation)
-            return;
-
-        //Alternative option for the entire mod, which does not require click
-        if (!Config.RequireClick && player.canMove)
-            StartMod(player);
-
-        //Alternative option for "Weapon for Monsters that does not require click"
-        if (Config.AlternativeWeaponOnMonsters && Config.WeaponOnMonsters)
-        {
-            InteractionRules.MonstersInteractionRules.AlternativeWeaponForMonsters(player);
-        }
-
-        //Tractor mod compatibility
-        if (!isTractorModInstalled || Config.DisableTractorSwap || (!Config.Enabled && !Config.DisableTractorSwap))
-            return;
-
-        if (player.isRidingHorse() && player.mount?.Name?.ToLower().Contains("tractor") == true)
-        {
-            ICursorPosition cursorPos = this.Helper.Input.GetCursorPosition();
-            Vector2 cursorTile = cursorPos.GrabTile;
-            Vector2 toolLocation = new((int)Game1.player.GetToolLocation().X / Game1.tileSize, (int)Game1.player.GetToolLocation().Y / Game1.tileSize);
-
-            if (Config.DetectionMethod == "Cursor")
-                ItemSwapCoordinator.TrySwapAll(currentLocation, cursorTile, player);
-
-            else if (Config.DetectionMethod == "Player")
-                ItemSwapCoordinator.TrySwapAll(currentLocation, toolLocation, player);
-
-        }
+        bool toolHeld = Helper.Input.IsDown(SButton.ControllerX)
+            || Game1.options.useToolButton.Any(button => Helper.Input.IsDown(button.ToSButton()));
+        bool customKeyHeld = Config.UseDifferentSwapKey && Config.SwapKey.IsDown();
+        controller.Update(player, Config, screens.Value, Game1.currentGameTime.ElapsedGameTime, toolHeld, customKeyHeld);
     }
-
-    /// Checks if the player is currently holding an item defined in the ItemBlacklist.
-    private bool IsHoldingBlacklistItem(Farmer player)
-    {
-        if (player.CurrentItem == null)
-            return false;
-
-        // Check if the current item's Qualified ID exists in the config list
-        return Config.ItemBlacklist.Contains(player.CurrentItem.QualifiedItemId);
-    }
-
-    //Checks if the swap button is pressed
-    public static bool SwapButtonPressed(ButtonPressedEventArgs e)
-    {
-        if (Config.UseDifferentSwapKey)
-        {
-            return Config.SwapKey.JustPressed();
-
-        }
-        else
-        {
-            foreach (var button in Game1.options.useToolButton)
-            {
-                if (e.Button == button.ToSButton() || e.Button == SButton.ControllerX)
-                    return true;
-
-            }
-            return false;
-        }
-    }
-
 }
-
-
-

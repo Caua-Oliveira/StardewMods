@@ -35,7 +35,7 @@
   "config.DetectionMethod.player": "Player",
 
   "config.RequireClick.name": "Require click to switch tools",
-  "config.RequireClick.tooltip": "If active, you need to click to switch tools, otherwise it will always switch automatically with no need to click.\n(This is recomended).",
+  "config.RequireClick.tooltip": "When enabled, tools switch while you press or hold the use-tool button (or your custom swap key). Release it to stop target-based switching.\nWhen disabled, tools switch automatically even without pressing a button.",
 
   "config.autoReturnToLastTool.name": "Auto-Return to Last Tool",
   "config.autoReturnToLastTool.tooltip": "Automatically return to the previously used tool after swapping.",
@@ -51,7 +51,7 @@
   "config.weaponOnMonsters.tooltip": "Automatically switch to Melee Weapons when clicking on monsters.",
 
   "config.alternativeWeaponOnMonsters.name": "Alternative \"Weapon for Monsters\"",
-  "config.alternativeWeaponOnMonsters.tooltip": "When enabled, you will swap to a Weapon whenever there is a monster nearby, without the need to click, but if you have a Weapon in hands, it wont swap to anything",
+  "config.alternativeWeaponOnMonsters.tooltip": "Equip a weapon when an eligible monster is nearby, without clicking. While that monster remains in range, keep your held combat weapon even when clicking other targets. Normal switching resumes when no threats remain in range.",
 
   "config.monsterRangeDetection.name": "Monster Range Detection",
   "config.monsterRangeDetection.tooltip": "The range in which the mod detects monsters (in tiles).",

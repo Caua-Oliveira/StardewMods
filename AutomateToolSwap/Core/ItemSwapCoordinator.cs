@@ -1,5 +1,3 @@
-using Microsoft.Xna.Framework;
-using StardewValley;
 using InteractionRules;
 
 namespace Core;
@@ -8,36 +6,33 @@ namespace Core;
 /// Aggregates all switch rules and invokes them sequentially.
 /// Only the first rule that applies will trigger a tool/item switch.
 /// </summary>
-public class ItemSwapCoordinator
+internal static class ItemSwapCoordinator
 {
-    public delegate bool InteractionRule(GameLocation location, Vector2 tile, Farmer player);
+    public delegate SwapDecision InteractionRule(SwapContext context);
 
     /// <summary> List of registered switch rules. (Order is important) </summary>
     private static readonly List<InteractionRule> interactionRules = new()
     {
-        ObjectsInteractionRules.TrySwap,
-        ResourceClumpsInteractionRules.TrySwap,
-        TerrainFeaturesInteractionRules.TrySwap,
-        MonstersInteractionRules.TrySwap,
-        WaterInteractionRules.TrySwap,
-        AnimalsInteractionRules.TrySwap,
-        SoilInteractionRules.TrySwap
+        ObjectsInteractionRules.Evaluate,
+        ResourceClumpsInteractionRules.Evaluate,
+        TerrainFeaturesInteractionRules.Evaluate,
+        MonstersInteractionRules.Evaluate,
+        WaterInteractionRules.Evaluate,
+        AnimalsInteractionRules.Evaluate,
+        SoilInteractionRules.Evaluate
     };
 
     /// <summary>
     /// Iterates over all registered switch rules to attempt a tool/item switch.
     /// </summary>
-    /// <param name="location">The current game location.</param>
-    /// <param name="tile">The tile that was clicked.</param>
-    /// <param name="player">The current player.</param>
-    /// <returns>True if any rule performed a switch; otherwise, false.</returns>
-    public static bool TrySwapAll(GameLocation location, Vector2 tile, Farmer player)
+    public static SwapDecision Evaluate(SwapContext context)
     {
         foreach (var rule in interactionRules)
         {
-            if (rule(location, tile, player))
-                return true;
+            var decision = rule(context);
+            if (decision.Kind != DecisionKind.NotApplicable)
+                return decision;
         }
-        return false;
+        return SwapDecision.None;
     }
 }
