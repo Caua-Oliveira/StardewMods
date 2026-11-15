@@ -3,6 +3,7 @@ using Integrations;
 using InteractionRules;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Menus;
 
 namespace Core;
 
@@ -34,9 +35,18 @@ internal sealed class SwapController
     internal static bool ShouldDeferReturn(SwapDecision combat, int? requestedSlot, int currentSlot)
         => combat.Kind != DecisionKind.NotApplicable || requestedSlot == currentSlot;
 
+    // The toolbar is a HUD menu, so activeClickableMenu doesn't cover it.
+    private static bool IsPointerOverToolbar() => Game1.displayHUD && Game1.wasMouseVisibleThisFrame
+        && Game1.onScreenMenus.OfType<Toolbar>().Any(toolbar => toolbar.isWithinBounds(Game1.getMouseX(true), Game1.getMouseY(true)));
+
     public void OnAction(Farmer player, ModConfig config, ScreenState state)
     {
         state.Observe(player);
+        if (IsPointerOverToolbar())
+        {
+            state.History.CancelReturn();
+            return;
+        }
         if (!SwapPolicy.CanSwap(player, config))
             return;
         var decision = ResolveDecision(EvaluateProximityCombat(player, config), true, () => EvaluateTarget(player, config));
@@ -52,6 +62,13 @@ internal sealed class SwapController
     public void Update(Farmer player, ModConfig config, ScreenState state, TimeSpan elapsed, bool toolHeld, bool customKeyHeld)
     {
         state.Observe(player);
+        // Guard held inputs and automatic modes too, or the update immediately
+        // replaces the slot vanilla selected after the initial mouse press.
+        if (IsPointerOverToolbar())
+        {
+            state.History.CancelReturn();
+            return;
+        }
         if (!config.Enabled || !config.AutoReturnToLastTool || Game1.activeClickableMenu != null)
             state.History.CancelReturn();
 
