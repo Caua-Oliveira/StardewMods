@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>BeneathYou</AssemblyName>
+    <RootNamespace>BeneathYou</RootNamespace>
+    <Version>1.0.0</Version>
+    <DebugType>portable</DebugType>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GamePath>C:\Games\Stardew Valley</GamePath>
+    <EnableHarmony>true</EnableHarmony>
+    <EnableModDeploy>false</EnableModDeploy>
+    <EnableModZip>false</EnableModZip>
+    <PathMap>$(MSBuildProjectDirectory)=/src/BeneathYou</PathMap>
+  </PropertyGroup>
+
+  <Target Name="LaunchGameAfterBuild" AfterTargets="Build" Condition="'$(RunGameAfterBuild)' == 'true'">
+    <Exec Command="&quot;$(GamePath)\StardewModdingAPI.exe&quot;" />
+  </Target>
+
+  <ItemGroup>
+    <Compile Remove="tests\**\*.cs;verification\**\*.cs" />
+    <None Remove="tests\**;verification\**;releases\**" />
+    <None Update="i18n\**;manifest.json" CopyToOutputDirectory="PreserveNewest" />
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.3.2" />
+  </ItemGroup>
+
+</Project>
+
+

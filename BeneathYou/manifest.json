@@ -1,0 +1,20 @@
+{
+  "Name": "Beneath You",
+  "Author": "Trapyy",
+  "Version": "1.0.0",
+  "Description": "Allows targeting tools and solid placeables on the tile directly beneath your feet, with smart player push.",
+  "UniqueID": "Trapyy.BeneathYou",
+  "EntryDll": "BeneathYou.dll",
+  "MinimumApiVersion": "4.0.0",
+  "UpdateKeys": [ "Nexus:55679" ],
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.GenericModConfigMenu",
+      "IsRequired": false
+    },
+    {
+      "UniqueID": "vgperson.RangedTools",
+      "IsRequired": false
+    }
+  ]
+}

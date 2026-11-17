@@ -1,0 +1,23 @@
+{
+  "config.section.general": "General",
+  "config.enabled.name": "Enable Mod",
+  "config.enabled.tooltip": "Master toggle for Beneath You.",
+
+  "config.section.solid-push": "Solid Placement & Smart Push",
+  "config.solid-placement.name": "Allow Solid Placement Under Player",
+  "config.solid-placement.tooltip": "Allow placing solid objects (chests, machines, sprinklers, fences, trellis seeds, furniture) on your standing tile and push you to an adjacent empty tile. Blocked if no safe exit tile exists.",
+  "config.push-direction.name": "Preferred Push Direction",
+  "config.push-direction.tooltip": "Order for choosing an adjacent empty tile when pushed off a newly placed solid item.",
+  "config.push-direction.MovementThenStepBack": "Held Movement, Then Step Back",
+  "config.push-direction.StepBackFirst": "Step Back First",
+  "config.push-direction.StepForwardFirst": "Step Forward First",
+  "config.push-direction.FacingDirectionOnly": "Facing Direction Only",
+  "config.diagonal-push.name": "Allow Diagonal Push",
+  "config.diagonal-push.tooltip": "If all 4 cardinal adjacent tiles are blocked, allow pushing onto an open diagonal adjacent tile.",
+  "config.push-style.name": "Push Movement Style",
+  "config.push-style.tooltip": "How the player is displaced onto the adjacent empty tile.",
+  "config.push-style.SmoothSlide": "Smooth Slide",
+  "config.push-style.InstantSnap": "Instant Snap",
+  "config.face-placed.name": "Face Placed Item After Push",
+  "config.face-placed.tooltip": "Turn the player to face the newly placed item after being pushed onto an adjacent tile."
+}
