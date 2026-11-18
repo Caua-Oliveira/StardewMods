@@ -112,8 +112,8 @@ internal class ModConfig
     public bool AnyToolForSupplyCrates { get; set; } = true;
     public bool PanForPanningSpots { get; set; } = true;
     public bool HayForFeedingBench { get; set; } = true;
-    public bool MilkPailForCowsAndGoats { get; set; } = true;
-    public bool ShearsForSheeps { get; set; } = true;
+    public bool SwapToMilkPail { get; set; } = true;
+    public bool SwapToShears { get; set; } = true;
     public bool FertilizerForCrops { get; set; } = false;
 
 

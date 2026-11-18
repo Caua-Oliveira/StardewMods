@@ -233,11 +233,11 @@
   "config.HayForFeedingBench.name": "사료 공급 벤치",
   "config.HayForFeedingBench.tooltip": "사료 공급 벤치를 클릭하면 자동으로 건초로 전환됩니다.",
 
-  "config.MilkPailForCowsAndGoats.name": "우유통",
-  "config.MilkPailForCowsAndGoats.tooltip": "소나 염소를 클릭하면 자동으로 우유통을 사용합니다.",
+  "config.SwapToMilkPail.name": "우유통으로 전환",
+  "config.SwapToMilkPail.tooltip": "우유통으로 수확하는 동물(모드 동물 포함)을 클릭하면 자동으로 우유통으로 전환합니다.",
 
-  "config.ShearsForSheeps.name": "가위",
-  "config.ShearsForSheeps.tooltip": "양을 클릭하면 자동으로 가위를 사용합니다.",
+  "config.SwapToShears.name": "가위로 전환",
+  "config.SwapToShears.tooltip": "가위로 수확하는 동물(모드 동물 포함)을 클릭하면 자동으로 가위로 전환합니다.",
 
   "config.tractor.text": "트랙터 설정",
   "config.disableTractorSwap.name": "트랙터",

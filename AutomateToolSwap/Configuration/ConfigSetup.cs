@@ -566,16 +566,16 @@ internal class ConfigSetup
             setValue: isEnabled => Config.HayForFeedingBench = isEnabled
         );
         configMenu.AddBoolOption(ModManifest,
-            name: () => i18n.Get("config.MilkPailForCowsAndGoats.name"),
-            tooltip: () => i18n.Get("config.MilkPailForCowsAndGoats.tooltip"),
-            getValue: () => Config.MilkPailForCowsAndGoats,
-            setValue: isEnabled => Config.MilkPailForCowsAndGoats = isEnabled
+            name: () => i18n.Get("config.SwapToMilkPail.name"),
+            tooltip: () => i18n.Get("config.SwapToMilkPail.tooltip"),
+            getValue: () => Config.SwapToMilkPail,
+            setValue: isEnabled => Config.SwapToMilkPail = isEnabled
         );
         configMenu.AddBoolOption(ModManifest,
-            name: () => i18n.Get("config.ShearsForSheeps.name"),
-            tooltip: () => i18n.Get("config.ShearsForSheeps.tooltip"),
-            getValue: () => Config.ShearsForSheeps,
-            setValue: isEnabled => Config.ShearsForSheeps = isEnabled
+            name: () => i18n.Get("config.SwapToShears.name"),
+            tooltip: () => i18n.Get("config.SwapToShears.tooltip"),
+            getValue: () => Config.SwapToShears,
+            setValue: isEnabled => Config.SwapToShears = isEnabled
         );
 
 

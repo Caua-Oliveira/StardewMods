@@ -247,11 +247,11 @@
   "config.HayForFeedingBench.name": "Foin pour l'alimentation",
   "config.HayForFeedingBench.tooltip": "Passer automatiquement au foin pour le banc d’alimentation pour les animaux.",
 
-  "config.MilkPailForCowsAndGoats.name": "Seau pour vaches et chèvres",
-  "config.MilkPailForCowsAndGoats.tooltip": "Passer automatiquement au seau lors du clic sur une vache ou une chèvre.",
+  "config.SwapToMilkPail.name": "Passer au seau à lait",
+  "config.SwapToMilkPail.tooltip": "Passer automatiquement au seau à lait lors du clic sur tout animal nécessitant un seau à lait (animaux de mods inclus).",
 
-  "config.ShearsForSheeps.name": "Cisailles pour moutons",
-  "config.ShearsForSheeps.tooltip": "Passer automatiquement aux cisailles lors du clic sur un mouton.",
+  "config.SwapToShears.name": "Passer aux cisailles",
+  "config.SwapToShears.tooltip": "Passer automatiquement aux cisailles lors du clic sur tout animal nécessitant des cisailles (animaux de mods inclus).",
 
   "config.tractor.text": "Paramètres du Mod Tractor",
   "config.disableTractorSwap.name": "Désactiver l’échange automatique\npendant l’utilisation du tracteur",

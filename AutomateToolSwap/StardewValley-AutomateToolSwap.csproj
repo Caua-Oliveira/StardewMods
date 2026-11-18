@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 		<GamePath>C:\Games\Stardew Valley</GamePath>
 		<AssemblyName>AutomateToolSwap</AssemblyName>
-		<Version>1.6.2</Version>
+		<Version>1.6.3</Version>
 		<OutputType>Library</OutputType>
 	</PropertyGroup>
 	<Target Name="LaunchGame" AfterTargets="Build" Condition="'$(LaunchGameAfterBuild)' == 'true'">

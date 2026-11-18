@@ -254,11 +254,11 @@
   "config.HayForFeedingBench.name": "Hay for Feeding Bench",
   "config.HayForFeedingBench.tooltip": "Toggle to automatically provide hay for the feeding bench.",
 
-  "config.MilkPailForCowsAndGoats.name": "Milk Pail for Cows and Goats",
-  "config.MilkPailForCowsAndGoats.tooltip": "Automatically use the milk pail when interacting with cows and goats.",
+  "config.SwapToMilkPail.name": "Swap to Milk Pail",
+  "config.SwapToMilkPail.tooltip": "Automatically switch to the Milk Pail when interacting with any animal harvested with a Milk Pail (including modded animals).",
 
-  "config.ShearsForSheeps.name": "Shears for Sheep",
-  "config.ShearsForSheeps.tooltip": "Automatically use the shears when interacting with sheep.",
+  "config.SwapToShears.name": "Swap to Shears",
+  "config.SwapToShears.tooltip": "Automatically switch to the Shears when interacting with any animal harvested with Shears (including modded animals).",
 
   "config.tractor.text": "Tractor Mod Settings",
   "config.disableTractorSwap.name": "Disable Auto Swap in Tractor",

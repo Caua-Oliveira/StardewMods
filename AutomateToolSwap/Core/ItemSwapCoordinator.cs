@@ -15,6 +15,7 @@ internal static class ItemSwapCoordinator
     {
         ObjectsInteractionRules.Evaluate,
         ResourceClumpsInteractionRules.Evaluate,
+        AnimalsInteractionRules.EvaluateDirectHarvest,
         TerrainFeaturesInteractionRules.Evaluate,
         MonstersInteractionRules.Evaluate,
         WaterInteractionRules.Evaluate,
